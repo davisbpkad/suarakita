@@ -1,0 +1,29 @@
+{
+  "name": "web-tts-localhost",
+  "version": "1.0.0",
+  "description": "Aplikasi Text to Speech Sederhana & Modern di Localhost",
+  "main": "server.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "node server.js",
+    "server": "node server.js"
+  },
+  "keywords": [
+    "tts",
+    "text-to-speech",
+    "web-speech-api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "autoprefixer": "^10.6.1",
+    "express": "^4.21.2",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.1",
+    "vue": "^3.5.43"
+  }
+}
