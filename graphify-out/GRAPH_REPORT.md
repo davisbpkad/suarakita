@@ -1,14 +1,19 @@
 # Graph Report - web-saya  (2026-10-01)
 
 ## Corpus Check
-- 414 files · ~279,251 words
+- 418 files · ~280,272 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 10 file(s) not represented in the graph (top: (none) 5, .jsonl 2, .css 2)
+- Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4755 nodes · 5204 edges · 396 communities (364 shown, 32 thin omitted)
+- 4773 nodes · 5227 edges · 397 communities (364 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 162 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `dc87399b`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - instinct-cli.py
@@ -399,7 +404,7 @@
 - Python Testing
 - package.json
 - cmd_prune
-- dependencies
+- 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
 
 ## God Nodes (most connected - your core abstractions)
@@ -419,17 +424,17 @@
   .agents/skills/graphify/SKILL.md → .agents/skills/council-multi-model/scripts/review-with-codex.js
 - `How It Works` --references--> `usage()`  [INFERRED]
   .agents/skills/strategic-compact/SKILL.md → .agents/skills/council-multi-model/scripts/review-with-codex.js
+- `handler()` --calls--> `correctTranscriptWithAI()`  [EXTRACTED]
+  netlify/functions/correct-transcript.js → corrector.js
 - `test_normalize_remote_url_empty_returns_empty()` --calls--> `_normalize_remote_url()`  [INFERRED]
   .agents/skills/continuous-learning-v2/scripts/test_parse_instinct.py → .agents/skills/continuous-learning-v2/scripts/instinct-cli.py
 - `test_normalize_remote_url_file_scheme_preserves_case()` --calls--> `_normalize_remote_url()`  [INFERRED]
-  .agents/skills/continuous-learning-v2/scripts/test_parse_instinct.py → .agents/skills/continuous-learning-v2/scripts/instinct-cli.py
-- `test_normalize_remote_url_https_strips_credentials_and_scheme()` --calls--> `_normalize_remote_url()`  [INFERRED]
   .agents/skills/continuous-learning-v2/scripts/test_parse_instinct.py → .agents/skills/continuous-learning-v2/scripts/instinct-cli.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (396 total, 32 thin omitted)
+## Communities (397 total, 33 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
@@ -492,8 +497,8 @@ Cohesion: 0.07
 Nodes (19): AxisScore, check_accuracy(), check_actionability(), check_clarity(), check_completeness(), check_conciseness(), _check_jargon(), _check_summary() (+11 more)
 
 ### Community 15 - "shared.mjs"
-Cohesion: 0.10
-Nodes (26): contextDirPath, projects, resolved, resolved, resolved, CK_HOME, contextMdPath(), contextPath() (+18 more)
+Cohesion: 0.11
+Nodes (25): contextDirPath, projects, resolved, resolved, resolved, CK_HOME, contextMdPath(), CONTEXTS_DIR (+17 more)
 
 ### Community 16 - "Review Checklist"
 Cohesion: 0.08
@@ -584,7 +589,7 @@ Cohesion: 0.10
 Nodes (19): /click-path-audit — Behavioural Flow Audit, Example: The Bug That Inspired This Skill, Execution Steps, How It Works, Integration with Other Skills, Pattern 1: Sequential Undo, Pattern 2: Async Race, Pattern 3: Stale Closure (+11 more)
 
 ### Community 38 - "review-with-codex.js"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (18): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+10 more)
 
 ### Community 39 - "grade"
@@ -728,8 +733,8 @@ Cohesion: 0.12
 Nodes (15): 1. Connect the MCP server, 2. Call standalone tools only, 3. Interpret scores (1–10), 4. Run the feedback loop, Code Health MCP (CodeScene), Example: AGENTS.md enforcement block, Example: anti-patterns vs correct loop, Example: Flask maintainability improvement (+7 more)
 
 ### Community 74 - "save.mjs"
-Cohesion: 0.15
-Nodes (15): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+7 more)
+Cohesion: 0.14
+Nodes (16): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+8 more)
 
 ### Community 75 - "Inherit Legacy Style"
 Cohesion: 0.12
@@ -912,7 +917,7 @@ Cohesion: 0.09
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
-Cohesion: 0.21
+Cohesion: 0.19
 Nodes (12): CK_HOME, CURRENT_SESSION, daysAgo(), extractClaudeMdGoal(), gitLogSince(), main(), parts, PROJECTS_FILE (+4 more)
 
 ### Community 121 - "Continuous Learning Skill - DEPRECATED"
@@ -1020,8 +1025,8 @@ Cohesion: 0.15
 Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Example Usage, HIGH (Should Fix), Integration with Other Commands, MEDIUM (Consider), Related (+4 more)
 
 ### Community 148 - "server.js"
-Cohesion: 0.15
-Nodes (15): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, DECISION_KEYWORDS, generateMeetingNotesWithAI(), generateMeetingNotesWithNLP() (+7 more)
+Cohesion: 0.12
+Nodes (20): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, DECISION_KEYWORDS, generateMeetingNotesWithAI(), generateMeetingNotesWithNLP() (+12 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13
@@ -1876,21 +1881,21 @@ Cohesion: 0.33
 Nodes (5): Coverage, Framework, Python Testing, Reference, Test Organization
 
 ### Community 390 - "package.json"
-Cohesion: 0.10
-Nodes (18): author, description, keywords, license, main, name, scripts, build (+10 more)
+Cohesion: 0.07
+Nodes (27): author, dependencies, autoprefixer, express, postcss, tailwindcss, @tailwindcss/vite, vite (+19 more)
 
 ### Community 391 - "cmd_prune"
 Cohesion: 0.38
 Nodes (6): cmd_prune(), _pending_item(), test_cmd_prune_deletes_only_expired(), test_cmd_prune_dry_run_keeps_files(), test_cmd_prune_empty_pending_nothing_to_do(), test_cmd_prune_quiet_suppresses_output()
 
-### Community 392 - "dependencies"
+### Community 392 - "🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas"
 Cohesion: 0.22
-Nodes (9): dependencies, autoprefixer, express, postcss, tailwindcss, @tailwindcss/vite, vite, @vitejs/plugin-vue (+1 more)
+Nodes (8): 1. Prasyarat, 2. Instalasi & Menjalankan Aplikasi, 🚀 Cara Menjalankan di Localhost, 🌐 Deploy Gratis ke Netlify (1-Klik), ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
 ## Knowledge Gaps
-- **3070 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3065 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3445 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3079 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3074 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -1902,7 +1907,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3070 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3079 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.04864311315924219 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**

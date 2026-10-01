@@ -2019,6 +2019,30 @@
       "source_location": "L25"
     },
     {
+      "id": "netlify_functions_correct_transcript_handler",
+      "label": "handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "handler()",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "netlify_functions_meeting_notes_handler",
+      "label": "handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "handler()",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L7"
+    },
+    {
       "id": "public_app_clearhighlights",
       "label": "clearHighlights()",
       "_callable": true,
@@ -2329,18 +2353,6 @@
       "norm_label": "contextmdpath()",
       "source_file": ".agents/skills/ck/commands/shared.mjs",
       "source_location": "L53"
-    },
-    {
-      "id": "agents_skills_ck_commands_shared_contextpath",
-      "label": "contextPath()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "contextpath()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L49"
     },
     {
       "id": "agents_skills_ck_commands_shared_daysagolabel",
@@ -3675,6 +3687,18 @@
       "source_location": "L17"
     },
     {
+      "id": "netlify_functions_status_handler",
+      "label": "handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 394,
+      "community_name": "status.js",
+      "file_type": "code",
+      "norm_label": "handler()",
+      "source_file": "netlify/functions/status.js",
+      "source_location": "L4"
+    },
+    {
       "id": "agents_skills_continuous_learning_v2_scripts_instinct_cli_cmd_projects",
       "label": "cmd_projects()",
       "_callable": true,
@@ -4609,6 +4633,18 @@
       "norm_label": "test_load_project_only_global_fallback_loads_global()",
       "source_file": ".agents/skills/continuous-learning-v2/scripts/test_parse_instinct.py",
       "source_location": "L607"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_contextpath",
+      "label": "contextPath()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "save.mjs",
+      "file_type": "code",
+      "norm_label": "contextpath()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L49"
     },
     {
       "id": "agents_skills_ck_commands_shared_loadcontext",
@@ -14384,6 +14420,61 @@
       "source_location": "L14"
     },
     {
+      "id": "netlify_functions_correct_transcript",
+      "label": "correct-transcript.js",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "correct-transcript.js",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_correct_transcript_correcttranscriptwithai",
+      "label": "{ correctTranscriptWithAI }",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "{ correcttranscriptwithai }",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "netlify_functions_meeting_notes",
+      "label": "meeting-notes.js",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "meeting-notes.js",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_meeting_notes_correcttranscriptwithnlp",
+      "label": "{ correctTranscriptWithNLP }",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "{ correcttranscriptwithnlp }",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "netlify_functions_meeting_notes_generatemeetingnoteswithai",
+      "label": "{ generateMeetingNotesWithAI }",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "{ generatemeetingnoteswithai }",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L5"
+    },
+    {
       "id": "server",
       "label": "server.js",
       "_origin": "ast",
@@ -19899,13 +19990,13 @@
     },
     {
       "id": "agents_rules_readme",
-      "label": "README.md",
+      "label": "rules/README.md",
       "_origin": "ast",
       "community": 180,
       "community_name": "Rules",
       "file_type": "document",
       "node_kind": "page",
-      "norm_label": "readme.md",
+      "norm_label": "rules/readme.md",
       "source_file": ".agents/rules/README.md",
       "source_location": "L1"
     },
@@ -43559,6 +43650,105 @@
       "source_location": "L17"
     },
     {
+      "id": "package_dependencies",
+      "label": "dependencies",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "package_dependencies_autoprefixer",
+      "label": "autoprefixer",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "autoprefixer",
+      "source_file": "package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "package_dependencies_express",
+      "label": "express",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "express",
+      "source_file": "package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "package_dependencies_postcss",
+      "label": "postcss",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "postcss",
+      "source_file": "package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "package_dependencies_tailwindcss",
+      "label": "tailwindcss",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "tailwindcss",
+      "source_file": "package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "package_dependencies_tailwindcss_vite",
+      "label": "@tailwindcss/vite",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "@tailwindcss/vite",
+      "source_file": "package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "package_dependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "vite",
+      "source_file": "package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "package_dependencies_vitejs_plugin_vue",
+      "label": "@vitejs/plugin-vue",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-vue",
+      "source_file": "package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "package_dependencies_vue",
+      "label": "vue",
+      "_origin": "ast",
+      "community": 390,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "vue",
+      "source_file": "package.json",
+      "source_location": "L27"
+    },
+    {
       "id": "package_description",
       "label": "description",
       "_origin": "ast",
@@ -43768,103 +43958,112 @@
       "source_location": "L2158"
     },
     {
-      "id": "package_dependencies",
-      "label": "dependencies",
+      "id": "readme",
+      "label": "README.md",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "dependencies",
-      "source_file": "package.json",
-      "source_location": "L19"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "readme.md",
+      "source_file": "README.md",
+      "source_location": "L1"
     },
     {
-      "id": "package_dependencies_autoprefixer",
-      "label": "autoprefixer",
+      "id": "readme_1_prasyarat",
+      "label": "1. Prasyarat",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "autoprefixer",
-      "source_file": "package.json",
-      "source_location": "L22"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. prasyarat",
+      "source_file": "README.md",
+      "source_location": "L44"
     },
     {
-      "id": "package_dependencies_express",
-      "label": "express",
+      "id": "readme_2_instalasi_menjalankan_aplikasi",
+      "label": "2. Instalasi & Menjalankan Aplikasi",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "express",
-      "source_file": "package.json",
-      "source_location": "L23"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. instalasi & menjalankan aplikasi",
+      "source_file": "README.md",
+      "source_location": "L48"
     },
     {
-      "id": "package_dependencies_postcss",
-      "label": "postcss",
+      "id": "readme_cara_menjalankan_di_localhost",
+      "label": "\ud83d\ude80 Cara Menjalankan di Localhost",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "postcss",
-      "source_file": "package.json",
-      "source_location": "L24"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\ude80 cara menjalankan di localhost",
+      "source_file": "README.md",
+      "source_location": "L42"
     },
     {
-      "id": "package_dependencies_tailwindcss",
-      "label": "tailwindcss",
+      "id": "readme_deploy_gratis_ke_netlify_1_klik",
+      "label": "\ud83c\udf10 Deploy Gratis ke Netlify (1-Klik)",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L25"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udf10 deploy gratis ke netlify (1-klik)",
+      "source_file": "README.md",
+      "source_location": "L71"
     },
     {
-      "id": "package_dependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite",
+      "id": "readme_fitur_utama",
+      "label": "\u2728 Fitur Utama",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "@tailwindcss/vite",
-      "source_file": "package.json",
-      "source_location": "L20"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\u2728 fitur utama",
+      "source_file": "README.md",
+      "source_location": "L11"
     },
     {
-      "id": "package_dependencies_vite",
-      "label": "vite",
+      "id": "readme_lisensi",
+      "label": "\ud83d\udcc4 Lisensi",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "vite",
-      "source_file": "package.json",
-      "source_location": "L26"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc4 lisensi",
+      "source_file": "README.md",
+      "source_location": "L105"
     },
     {
-      "id": "package_dependencies_vitejs_plugin_vue",
-      "label": "@vitejs/plugin-vue",
+      "id": "readme_struktur_direktori",
+      "label": "\ud83d\udcc1 Struktur Direktori",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "@vitejs/plugin-vue",
-      "source_file": "package.json",
-      "source_location": "L21"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc1 struktur direktori",
+      "source_file": "README.md",
+      "source_location": "L86"
     },
     {
-      "id": "package_dependencies_vue",
-      "label": "vue",
+      "id": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "label": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
       "_origin": "ast",
       "community": 392,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "vue",
-      "source_file": "package.json",
-      "source_location": "L27"
+      "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udf99\ufe0f suarakita \u2014 voice-to-text & notulen rapat cerdas",
+      "source_file": "README.md",
+      "source_location": "L1"
     },
     {
       "id": "bootstrap_app",
@@ -43909,6 +44108,17 @@
       "norm_label": "illuminate\\foundation\\configuration\\middleware",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "netlify_functions_status",
+      "label": "status.js",
+      "_origin": "ast",
+      "community": 394,
+      "community_name": "status.js",
+      "file_type": "code",
+      "norm_label": "status.js",
+      "source_file": "netlify/functions/status.js",
+      "source_location": "L1"
     },
     {
       "id": "artisan",
@@ -57585,6 +57795,18 @@
       "type": "external"
     },
     {
+      "id": "ref_os",
+      "label": "ref_os",
+      "_origin": "semantic",
+      "community": 120,
+      "community_name": "session-start.mjs",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_os",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "argparse",
       "label": "argparse",
       "_origin": "semantic",
@@ -57737,18 +57959,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "logging",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_os",
-      "label": "ref_os",
-      "_origin": "semantic",
-      "community": 38,
-      "community_name": "review-with-codex.js",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_os",
       "source_file": "",
       "type": "external"
     },
@@ -61955,6 +62165,42 @@
       "weight": 1.0
     },
     {
+      "source": "netlify_functions_correct_transcript_handler",
+      "target": "corrector_correcttranscriptwithai",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes_handler",
+      "target": "corrector_correcttranscriptwithnlp",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes_handler",
+      "target": "meetingnotes_generatemeetingnoteswithai",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
       "source": "public_app_pausespeech",
       "target": "public_app_setstatus",
       "relation": "calls",
@@ -64235,6 +64481,42 @@
       "weight": 1.0
     },
     {
+      "source": "netlify_functions_correct_transcript",
+      "target": "corrector_correcttranscriptwithai",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "corrector_correcttranscriptwithnlp",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "meetingnotes_generatemeetingnoteswithai",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
       "source": "package",
       "target": "ref_tailwindcss_vite",
       "relation": "imports",
@@ -65384,6 +65666,42 @@
       "context": "import",
       "source_file": "meetingNotes.js",
       "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_correct_transcript",
+      "target": "corrector",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "corrector",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "meetingnotes",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -109177,6 +109495,72 @@
       "weight": 1.0
     },
     {
+      "source": "netlify_functions_correct_transcript",
+      "target": "netlify_functions_correct_transcript_correcttranscriptwithai",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_correct_transcript",
+      "target": "netlify_functions_correct_transcript_handler",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/correct-transcript.js",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "netlify_functions_meeting_notes_correcttranscriptwithnlp",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "netlify_functions_meeting_notes_generatemeetingnoteswithai",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_meeting_notes",
+      "target": "netlify_functions_meeting_notes_handler",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/meeting-notes.js",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_status",
+      "target": "netlify_functions_status_handler",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/status.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
       "source": "package",
       "target": "package_keywords",
       "relation": "contains",
@@ -109471,6 +109855,94 @@
       "confidence_score": 1.0,
       "source_file": "public/app.js",
       "source_location": "L983",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cara_menjalankan_di_localhost",
+      "target": "readme_1_prasyarat",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cara_menjalankan_di_localhost",
+      "target": "readme_2_instalasi_menjalankan_aplikasi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_lisensi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_fitur_utama",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_cara_menjalankan_di_localhost",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_deploy_gratis_ke_netlify_1_klik",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_struktur_direktori",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -115905,5 +116377,6 @@
       "weight": 0.8
     }
   ],
-  "hyperedges": []
+  "hyperedges": [],
+  "built_at_commit": "dc87399b27e86f5728ae224b1159c03132e9c441"
 }

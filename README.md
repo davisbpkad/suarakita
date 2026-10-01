@@ -48,8 +48,8 @@ Aplikasi web modern berbasis **Neobrutalism** untuk merekam suara secara real-ti
 ### 2. Instalasi & Menjalankan Aplikasi
 ```bash
 # 1. Clone repositori
-git clone https://github.com/davisbpkad/web-saya.git
-cd web-saya
+git clone https://github.com/davisbpkad/suarakita.git
+cd suarakita
 
 # 2. Install dependensi
 npm install
@@ -65,6 +65,21 @@ node server.js
 
 Aplikasi dapat langsung diakses di browser pada:
 👉 **`http://localhost:3000`**
+
+---
+
+## 🌐 Deploy Gratis ke Netlify (1-Klik)
+
+Aplikasi ini sudah dilengkapi konfigurasi **Netlify Serverless Functions** (`netlify.toml` dan `netlify/functions/`), sehingga seluruh fitur (Voice to Text, Koreksi Transkrip, & Notulen Rapat) berjalan 100% otomatis dan gratis selamanya di Netlify tanpa server sleep!
+
+1. Buka [Netlify Dashboard](https://app.netlify.com/) dan login menggunakan akun GitHub Anda.
+2. Klik tombol **Add new site** $\rightarrow$ **Import an existing project**.
+3. Pilih penyedia **GitHub** dan pilih repository **`davisbpkad/suarakita`**.
+4. Netlify akan otomatis membaca file `netlify.toml`:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `public`
+   - **Functions directory**: `netlify/functions`
+5. Klik **Deploy suarakita**. Dalam 1–2 menit, website Anda sudah aktif di internet dengan HTTPS gratis!
 
 ---
 

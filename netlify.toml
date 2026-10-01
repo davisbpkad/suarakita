@@ -1,0 +1,44 @@
+[build]
+  publish = "public"
+  command = "npm run build"
+  functions = "netlify/functions"
+
+# Environment defaults
+[build.environment]
+  NODE_VERSION = "20"
+
+# API rewrites: forward /api/... to Netlify Serverless Functions
+[[redirects]]
+  from = "/api/status"
+  to = "/.netlify/functions/status"
+  status = 200
+
+[[redirects]]
+  from = "/api/correct-transcript"
+  to = "/.netlify/functions/correct-transcript"
+  status = 200
+
+[[redirects]]
+  from = "/api/meeting-notes"
+  to = "/.netlify/functions/meeting-notes"
+  status = 200
+
+[[redirects]]
+  from = "/api/generate-meeting-notes"
+  to = "/.netlify/functions/meeting-notes"
+  status = 200
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security and cache headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
