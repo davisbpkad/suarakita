@@ -407,8 +407,8 @@
             </ul>
           </div>
 
-          <!-- Section 5: Action Items -->
-          <div class="p-4 bg-[#DDD6FE] border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_#000] flex flex-col gap-2">
+          <!-- Section 5: Action Items (Jika Ada) -->
+          <div v-if="momData.actionItems && momData.actionItems.length" class="p-4 bg-[#DDD6FE] border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_#000] flex flex-col gap-2">
             <div class="font-black text-black uppercase tracking-wider flex items-center gap-1.5">
               <span>🎯</span> Rencana Tindakan Lanjut (Action Items):
             </div>

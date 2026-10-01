@@ -10,7 +10,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "meetingnotescontroller",
       "source_file": "app/Http/Controllers/MeetingNotesController.php",
@@ -23,7 +23,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "transcriptcontroller",
       "source_file": "app/Http/Controllers/TranscriptController.php",
@@ -36,7 +36,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "meetingnotesservice",
       "source_file": "app/Services/MeetingNotesService.php",
@@ -49,7 +49,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "transcriptcorrectionservice",
       "source_file": "app/Services/TranscriptCorrectionService.php",
@@ -1184,7 +1184,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".__construct()",
       "source_file": "app/Http/Controllers/MeetingNotesController.php",
@@ -1196,7 +1196,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".generate()",
       "source_file": "app/Http/Controllers/MeetingNotesController.php",
@@ -1208,7 +1208,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".__construct()",
       "source_file": "app/Http/Controllers/TranscriptController.php",
@@ -1220,7 +1220,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".correct()",
       "source_file": "app/Http/Controllers/TranscriptController.php",
@@ -1232,11 +1232,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "{closure#1}()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L27"
+      "source_location": "L39"
     },
     {
       "id": "app_services_meetingnotesservice_closure_2",
@@ -1244,11 +1244,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "{closure#2}()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L109"
+      "source_location": "L155"
     },
     {
       "id": "app_services_meetingnotesservice_closure_3",
@@ -1256,11 +1256,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "{closure#3}()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L110"
+      "source_location": "L156"
     },
     {
       "id": "app_services_meetingnotesservice_closure_4",
@@ -1268,11 +1268,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "{closure#4}()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L111"
+      "source_location": "L227"
     },
     {
       "id": "app_services_meetingnotesservice_closure_5",
@@ -1280,35 +1280,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "{closure#5}()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L150"
-    },
-    {
-      "id": "app_services_meetingnotesservice_closure_6",
-      "label": "{closure#6}()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "community_name": "MeetingNotesService.php",
-      "file_type": "code",
-      "norm_label": "{closure#6}()",
-      "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L151"
-    },
-    {
-      "id": "app_services_meetingnotesservice_closure_7",
-      "label": "{closure#7}()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "community_name": "MeetingNotesService.php",
-      "file_type": "code",
-      "norm_label": "{closure#7}()",
-      "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L152"
+      "source_location": "L228"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_generate",
@@ -1316,11 +1292,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".generate()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L14"
+      "source_location": "L21"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_generatewithai",
@@ -1328,11 +1304,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".generatewithai()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L124"
+      "source_location": "L170"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_generatewithnlp",
@@ -1340,23 +1316,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".generatewithnlp()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L24"
-    },
-    {
-      "id": "app_services_transcriptcorrectionservice_closure_1",
-      "label": "{closure#1}()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "community_name": "MeetingNotesService.php",
-      "file_type": "code",
-      "norm_label": "{closure#1}()",
-      "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L111"
+      "source_location": "L36"
     },
     {
       "id": "app_services_transcriptcorrectionservice_transcriptcorrectionservice_correct",
@@ -1364,11 +1328,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".correct()",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L32"
+      "source_location": "L36"
     },
     {
       "id": "app_services_transcriptcorrectionservice_transcriptcorrectionservice_correctwithai",
@@ -1376,11 +1340,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".correctwithai()",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L133"
+      "source_location": "L190"
     },
     {
       "id": "app_services_transcriptcorrectionservice_transcriptcorrectionservice_correctwithnlp",
@@ -1388,11 +1352,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": ".correctwithnlp()",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L42"
+      "source_location": "L46"
     },
     {
       "id": "routes_web_get",
@@ -1400,7 +1364,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "get /()",
       "source_file": "routes/web.php",
@@ -1980,7 +1944,7 @@
       "file_type": "code",
       "norm_label": "correcttranscriptwithai()",
       "source_file": "corrector.js",
-      "source_location": "L166"
+      "source_location": "L236"
     },
     {
       "id": "corrector_correcttranscriptwithnlp",
@@ -1992,7 +1956,7 @@
       "file_type": "code",
       "norm_label": "correcttranscriptwithnlp()",
       "source_file": "corrector.js",
-      "source_location": "L56"
+      "source_location": "L87"
     },
     {
       "id": "meetingnotes_generatemeetingnoteswithai",
@@ -2004,7 +1968,7 @@
       "file_type": "code",
       "norm_label": "generatemeetingnoteswithai()",
       "source_file": "meetingNotes.js",
-      "source_location": "L162"
+      "source_location": "L205"
     },
     {
       "id": "meetingnotes_generatemeetingnoteswithnlp",
@@ -2016,7 +1980,7 @@
       "file_type": "code",
       "norm_label": "generatemeetingnoteswithnlp()",
       "source_file": "meetingNotes.js",
-      "source_location": "L25"
+      "source_location": "L51"
     },
     {
       "id": "netlify_functions_correct_transcript_handler",
@@ -2343,18 +2307,6 @@
       "source_location": "L172"
     },
     {
-      "id": "agents_skills_ck_commands_shared_contextmdpath",
-      "label": "contextMdPath()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "contextmdpath()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L53"
-    },
-    {
       "id": "agents_skills_ck_commands_shared_daysagolabel",
       "label": "daysAgoLabel()",
       "_callable": true,
@@ -2427,18 +2379,6 @@
       "source_location": "L273"
     },
     {
-      "id": "agents_skills_ck_commands_shared_rendercontextmd",
-      "label": "renderContextMd()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "rendercontextmd()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L198"
-    },
-    {
       "id": "agents_skills_ck_commands_shared_renderinfoblock",
       "label": "renderInfoBlock()",
       "_callable": true,
@@ -2487,18 +2427,6 @@
       "source_location": "L145"
     },
     {
-      "id": "agents_skills_ck_commands_shared_savecontext",
-      "label": "saveContext()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "savecontext()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L61"
-    },
-    {
       "id": "agents_skills_ck_commands_shared_stalenessicon",
       "label": "stalenessIcon()",
       "_callable": true,
@@ -2509,30 +2437,6 @@
       "norm_label": "stalenessicon()",
       "source_file": ".agents/skills/ck/commands/shared.mjs",
       "source_location": "L129"
-    },
-    {
-      "id": "agents_skills_ck_commands_shared_writejson",
-      "label": "writeJson()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "writejson()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L33"
-    },
-    {
-      "id": "agents_skills_ck_commands_shared_writeprojects",
-      "label": "writeProjects()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "writeprojects()",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L43"
     },
     {
       "id": "agents_skills_skill_comply_tests_test_runner_testrunscenarioerrorincludesstdouttail_test_error_message_contains_stdout_tail",
@@ -2823,6 +2727,18 @@
       "source_location": "L38"
     },
     {
+      "id": "agents_skills_council_multi_model_scripts_review_with_codex_usage",
+      "label": "usage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "code",
+      "norm_label": "usage()",
+      "source_file": ".agents/skills/council-multi-model/scripts/review-with-codex.js",
+      "source_location": "L41"
+    },
+    {
       "id": "agents_skills_continuous_learning_v2_scripts_instinct_cli_fetch_import_url",
       "label": "_fetch_import_url()",
       "_callable": true,
@@ -3015,6 +2931,42 @@
       "source_location": "L59"
     },
     {
+      "id": "agents_skills_ck_commands_shared_contextmdpath",
+      "label": "contextMdPath()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "contextmdpath()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L53"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_rendercontextmd",
+      "label": "renderContextMd()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "rendercontextmd()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L198"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_savecontext",
+      "label": "saveContext()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "savecontext()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L61"
+    },
+    {
       "id": "agents_skills_ck_commands_shared_shortid",
       "label": "shortId()",
       "_callable": true,
@@ -3025,6 +2977,30 @@
       "norm_label": "shortid()",
       "source_file": ".agents/skills/ck/commands/shared.mjs",
       "source_location": "L139"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_writejson",
+      "label": "writeJson()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "writejson()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L33"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_writeprojects",
+      "label": "writeProjects()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "writeprojects()",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L43"
     },
     {
       "id": "agents_skills_skill_comply_scripts_runner_redact_home_path",
@@ -3181,18 +3157,6 @@
       "norm_label": "runstdinreview()",
       "source_file": ".agents/skills/council-multi-model/scripts/review-with-codex.js",
       "source_location": "L235"
-    },
-    {
-      "id": "agents_skills_council_multi_model_scripts_review_with_codex_usage",
-      "label": "usage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "review-with-codex.js",
-      "file_type": "code",
-      "norm_label": "usage()",
-      "source_file": ".agents/skills/council-multi-model/scripts/review-with-codex.js",
-      "source_location": "L41"
     },
     {
       "id": "agents_skills_council_multi_model_scripts_review_with_codex_verifytoollesssupport",
@@ -5749,188 +5713,103 @@
       "source_location": "L16"
     },
     {
-      "id": "agents_skills_strategic_compact_skill",
-      "label": "strategic-compact/SKILL.md",
+      "id": "package_dependencies",
+      "label": "dependencies",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "frontmatter": {
-        "name": "strategic-compact",
-        "description": "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction. Use when a session is approaching a context limit and a task phase is a natural place to compact."
-      },
-      "node_kind": "page",
-      "norm_label": "strategic-compact/skill.md",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L1"
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "package.json",
+      "source_location": "L19"
     },
     {
-      "id": "agents_skills_strategic_compact_skill_best_practices",
-      "label": "Best Practices",
+      "id": "package_dependencies_autoprefixer",
+      "label": "autoprefixer",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "best practices",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L115"
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "autoprefixer",
+      "source_file": "package.json",
+      "source_location": "L22"
     },
     {
-      "id": "agents_skills_strategic_compact_skill_compaction_decision_guide",
-      "label": "Compaction Decision Guide",
+      "id": "package_dependencies_express",
+      "label": "express",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "compaction decision guide",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L76"
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "express",
+      "source_file": "package.json",
+      "source_location": "L23"
     },
     {
-      "id": "agents_skills_strategic_compact_skill_configuration",
-      "label": "Configuration",
+      "id": "package_dependencies_postcss",
+      "label": "postcss",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "configuration",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L64"
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "postcss",
+      "source_file": "package.json",
+      "source_location": "L24"
     },
     {
-      "id": "agents_skills_strategic_compact_skill_context_composition_awareness",
-      "label": "Context Composition Awareness",
+      "id": "package_dependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "context composition awareness",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L135"
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "tailwindcss",
+      "source_file": "package.json",
+      "source_location": "L25"
     },
     {
-      "id": "agents_skills_strategic_compact_skill_context_optimization_tools",
-      "label": "Context Optimization Tools",
+      "id": "package_dependencies_tailwindcss_vite",
+      "label": "@tailwindcss/vite",
       "_origin": "ast",
       "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "context optimization tools",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L148"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_duplicate_instruction_detection",
-      "label": "Duplicate Instruction Detection",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "duplicate instruction detection",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L142"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_hook_setup",
-      "label": "Hook Setup",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "hook setup",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L41"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_related",
-      "label": "Related",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "related",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L152"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_strategic_compact_skill",
-      "label": "Strategic Compact Skill",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "strategic compact skill",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L8"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_token_optimization_patterns",
-      "label": "Token Optimization Patterns",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "token optimization patterns",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L124"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_trigger_table_lazy_loading",
-      "label": "Trigger-Table Lazy Loading",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "trigger-table lazy loading",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L126"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_what_survives_compaction",
-      "label": "What Survives Compaction",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what survives compaction",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L89"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_when_to_activate",
-      "label": "When to Activate",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "when to activate",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L12"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_why_strategic_compaction",
-      "label": "Why Strategic Compaction?",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "why strategic compaction?",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@tailwindcss/vite",
+      "source_file": "package.json",
       "source_location": "L20"
+    },
+    {
+      "id": "package_dependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "vite",
+      "source_file": "package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "package_dependencies_vitejs_plugin_vue",
+      "label": "@vitejs/plugin-vue",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-vue",
+      "source_file": "package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "package_dependencies_vue",
+      "label": "vue",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "vue",
+      "source_file": "package.json",
+      "source_location": "L27"
     },
     {
       "id": "agents_workflows_cpp_test",
@@ -9112,7 +8991,7 @@
       "label": "MeetingNotesController.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "meetingnotescontroller.php",
       "source_file": "app/Http/Controllers/MeetingNotesController.php",
@@ -9123,7 +9002,7 @@
       "label": "TranscriptController.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "transcriptcontroller.php",
       "source_file": "app/Http/Controllers/TranscriptController.php",
@@ -9134,7 +9013,7 @@
       "label": "MeetingNotesService.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "meetingnotesservice.php",
       "source_file": "app/Services/MeetingNotesService.php",
@@ -9145,7 +9024,7 @@
       "label": "TranscriptCorrectionService.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "transcriptcorrectionservice.php",
       "source_file": "app/Services/TranscriptCorrectionService.php",
@@ -9156,7 +9035,7 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "controller",
       "source_file": "",
@@ -9167,7 +9046,7 @@
       "label": "Illuminate\\Http\\Request",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "illuminate\\http\\request",
       "source_file": "",
@@ -9178,7 +9057,7 @@
       "label": "Illuminate\\Support\\Facades\\Http",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "illuminate\\support\\facades\\http",
       "source_file": "",
@@ -9189,7 +9068,7 @@
       "label": "Illuminate\\Support\\Facades\\Route",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "illuminate\\support\\facades\\route",
       "source_file": "",
@@ -9200,7 +9079,7 @@
       "label": "api.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "api.php",
       "source_file": "routes/api.php",
@@ -9211,7 +9090,7 @@
       "label": "web.php",
       "_origin": "ast",
       "community": 119,
-      "community_name": "MeetingNotesService.php",
+      "community_name": "TranscriptCorrectionService",
       "file_type": "code",
       "norm_label": "web.php",
       "source_file": "routes/web.php",
@@ -14362,7 +14241,7 @@
       "file_type": "code",
       "norm_label": "https",
       "source_file": "corrector.js",
-      "source_location": "L12"
+      "source_location": "L26"
     },
     {
       "id": "corrector_oral_contractions",
@@ -14373,7 +14252,7 @@
       "file_type": "code",
       "norm_label": "oral_contractions",
       "source_file": "corrector.js",
-      "source_location": "L15"
+      "source_location": "L29"
     },
     {
       "id": "corrector_tech_acronyms",
@@ -14384,7 +14263,7 @@
       "file_type": "code",
       "norm_label": "tech_acronyms",
       "source_file": "corrector.js",
-      "source_location": "L39"
+      "source_location": "L57"
     },
     {
       "id": "meetingnotes",
@@ -14398,6 +14277,28 @@
       "source_location": "L1"
     },
     {
+      "id": "meetingnotes_correcttranscriptwithnlp",
+      "label": "{ correctTranscriptWithNLP }",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "{ correcttranscriptwithnlp }",
+      "source_file": "meetingNotes.js",
+      "source_location": "L32"
+    },
+    {
+      "id": "meetingnotes_debate_patterns",
+      "label": "DEBATE_PATTERNS",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "debate_patterns",
+      "source_file": "meetingNotes.js",
+      "source_location": "L41"
+    },
+    {
       "id": "meetingnotes_decision_keywords",
       "label": "DECISION_KEYWORDS",
       "_origin": "ast",
@@ -14406,7 +14307,7 @@
       "file_type": "code",
       "norm_label": "decision_keywords",
       "source_file": "meetingNotes.js",
-      "source_location": "L17"
+      "source_location": "L35"
     },
     {
       "id": "meetingnotes_https",
@@ -14417,7 +14318,7 @@
       "file_type": "code",
       "norm_label": "https",
       "source_file": "meetingNotes.js",
-      "source_location": "L14"
+      "source_location": "L31"
     },
     {
       "id": "netlify_functions_correct_transcript",
@@ -14563,50 +14464,6 @@
       "source_location": "L1"
     },
     {
-      "id": "agents_skills_ck_commands_forget",
-      "label": "forget.mjs",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "forget.mjs",
-      "source_file": ".agents/skills/ck/commands/forget.mjs",
-      "source_location": "L1"
-    },
-    {
-      "id": "agents_skills_ck_commands_forget_contextdirpath",
-      "label": "contextDirPath",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "contextdirpath",
-      "source_file": ".agents/skills/ck/commands/forget.mjs",
-      "source_location": "L31"
-    },
-    {
-      "id": "agents_skills_ck_commands_forget_projects",
-      "label": "projects",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "projects",
-      "source_file": ".agents/skills/ck/commands/forget.mjs",
-      "source_location": "L40"
-    },
-    {
-      "id": "agents_skills_ck_commands_forget_resolved",
-      "label": "resolved",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "resolved",
-      "source_file": ".agents/skills/ck/commands/forget.mjs",
-      "source_location": "L21"
-    },
-    {
       "id": "agents_skills_ck_commands_info",
       "label": "info.mjs",
       "_origin": "ast",
@@ -14671,17 +14528,6 @@
       "norm_label": "ck_home",
       "source_file": ".agents/skills/ck/commands/shared.mjs",
       "source_location": "L16"
-    },
-    {
-      "id": "agents_skills_ck_commands_shared_contexts_dir",
-      "label": "CONTEXTS_DIR",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "shared.mjs",
-      "file_type": "code",
-      "norm_label": "contexts_dir",
-      "source_file": ".agents/skills/ck/commands/shared.mjs",
-      "source_location": "L17"
     },
     {
       "id": "agents_skills_ck_commands_shared_projects_file",
@@ -27030,23 +26876,11 @@
       "source_location": "L12"
     },
     {
-      "id": "agents_rules_common_coding_style",
-      "label": "common-coding-style.md",
-      "_origin": "ast",
-      "community": 224,
-      "community_name": "common-coding-style.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "common-coding-style.md",
-      "source_file": ".agents/rules/common-coding-style.md",
-      "source_location": "L1"
-    },
-    {
       "id": "agents_rules_golang_coding_style",
       "label": "golang-coding-style.md",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "golang-coding-style.md",
@@ -27058,7 +26892,7 @@
       "label": "Design Principles",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "design principles",
@@ -27070,7 +26904,7 @@
       "label": "Error Handling",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "error handling",
@@ -27082,7 +26916,7 @@
       "label": "Formatting",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "formatting",
@@ -27094,7 +26928,7 @@
       "label": "Go Coding Style",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "go coding style",
@@ -27106,36 +26940,12 @@
       "label": "Reference",
       "_origin": "ast",
       "community": 224,
-      "community_name": "common-coding-style.md",
+      "community_name": "Go Coding Style",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "reference",
       "source_file": ".agents/rules/golang-coding-style.md",
       "source_location": "L30"
-    },
-    {
-      "id": "agents_rules_react_coding_style",
-      "label": "react-coding-style.md",
-      "_origin": "ast",
-      "community": 224,
-      "community_name": "common-coding-style.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "react-coding-style.md",
-      "source_file": ".agents/rules/react-coding-style.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "agents_rules_typescript_coding_style",
-      "label": "typescript-coding-style.md",
-      "_origin": "ast",
-      "community": 224,
-      "community_name": "common-coding-style.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "typescript-coding-style.md",
-      "source_file": ".agents/rules/typescript-coding-style.md",
-      "source_location": "L1"
     },
     {
       "id": "agents_rules_fsharp_coding_style",
@@ -27678,6 +27488,22 @@
       "source_location": "L76"
     },
     {
+      "id": "agents_skills_strategic_compact_skill",
+      "label": "strategic-compact/SKILL.md",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "frontmatter": {
+        "name": "strategic-compact",
+        "description": "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction. Use when a session is approaching a context limit and a task phase is a natural place to compact."
+      },
+      "node_kind": "page",
+      "norm_label": "strategic-compact/skill.md",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L1"
+    },
+    {
       "id": "agents_skills_graphify_skill",
       "label": "graphify/SKILL.md",
       "_origin": "ast",
@@ -27788,6 +27614,18 @@
       "norm_label": "part a - structural extraction for code files",
       "source_file": ".agents/skills/graphify/SKILL.md",
       "source_location": "L176"
+    },
+    {
+      "id": "agents_skills_graphify_skill_part_b_semantic_extraction_parallel_subagents",
+      "label": "Part B - Semantic extraction (parallel subagents)",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "part b - semantic extraction (parallel subagents)",
+      "source_file": ".agents/skills/graphify/SKILL.md",
+      "source_location": "L202"
     },
     {
       "id": "agents_skills_graphify_skill_part_c_merge_ast_semantic_into_final_extraction",
@@ -27968,6 +27806,186 @@
       "norm_label": "what you must do when invoked",
       "source_file": ".agents/skills/graphify/SKILL.md",
       "source_location": "L49"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_best_practices",
+      "label": "Best Practices",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "best practices",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_compaction_decision_guide",
+      "label": "Compaction Decision Guide",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "compaction decision guide",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_configuration",
+      "label": "Configuration",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "configuration",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_context_composition_awareness",
+      "label": "Context Composition Awareness",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "context composition awareness",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_context_optimization_tools",
+      "label": "Context Optimization Tools",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "context optimization tools",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_duplicate_instruction_detection",
+      "label": "Duplicate Instruction Detection",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "duplicate instruction detection",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_hook_setup",
+      "label": "Hook Setup",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "hook setup",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_how_it_works",
+      "label": "How It Works",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "how it works",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_related",
+      "label": "Related",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "related",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_strategic_compact_skill",
+      "label": "Strategic Compact Skill",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "strategic compact skill",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_token_optimization_patterns",
+      "label": "Token Optimization Patterns",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "token optimization patterns",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_trigger_table_lazy_loading",
+      "label": "Trigger-Table Lazy Loading",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "trigger-table lazy loading",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_what_survives_compaction",
+      "label": "What Survives Compaction",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "what survives compaction",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_when_to_activate",
+      "label": "When to Activate",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "when to activate",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_why_strategic_compaction",
+      "label": "Why Strategic Compaction?",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "why strategic compaction?",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L20"
     },
     {
       "id": "agents_rules_vue_patterns",
@@ -32305,6 +32323,50 @@
       "source_location": "L40"
     },
     {
+      "id": "agents_skills_ck_commands_forget",
+      "label": "forget.mjs",
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "forget.mjs",
+      "source_file": ".agents/skills/ck/commands/forget.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "agents_skills_ck_commands_forget_contextdirpath",
+      "label": "contextDirPath",
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "contextdirpath",
+      "source_file": ".agents/skills/ck/commands/forget.mjs",
+      "source_location": "L31"
+    },
+    {
+      "id": "agents_skills_ck_commands_forget_projects",
+      "label": "projects",
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "projects",
+      "source_file": ".agents/skills/ck/commands/forget.mjs",
+      "source_location": "L40"
+    },
+    {
+      "id": "agents_skills_ck_commands_forget_resolved",
+      "label": "resolved",
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "resolved",
+      "source_file": ".agents/skills/ck/commands/forget.mjs",
+      "source_location": "L21"
+    },
+    {
       "id": "agents_skills_ck_commands_migrate",
       "label": "migrate.mjs",
       "_origin": "ast",
@@ -32336,6 +32398,17 @@
       "norm_label": "projects",
       "source_file": ".agents/skills/ck/commands/migrate.mjs",
       "source_location": "L84"
+    },
+    {
+      "id": "agents_skills_ck_commands_shared_contexts_dir",
+      "label": "CONTEXTS_DIR",
+      "_origin": "ast",
+      "community": 267,
+      "community_name": "migrate.mjs",
+      "file_type": "code",
+      "norm_label": "contexts_dir",
+      "source_file": ".agents/skills/ck/commands/shared.mjs",
+      "source_location": "L17"
     },
     {
       "id": "agents_skills_skill_comply_skill",
@@ -37967,11 +38040,23 @@
       "source_location": "L29"
     },
     {
+      "id": "agents_rules_common_coding_style",
+      "label": "common-coding-style.md",
+      "_origin": "ast",
+      "community": 311,
+      "community_name": "common-coding-style.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "common-coding-style.md",
+      "source_file": ".agents/rules/common-coding-style.md",
+      "source_location": "L1"
+    },
+    {
       "id": "agents_rules_python_coding_style",
       "label": "python-coding-style.md",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "python-coding-style.md",
@@ -37983,7 +38068,7 @@
       "label": "Formatting",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "formatting",
@@ -37995,7 +38080,7 @@
       "label": "Immutability",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "immutability",
@@ -38007,7 +38092,7 @@
       "label": "Python Coding Style",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "python coding style",
@@ -38019,7 +38104,7 @@
       "label": "Reference",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "reference",
@@ -38031,12 +38116,36 @@
       "label": "Standards",
       "_origin": "ast",
       "community": 311,
-      "community_name": "Python Coding Style",
+      "community_name": "common-coding-style.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "standards",
       "source_file": ".agents/rules/python-coding-style.md",
       "source_location": "L10"
+    },
+    {
+      "id": "agents_rules_react_coding_style",
+      "label": "react-coding-style.md",
+      "_origin": "ast",
+      "community": 311,
+      "community_name": "common-coding-style.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "react-coding-style.md",
+      "source_file": ".agents/rules/react-coding-style.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "agents_rules_typescript_coding_style",
+      "label": "typescript-coding-style.md",
+      "_origin": "ast",
+      "community": 311,
+      "community_name": "common-coding-style.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "typescript-coding-style.md",
+      "source_file": ".agents/rules/typescript-coding-style.md",
+      "source_location": "L1"
     },
     {
       "id": "agents_rules_python_patterns",
@@ -43114,30 +43223,6 @@
       "source_location": "L8"
     },
     {
-      "id": "agents_skills_graphify_skill_part_b_semantic_extraction_parallel_subagents",
-      "label": "Part B - Semantic extraction (parallel subagents)",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "review-with-codex.js",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "part b - semantic extraction (parallel subagents)",
-      "source_file": ".agents/skills/graphify/SKILL.md",
-      "source_location": "L202"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_how_it_works",
-      "label": "How It Works",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "review-with-codex.js",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "how it works",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L32"
-    },
-    {
       "id": "agents_workflows_graphify",
       "label": "workflows/graphify.md",
       "_origin": "ast",
@@ -43648,105 +43733,6 @@
       "norm_label": "author",
       "source_file": "package.json",
       "source_location": "L17"
-    },
-    {
-      "id": "package_dependencies",
-      "label": "dependencies",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "dependencies",
-      "source_file": "package.json",
-      "source_location": "L19"
-    },
-    {
-      "id": "package_dependencies_autoprefixer",
-      "label": "autoprefixer",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "autoprefixer",
-      "source_file": "package.json",
-      "source_location": "L22"
-    },
-    {
-      "id": "package_dependencies_express",
-      "label": "express",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "express",
-      "source_file": "package.json",
-      "source_location": "L23"
-    },
-    {
-      "id": "package_dependencies_postcss",
-      "label": "postcss",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "postcss",
-      "source_file": "package.json",
-      "source_location": "L24"
-    },
-    {
-      "id": "package_dependencies_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L25"
-    },
-    {
-      "id": "package_dependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "@tailwindcss/vite",
-      "source_file": "package.json",
-      "source_location": "L20"
-    },
-    {
-      "id": "package_dependencies_vite",
-      "label": "vite",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "vite",
-      "source_file": "package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "package_dependencies_vitejs_plugin_vue",
-      "label": "@vitejs/plugin-vue",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "@vitejs/plugin-vue",
-      "source_file": "package.json",
-      "source_location": "L21"
-    },
-    {
-      "id": "package_dependencies_vue",
-      "label": "vue",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "code",
-      "norm_label": "vue",
-      "source_file": "package.json",
-      "source_location": "L27"
     },
     {
       "id": "package_description",
@@ -62101,7 +62087,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L17",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -62113,7 +62099,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L21",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -62125,7 +62111,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L35",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -62137,7 +62123,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L39",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -62149,7 +62135,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "corrector.js",
-      "source_location": "L168",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
@@ -62161,7 +62147,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L164",
+      "source_location": "L207",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes_generatemeetingnoteswithnlp",
+      "target": "corrector_correcttranscriptwithnlp",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "meetingNotes.js",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -64481,6 +64479,18 @@
       "weight": 1.0
     },
     {
+      "source": "meetingnotes",
+      "target": "corrector_correcttranscriptwithnlp",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "meetingNotes.js",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
       "source": "netlify_functions_correct_transcript",
       "target": "corrector_correcttranscriptwithai",
       "relation": "imports",
@@ -65653,7 +65663,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "corrector.js",
-      "source_location": "L12",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -65665,7 +65675,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "meetingNotes.js",
-      "source_location": "L14",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "corrector",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "meetingNotes.js",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -108897,7 +108919,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L109",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -108908,7 +108930,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L110",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -108919,7 +108941,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L111",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -108930,29 +108952,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L150",
-      "weight": 1.0
-    },
-    {
-      "source": "app_services_meetingnotesservice",
-      "target": "app_services_meetingnotesservice_closure_6",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L151",
-      "weight": 1.0
-    },
-    {
-      "source": "app_services_meetingnotesservice",
-      "target": "app_services_meetingnotesservice_closure_7",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L152",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -108963,7 +108963,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L27",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -108975,17 +108975,6 @@
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
       "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "app_services_transcriptcorrectionservice",
-      "target": "app_services_transcriptcorrectionservice_closure_1",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -109447,7 +109436,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "corrector.js",
-      "source_location": "L12",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -109458,7 +109447,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "corrector.js",
-      "source_location": "L15",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -109469,7 +109458,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "corrector.js",
-      "source_location": "L39",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -109480,7 +109469,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L14",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "meetingnotes_correcttranscriptwithnlp",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -109491,7 +109491,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L17",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "meetingnotes_debate_patterns",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -111449,7 +111460,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L124",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -111460,7 +111471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L14",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -111471,7 +111482,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L24",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -111482,7 +111493,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L133",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -111493,7 +111504,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L32",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -111504,7 +111515,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L42",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -115849,6 +115860,18 @@
       "weight": 1.0
     },
     {
+      "source": "app_services_meetingnotesservice_meetingnotesservice_generate",
+      "target": "app_services_transcriptcorrectionservice_transcriptcorrectionservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "call",
+      "source_file": "app/Services/MeetingNotesService.php",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
       "source": "agents_skills_council_multi_model_scripts_review_with_codex",
       "target": "agents_skills_council_multi_model_scripts_review_with_codex_buildcodexargs",
       "relation": "indirect_call",
@@ -115941,7 +115964,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L244",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -115953,7 +115976,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L245",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -115965,7 +115988,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L278",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -115977,7 +116000,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L279",
+      "source_location": "L336",
       "weight": 1.0
     },
     {
@@ -116378,5 +116401,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "dc87399b27e86f5728ae224b1159c03132e9c441"
+  "built_at_commit": "8f6409503cf24879cec4e5a0eba6f96274fa54df"
 }

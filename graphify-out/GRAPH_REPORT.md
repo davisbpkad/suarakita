@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-01)
 
 ## Corpus Check
-- 418 files · ~280,272 words
+- 418 files · ~281,509 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4773 nodes · 5227 edges · 397 communities (364 shown, 33 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 162 edges (avg confidence: 0.87)
+- 4772 nodes · 5230 edges · 397 communities (364 shown, 33 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 163 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `dc87399b`
+- Built from commit: `8f640950`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -117,7 +117,7 @@
 - Dev Team
 - Iterative Retrieval Pattern
 - How It Works
-- Strategic Compact Skill
+- dependencies
 - C++ TDD Command
 - Evolve Command
 - No issues
@@ -135,7 +135,7 @@
 - _load_instincts_from_dir
 - common-hooks.md
 - Dart/Flutter Testing
-- MeetingNotesService.php
+- TranscriptCorrectionService
 - session-start.mjs
 - Continuous Learning Skill - DEPRECATED
 - observer-loop.sh
@@ -240,7 +240,7 @@
 - seo-specialist.md
 - Evaluation Criteria
 - Angular Security
-- common-coding-style.md
+- Go Coding Style
 - F# Coding Style
 - Java Security
 - Kotlin Security
@@ -327,7 +327,7 @@
 - Dart/Flutter Hooks
 - Go Patterns
 - Go Testing
-- Python Coding Style
+- common-coding-style.md
 - Python Patterns
 - Low-Score Example: Adding Retry Logic
 - graphify reference: query, path, explain
@@ -497,8 +497,8 @@ Cohesion: 0.07
 Nodes (19): AxisScore, check_accuracy(), check_actionability(), check_clarity(), check_completeness(), check_conciseness(), _check_jargon(), _check_summary() (+11 more)
 
 ### Community 15 - "shared.mjs"
-Cohesion: 0.11
-Nodes (25): contextDirPath, projects, resolved, resolved, resolved, CK_HOME, contextMdPath(), CONTEXTS_DIR (+17 more)
+Cohesion: 0.15
+Nodes (16): resolved, resolved, CK_HOME, daysAgoLabel(), encodeProjectPath(), gitLogSince(), gitSummary(), nativeMemoryDir() (+8 more)
 
 ### Community 16 - "Review Checklist"
 Cohesion: 0.08
@@ -529,8 +529,8 @@ Cohesion: 0.08
 Nodes (23): 1. Enable Observation Hooks, 2. Initialize Directory Structure, 3. Use the Instinct Commands, Backward Compatibility, Commands, Confidence Scoring, Configuration, Continuous Learning v2.1 - Instinct (+15 more)
 
 ### Community 23 - "What You Must Do When Invoked"
-Cohesion: 0.08
-Nodes (23): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+15 more)
+Cohesion: 0.05
+Nodes (40): usage(), For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands (+32 more)
 
 ### Community 24 - "ObservationEvent"
 Cohesion: 0.17
@@ -589,8 +589,8 @@ Cohesion: 0.10
 Nodes (19): /click-path-audit — Behavioural Flow Audit, Example: The Bug That Inspired This Skill, Execution Steps, How It Works, Integration with Other Skills, Pattern 1: Sequential Undo, Pattern 2: Async Race, Pattern 3: Stale Closure (+11 more)
 
 ### Community 38 - "review-with-codex.js"
-Cohesion: 0.15
-Nodes (18): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+10 more)
+Cohesion: 0.18
+Nodes (15): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+7 more)
 
 ### Community 39 - "grade"
 Cohesion: 0.22
@@ -840,9 +840,9 @@ Nodes (14): Best Practices, Example 1: Bug Fix Context, Example 2: Feature Imple
 Cohesion: 0.13
 Nodes (14): Anti-Patterns, Examples, How It Works, Related, Result Table, Skill Scout, Step 1 - Capture Intent, Step 2 - Search Local Sources (+6 more)
 
-### Community 101 - "Strategic Compact Skill"
-Cohesion: 0.13
-Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Composition Awareness, Context Optimization Tools, Duplicate Instruction Detection, Hook Setup, Related (+6 more)
+### Community 101 - "dependencies"
+Cohesion: 0.22
+Nodes (9): dependencies, autoprefixer, express, postcss, tailwindcss, @tailwindcss/vite, vite, @vitejs/plugin-vue (+1 more)
 
 ### Community 102 - "C++ TDD Command"
 Cohesion: 0.13
@@ -912,8 +912,8 @@ Nodes (9): C# Hooks, PostToolUse Hooks, Stop Hooks, Go Hooks, PostToolUse Hooks,
 Cohesion: 0.14
 Nodes (13): Async Testing, BLoC with `bloc_test`, Coverage, Dart/Flutter Testing, Fakes Over Mocks, Golden Tests, Riverpod with `ProviderContainer`, Test Framework (+5 more)
 
-### Community 119 - "MeetingNotesService.php"
-Cohesion: 0.09
+### Community 119 - "TranscriptCorrectionService"
+Cohesion: 0.10
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
@@ -1026,7 +1026,7 @@ Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Exampl
 
 ### Community 148 - "server.js"
 Cohesion: 0.12
-Nodes (20): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, DECISION_KEYWORDS, generateMeetingNotesWithAI(), generateMeetingNotesWithNLP() (+12 more)
+Nodes (22): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, { correctTranscriptWithNLP }, DEBATE_PATTERNS, DECISION_KEYWORDS (+14 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13
@@ -1324,8 +1324,8 @@ Nodes (8): 1. Encapsulation, 2. Invariant Expression, 3. Invariant Usefulness, 4
 Cohesion: 0.22
 Nodes (8): Agent Support, Angular Security, Content Security Policy, HTTP Security, Route Guards, Secret Management, SSR Security, XSS Prevention
 
-### Community 224 - "common-coding-style.md"
-Cohesion: 0.25
+### Community 224 - "Go Coding Style"
+Cohesion: 0.33
 Nodes (5): Design Principles, Error Handling, Formatting, Go Coding Style, Reference
 
 ### Community 225 - "F# Coding Style"
@@ -1497,8 +1497,8 @@ Cohesion: 0.25
 Nodes (7): Content Security Policy, Forms, HTTPS and Headers, Nonce-Based CSP, Third-Party Scripts, Web Security Rules, XSS Prevention
 
 ### Community 267 - "migrate.mjs"
-Cohesion: 0.29
-Nodes (5): isDryRun, parseBullets(), parseLeftOff(), projects, shortId()
+Cohesion: 0.13
+Nodes (14): contextDirPath, projects, resolved, isDryRun, parseBullets(), parseLeftOff(), projects, contextMdPath() (+6 more)
 
 ### Community 268 - "skill-comply: Automated Compliance Measurement"
 Cohesion: 0.25
@@ -1672,8 +1672,8 @@ Nodes (5): Dependency Injection, Functional Options, Go Patterns, Reference, Sma
 Cohesion: 0.33
 Nodes (5): Coverage, Framework, Go Testing, Race Detection, Reference
 
-### Community 311 - "Python Coding Style"
-Cohesion: 0.33
+### Community 311 - "common-coding-style.md"
+Cohesion: 0.25
 Nodes (5): Formatting, Immutability, Python Coding Style, Reference, Standards
 
 ### Community 312 - "Python Patterns"
@@ -1881,8 +1881,8 @@ Cohesion: 0.33
 Nodes (5): Coverage, Framework, Python Testing, Reference, Test Organization
 
 ### Community 390 - "package.json"
-Cohesion: 0.07
-Nodes (27): author, dependencies, autoprefixer, express, postcss, tailwindcss, @tailwindcss/vite, vite (+19 more)
+Cohesion: 0.10
+Nodes (18): author, description, keywords, license, main, name, scripts, build (+10 more)
 
 ### Community 391 - "cmd_prune"
 Cohesion: 0.38
@@ -1893,8 +1893,8 @@ Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Instalasi & Menjalankan Aplikasi, 🚀 Cara Menjalankan di Localhost, 🌐 Deploy Gratis ke Netlify (1-Klik), ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
 ## Knowledge Gaps
-- **3079 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3074 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **3081 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3076 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3456 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -1907,7 +1907,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3079 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3081 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.04864311315924219 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**
