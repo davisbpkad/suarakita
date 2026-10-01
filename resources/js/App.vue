@@ -498,9 +498,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 // -------------------------------------------------------------
 // STATE: TRANSCRIPT WORKSPACE
 // -------------------------------------------------------------
-const transcriptText = ref(
-  'Selamat pagi rekan-rekan semua. Hari ini kita meeting evaluasi peluncuran web kita. Desain antarmuka sudah selesai diuji dan responnya sangat positif. Kita sepakat untuk rilis jumat besok. Budi bisa siapkan server dan konfigurasi domain paling lambat besok sore. Davis akan menyelesaikan perbaikan bug sebelum jam lima sore. Tim QA diputuskan untuk pengujian akhir lusa pagi.'
-);
+const transcriptText = ref('');
 
 const copySuccess = ref(false);
 const showDownloadMenu = ref(false);
