@@ -56,15 +56,13 @@ class MeetingNotesService
         if (trim($text) === '') {
             $topic = 'Topik pembicaraan tidak spesifik / Obrolan kasual';
             $summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-            $keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
             $decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
             return [
                 'topic' => $topic,
                 'summary' => implode("\n", $summaryItems),
                 'summaryItems' => $summaryItems,
-                'keyPoints' => $keyPoints,
                 'decisions' => $decisions,
-                'rawMarkdown' => $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions),
+                'rawMarkdown' => $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions),
                 'method' => 'nlp_builtin'
             ];
         }
@@ -74,15 +72,13 @@ class MeetingNotesService
 
         $topic = $this->extractTopicSentence($sentences, $text);
         $summaryItems = $this->extractSummaryItems($sentences);
-        $keyPoints = $this->extractKeyPoints($sentences, $summaryItems, $text);
         $decisions = $this->extractDecisions($sentences, $text);
-        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions);
+        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions);
 
         return [
             'topic' => $topic,
             'summary' => implode("\n", $summaryItems),
             'summaryItems' => $summaryItems,
-            'keyPoints' => $keyPoints,
             'decisions' => $decisions,
             'rawMarkdown' => $rawMarkdown,
             'method' => 'nlp_builtin'
@@ -254,35 +250,6 @@ class MeetingNotesService
         return $items;
     }
 
-    protected function extractKeyPoints(array $sentences, array $summaryItems, string $fullText): array
-    {
-        $points = [];
-
-        foreach ($sentences as $s) {
-            if ($this->isDisallowedFromSummary($s)) continue;
-            if (preg_match('/(?:\b\d+%|\bRp\s*[\d.,]+|\bselesai\s+100%|\bmencapai\s+\d+)/i', $s)) {
-                $clean = preg_replace('/^(?:dan|lalu|kemudian|untuk|dari|bagaimana\s+dengan)\s+/i', '', trim($s));
-                $clean = preg_replace('/^(?:[A-Z][a-z]+\s+(?:dari\s+(?:tim\s+)?[A-Za-z]+\s+)?(?:melaporkan|menyampaikan|menjelaskan)\s+)/i', '', $clean);
-                $clean = ucfirst($clean);
-                if (!preg_match('/[.?!]$/', $clean)) $clean .= '.';
-                $points[] = "* {$clean}";
-            }
-        }
-
-        if (empty($points) && !empty($summaryItems) && !str_contains($summaryItems[0], 'Tidak ada poin')) {
-            foreach (array_slice($summaryItems, 0, 3) as $item) {
-                $cleanItem = preg_replace('/^\*\s+\*\*\[.*?\]:\*\*\s*/', '', $item);
-                $points[] = "* {$cleanItem}";
-            }
-        }
-
-        if (empty($points)) {
-            return ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-        }
-
-        return array_slice($points, 0, 3);
-    }
-
     protected function extractDecisions(array $sentences, string $rawText): array
     {
         $decisions = [];
@@ -361,7 +328,7 @@ class MeetingNotesService
         return $decisions;
     }
 
-    protected function formatMeetingNotesMarkdown(string $topic, array $summaryItems, array $keyPoints, array $decisions): string
+    protected function formatMeetingNotesMarkdown(string $topic, array $summaryItems, array $decisions): string
     {
         $md = "📌 **Topik / Konteks Pembicaraan:**\n" . $this->cleanDuplicateWords($topic) . "\n\n📝 **Ringkasan Hasil Rapat (Progress & Substansi):**\n";
 
@@ -369,10 +336,6 @@ class MeetingNotesService
             $md .= implode("\n", $summaryItems);
         } else {
             $md .= "* Tidak ada poin utama yang relevan untuk dirangkum.";
-        }
-
-        if (!empty($keyPoints)) {
-            $md .= "\n\n⚡ **Poin-Poin Utama:**\n" . implode("\n", $keyPoints);
         }
 
         $md .= "\n\n🎯 **Keputusan yang Diambil (Decisions Made):**\n";
@@ -417,10 +380,6 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 * **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]
 * **[Nama PIC / Bidang]:** ...
 
-⚡ **Poin-Poin Utama:**
-* [Poin substantif 1]
-* [Poin substantif 2]
-
 🎯 **Keputusan yang Diambil (Decisions Made):**
 * **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
 * **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].
@@ -430,11 +389,7 @@ Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (```json) dengan 
 {
   \"topic\": \"1 kalimat ringkas mengenai tujuan utama rapat tanpa kata berulang\",
   \"summaryItems\": [
-    \"* **[Nama PIC / Bidang]:** Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik\"
-  ],
-  \"keyPoints\": [
-    \"* Poin substantif 1\",
-    \"* Poin substantif 2\"
+    \"* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]\"
   ],
   \"decisions\": [
     \"* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].\"
@@ -443,9 +398,6 @@ Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (```json) dengan 
 
 Jika rapat benar-benar tanpa keputusan, isi decisions dengan:
 [\"* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.\"]
-
-Jika seluruh transkrip tidak memiliki poin utama yang relevan, isi keyPoints dengan:
-[\"* Tidak ada poin utama yang relevan untuk dirangkum.\"]
 
 Transkrip Mentah:
 \"\"\"
@@ -485,11 +437,6 @@ Transkrip Mentah:
                                 $summaryItems = array_values(array_filter($res['summaryItems']));
                             }
 
-                            $keyPoints = [];
-                            if (isset($res['keyPoints']) && is_array($res['keyPoints'])) {
-                                $keyPoints = array_values(array_filter($res['keyPoints']));
-                            }
-
                             $decisions = [];
                             if (isset($res['decisions']) && is_array($res['decisions'])) {
                                 $decisions = array_values(array_filter($res['decisions']));
@@ -498,20 +445,16 @@ Transkrip Mentah:
                             if (empty($summaryItems)) {
                                 $summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
                             }
-                            if (empty($keyPoints)) {
-                                $keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-                            }
                             if (empty($decisions)) {
                                 $decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
                             }
 
-                            $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions);
+                            $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions);
 
                             return [
                                 'topic' => $topic,
                                 'summary' => implode("\n", $summaryItems),
                                 'summaryItems' => $summaryItems,
-                                'keyPoints' => $keyPoints,
                                 'decisions' => $decisions,
                                 'rawMarkdown' => $rawMarkdown,
                                 'modelUsed' => $model,

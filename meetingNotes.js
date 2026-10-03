@@ -107,7 +107,7 @@ function isDisallowedFromSummary(sentence) {
 /**
  * Format Output Markdown Resmi Sesuai Spesifikasi Notulen Rapat
  */
-function formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions) {
+function formatMeetingNotesMarkdown(topic, summaryItems, decisions) {
   let md = `📌 **Topik / Konteks Pembicaraan:**\n${cleanDuplicateWords(topic)}\n\n📝 **Ringkasan Hasil Rapat (Progress & Substansi):**\n`;
   
   if (Array.isArray(summaryItems) && summaryItems.length > 0) {
@@ -116,12 +116,6 @@ function formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions) {
     md += summaryItems.trim();
   } else {
     md += `* Tidak ada poin utama yang relevan untuk dirangkum.`;
-  }
-
-  if (Array.isArray(keyPoints) && keyPoints.length > 0) {
-    md += `\n\n⚡ **Poin-Poin Utama:**\n` + keyPoints.join('\n');
-  } else if (typeof keyPoints === 'string' && keyPoints.trim()) {
-    md += `\n\n⚡ **Poin-Poin Utama:**\n` + keyPoints.trim();
   }
 
   md += `\n\n🎯 **Keputusan yang Diambil (Decisions Made):**\n`;
@@ -257,8 +251,8 @@ function extractSummaryItems(sentences) {
 
     // Bersihkan updateText dari awalan percakapan / verba verbalistis untuk sintesis mandiri non-verbatim
     updateText = updateText.replace(new RegExp(`^(?:dan|lalu|kemudian|untuk|dari)?\\s*(?:si\\s+)?${label}\\s*(?:dari\\s+(?:tim\\s+)?[A-Za-z]+)?\\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|menjelaskan|bilang)?\\s*`, 'i'), '');
-    updateText = updateText.replace(/^(?:ada\s+kendala\s+apa\s+di\s+tim\s+[a-z]+\??\s*)/i, '');
-    updateText = updateText.replace(/^(?:ada\s+kendala\s+)/i, 'Terdapat kendala ');
+    updateText = updateText.replace(/^(?:ada\\s+kendala\\s+apa\\s+di\\s+tim\\s+[a-z]+\??\\s*)/i, '');
+    updateText = updateText.replace(/^(?:ada\\s+kendala\\s+)/i, 'Terdapat kendala ');
     updateText = cleanDuplicateWords(updateText);
     updateText = updateText.charAt(0).toUpperCase() + updateText.slice(1);
     if (!/[.?!]$/.test(updateText)) updateText += '.';
@@ -282,39 +276,6 @@ function extractSummaryItems(sentences) {
   });
 
   return items;
-}
-
-/**
- * Ekstraksi Poin-Poin Utama Rapat (Key Points)
- */
-function extractKeyPoints(sentences, summaryItems, fullText) {
-  const points = [];
-
-  // Cari angka metrik substantif (persentase, nominal anggaran, dsb.)
-  sentences.forEach(s => {
-    if (isDisallowedFromSummary(s)) return;
-    if (/(?:\b\d+%|\bRp\s*[\d.,]+|\bselesai\s+100%|\bmencapai\s+\d+)/i.test(s)) {
-      let clean = s.replace(/^(?:dan|lalu|kemudian|untuk|dari|bagaimana\s+dengan)\s+/i, '').trim();
-      clean = clean.replace(/^(?:[A-Z][a-z]+\s+(?:dari\s+(?:tim\s+)?[A-Za-z]+\s+)?(?:melaporkan|menyampaikan|menjelaskan)\s+)/i, '');
-      clean = clean.charAt(0).toUpperCase() + clean.slice(1);
-      if (!/[.?!]$/.test(clean)) clean += '.';
-      points.push(`* ${clean}`);
-    }
-  });
-
-  // Jika belum ada poin substantif berangka, ambil dari kesimpulan ringkasan
-  if (points.length === 0 && Array.isArray(summaryItems) && summaryItems.length > 0 && !summaryItems[0].includes('Tidak ada poin')) {
-    summaryItems.slice(0, 3).forEach(item => {
-      const cleanItem = item.replace(/^\*\s+\*\*\[.*?\]:\*\*\s*/, '');
-      points.push(`* ${cleanItem}`);
-    });
-  }
-
-  if (points.length === 0) {
-    return ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-  }
-
-  return points.slice(0, 3);
 }
 
 /**
@@ -421,15 +382,13 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
   if (!rawTranscriptText || !rawTranscriptText.trim()) {
     const topic = 'Topik pembicaraan tidak spesifik / Obrolan kasual';
     const summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-    const keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
     const decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
     return {
       topic,
       summary: summaryItems.join('\n'),
       summaryItems,
-      keyPoints,
       decisions,
-      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions),
+      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
       method: 'nlp_builtin'
     };
   }
@@ -450,20 +409,16 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
   // 3. Ekstraksi Ringkasan Hasil Rapat (tergabung utuh per PIC/Divisi, non-verbatim)
   const summaryItems = extractSummaryItems(rawSentences);
 
-  // 4. Ekstraksi Poin-Poin Utama
-  const keyPoints = extractKeyPoints(rawSentences, summaryItems, text);
-
-  // 5. Ekstraksi Keputusan yang Diambil (Format keputusan terstruktur)
+  // 4. Ekstraksi Keputusan yang Diambil (Format keputusan terstruktur)
   const decisions = extractDecisions(rawSentences, text);
 
-  // 6. Format Markdown Output
-  const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions);
+  // 5. Format Markdown Output
+  const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
 
   return {
     topic,
     summary: summaryItems.join('\n'),
     summaryItems,
-    keyPoints,
     decisions,
     rawMarkdown,
     method: 'nlp_builtin'
@@ -507,10 +462,6 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 * **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]
 * **[Nama PIC / Bidang]:** ...
 
-⚡ **Poin-Poin Utama:**
-* [Poin substantif 1]
-* [Poin substantif 2]
-
 🎯 **Keputusan yang Diambil (Decisions Made):**
 * **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
 * **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].
@@ -522,10 +473,6 @@ Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (\`\`\`json) deng
   "summaryItems": [
     "* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]"
   ],
-  "keyPoints": [
-    "* [Poin substantif 1]",
-    "* [Poin substantif 2]"
-  ],
   "decisions": [
     "* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada]."
   ]
@@ -533,9 +480,6 @@ Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (\`\`\`json) deng
 
 Jika rapat benar-benar tanpa keputusan, isi decisions dengan:
 ["* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan."]
-
-Jika seluruh transkrip tidak memiliki poin utama yang relevan, isi keyPoints dengan:
-["* Tidak ada poin utama yang relevan untuk dirangkum."]
 
 Transkrip Mentah:
 """
@@ -568,20 +512,17 @@ ${rawTranscriptText}
       if (res && res.topic) {
         const topic = cleanDuplicateWords(res.topic.trim());
         let summaryItems = Array.isArray(res.summaryItems) ? res.summaryItems.filter(Boolean) : [];
-        let keyPoints = Array.isArray(res.keyPoints) ? res.keyPoints.filter(Boolean) : [];
         let decisions = Array.isArray(res.decisions) ? res.decisions.filter(Boolean) : [];
 
         if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-        if (keyPoints.length === 0) keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
         if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
 
-        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions);
+        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
 
         return {
           topic,
           summary: summaryItems.join('\n'),
           summaryItems,
-          keyPoints,
           decisions,
           rawMarkdown,
           modelUsed: model,

@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-04)
 
 ## Corpus Check
-- 418 files · ~285,837 words
+- 418 files · ~285,324 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4792 nodes · 5280 edges · 396 communities (363 shown, 33 thin omitted)
+- 4790 nodes · 5274 edges · 396 communities (363 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 164 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0220a7e9`
+- Built from commit: `540170c2`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1025,7 +1025,7 @@ Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Exampl
 
 ### Community 148 - "meetingNotes.js"
 Cohesion: 0.10
-Nodes (32): callGeminiCorrectorSingleModel(), correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, callGeminiSingleModel(), CASUAL_PATTERNS (+24 more)
+Nodes (31): callGeminiCorrectorSingleModel(), correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, callGeminiSingleModel(), CASUAL_PATTERNS (+23 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13

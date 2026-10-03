@@ -386,20 +386,6 @@
             <p v-else class="text-sm text-[var(--color-ink)] leading-relaxed whitespace-pre-line">{{ momData.summary }}</p>
           </div>
 
-          <!-- Poin-Poin Utama -->
-          <div v-if="momData.keyPoints && momData.keyPoints.length" class="p-5 bg-blue-50/70 border border-blue-200 rounded-2xl">
-            <div class="text-xs font-bold text-blue-700 mb-3 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-              ⚡ Poin-Poin Utama
-            </div>
-            <ul class="flex flex-col gap-2.5">
-              <li v-for="(point, idx) in momData.keyPoints" :key="idx" class="flex items-start gap-2 text-sm text-[var(--color-ink)] leading-relaxed">
-                <span class="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                <span v-html="formatMarkdownInline(point)"></span>
-              </li>
-            </ul>
-          </div>
-
           <!-- Keputusan yang Diambil (Decisions Made) -->
           <div v-if="momData.decisions && momData.decisions.length" class="p-5 bg-green-50 border border-green-200 rounded-2xl">
             <div class="text-xs font-bold text-green-700 mb-3 flex items-center gap-2">
@@ -836,7 +822,6 @@ const momData = ref({
   topic: '',
   summary: '',
   summaryItems: [],
-  keyPoints: [],
   decisions: [],
   rawMarkdown: '',
   method: 'nlp_builtin'
