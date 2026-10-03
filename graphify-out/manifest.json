@@ -2400,9 +2400,9 @@
     "semantic_hash": ""
   },
   "public/index.html": {
-    "mtime": 1791008546.9898217,
-    "seen": 1791008700.865358,
-    "ast_hash": "528ea81d1816a8d15af2539f3fbdd875",
+    "mtime": 1791010058.228568,
+    "seen": 1791010486.3888488,
+    "ast_hash": "ed1a5683c7dbbb8c3612d353811fea44",
     "semantic_hash": ""
   },
   "corrector.js": {
@@ -2489,12 +2489,6 @@
     "ast_hash": "73b201b3d57d57a1187e3a006e65efa2",
     "semantic_hash": ""
   },
-  "vite.config.js": {
-    "mtime": 1790835151.0488734,
-    "seen": 1790836580.630775,
-    "ast_hash": "dfdcfc51f43e32f767a54cf94be9e579",
-    "semantic_hash": ""
-  },
   "netlify/functions/correct-transcript.js": {
     "mtime": 1790840321.1497705,
     "seen": 1790840447.545207,
@@ -2517,6 +2511,12 @@
     "mtime": 1790840438.6330638,
     "seen": 1790840447.545353,
     "ast_hash": "ba15f751a6df975ac227560cbd32b204",
+    "semantic_hash": ""
+  },
+  "vite.config.mjs": {
+    "mtime": 1791010003.0288367,
+    "seen": 1791010486.388716,
+    "ast_hash": "141f5a949afcadf7332712f71b532ae2",
     "semantic_hash": ""
   }
 }

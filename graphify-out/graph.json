@@ -43857,13 +43857,13 @@
     },
     {
       "id": "vite_config",
-      "label": "vite.config.js",
+      "label": "vite.config.mjs",
       "_origin": "ast",
       "community": 390,
       "community_name": "package.json",
       "file_type": "code",
-      "norm_label": "vite.config.js",
-      "source_file": "vite.config.js",
+      "norm_label": "vite.config.mjs",
+      "source_file": "vite.config.mjs",
       "source_location": "L1"
     },
     {
@@ -65830,7 +65830,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
-      "source_file": "vite.config.js",
+      "source_file": "vite.config.mjs",
       "source_location": "L1",
       "weight": 1.0
     },
@@ -65842,7 +65842,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
-      "source_file": "vite.config.js",
+      "source_file": "vite.config.mjs",
       "source_location": "L2",
       "weight": 1.0
     },
@@ -65854,7 +65854,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
-      "source_file": "vite.config.js",
+      "source_file": "vite.config.mjs",
       "source_location": "L3",
       "weight": 1.0
     },
@@ -65866,7 +65866,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
-      "source_file": "vite.config.js",
+      "source_file": "vite.config.mjs",
       "source_location": "L4",
       "weight": 1.0
     },
@@ -116401,5 +116401,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2c9f094efcea92fdf27c0b8f0272f67655155579"
+  "built_at_commit": "3f2c0bb5e5aba1b40d1f1624e2662f51542be8d3"
 }
