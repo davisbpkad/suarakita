@@ -120,10 +120,10 @@
           <span v-if="isRecording" class="font-mono text-[var(--color-muted)] text-xs ml-1">{{ formattedRecordingTime }}</span>
         </div>
 
-        <!-- Headline -->
-        <h1 class="display text-[clamp(2rem,6vw,3.5rem)] max-w-2xl">
+        <!-- Headline (Rata tengah & menyambung satu baris) -->
+        <h1 class="display text-[clamp(1.35rem,3.6vw,2.75rem)] text-center w-full max-w-4xl mx-auto sm:whitespace-nowrap">
           <span>Bicara bebas, </span>
-          <span class="bg-[var(--color-yolk)] -mx-1 px-1 box-decoration-clone">jadi teks instan.</span>
+          <span class="bg-[var(--color-yolk)] -mx-1 px-1.5 rounded-lg box-decoration-clone">jadi teks instan.</span>
         </h1>
         <p class="text-[var(--color-muted)] text-base lg:text-lg max-w-lg leading-relaxed">
           Rekam suara, koreksi transkrip, dan buat notulen rapat — semua dalam satu tempat.
