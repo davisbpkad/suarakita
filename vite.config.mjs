@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './resources/js')
+      '@': path.resolve(import.meta.dirname, './resources/js')
     }
   },
   server: {
@@ -22,12 +22,18 @@ export default defineConfig({
       }
     }
   },
+  publicDir: false,
   build: {
     outDir: 'public/build',
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
-      input: 'resources/js/app.js'
+      input: 'resources/js/app.js',
+      output: {
+        entryFileNames: 'assets/app.js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/app.[ext]'
+      }
     }
   }
 });
