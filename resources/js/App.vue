@@ -367,60 +367,37 @@
         <div class="flex flex-col gap-4">
           <!-- Topik -->
           <div class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
-            <div class="section-label text-xs mb-2">📌 Topik Pembicaraan</div>
-            <p class="text-base font-bold text-[var(--color-ink)]">{{ momData.topic }}</p>
+            <div class="section-label text-xs mb-2">📌 Topik / Konteks Pembicaraan</div>
+            <p class="text-base font-bold text-[var(--color-ink)] leading-snug">{{ momData.topic }}</p>
           </div>
 
-          <!-- Ringkasan -->
+          <!-- Ringkasan Hasil Rapat -->
           <div class="p-5 bg-[var(--color-yolk)]/20 border border-[var(--color-yolk)]/30 rounded-2xl">
-            <div class="text-xs font-bold text-[var(--color-muted)] mb-2 flex items-center gap-2">
+            <div class="text-xs font-bold text-[var(--color-muted)] mb-3 flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-yolk)]"></span>
               📝 Ringkasan Hasil Rapat
             </div>
-            <p class="text-sm text-[var(--color-ink)] leading-relaxed">{{ momData.summary }}</p>
-          </div>
-
-          <!-- Poin Kunci (Hanya tampil jika ada poin penting nyata) -->
-          <div v-if="momData.keyTakeaways && momData.keyTakeaways.length" class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
-            <div class="section-label text-xs mb-3">💡 Poin Utama</div>
-            <ul class="flex flex-col gap-2 pl-5 list-disc text-sm text-[var(--color-ink)]">
-              <li v-for="(point, idx) in momData.keyTakeaways" :key="idx">{{ point }}</li>
+            <ul v-if="momData.summaryItems && momData.summaryItems.length" class="flex flex-col gap-2.5">
+              <li v-for="(item, idx) in momData.summaryItems" :key="idx" class="flex items-start gap-2 text-sm text-[var(--color-ink)] leading-relaxed">
+                <span class="text-amber-600 font-bold shrink-0 mt-0.5">•</span>
+                <span v-html="formatMarkdownInline(item)"></span>
+              </li>
             </ul>
+            <p v-else class="text-sm text-[var(--color-ink)] leading-relaxed whitespace-pre-line">{{ momData.summary }}</p>
           </div>
 
-          <!-- Keputusan (Hanya tampil jika ada keputusan/kesepakatan yang nyata disepakati) -->
+          <!-- Keputusan yang Diambil (Decisions Made) -->
           <div v-if="momData.decisions && momData.decisions.length" class="p-5 bg-green-50 border border-green-200 rounded-2xl">
             <div class="text-xs font-bold text-green-700 mb-3 flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-              ⚖️ Keputusan yang Diambil
+              ⚖️ Keputusan yang Diambil (Decisions Made)
             </div>
-            <ul class="flex flex-col gap-2 pl-5 list-disc text-sm font-semibold text-[var(--color-ink)]">
-              <li v-for="(dec, idx) in momData.decisions" :key="idx">{{ dec }}</li>
+            <ul class="flex flex-col gap-2.5">
+              <li v-for="(dec, idx) in momData.decisions" :key="idx" class="flex items-start gap-2 text-sm text-[var(--color-ink)] leading-relaxed">
+                <span class="text-green-600 font-bold shrink-0 mt-0.5">•</span>
+                <span v-html="formatMarkdownInline(dec)"></span>
+              </li>
             </ul>
-          </div>
-
-          <!-- Action Items (jika ada) -->
-          <div v-if="momData.actionItems && momData.actionItems.length" class="p-5 bg-purple-50 border border-purple-200 rounded-2xl">
-            <div class="text-xs font-bold text-purple-700 mb-3 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
-              🎯 Rencana Tindakan Lanjut
-            </div>
-            <div class="flex flex-col gap-2.5">
-              <div
-                v-for="(act, idx) in momData.actionItems"
-                :key="idx"
-                class="p-3.5 bg-white border border-purple-200 rounded-xl flex flex-wrap items-center justify-between gap-2"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="text-green-600 font-bold">✓</span>
-                  <span class="text-sm font-semibold text-[var(--color-ink)]">{{ act.task }}</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="tag bg-blue-100 text-blue-700 text-xs">PIC: {{ act.pic }}</span>
-                  <span class="tag bg-[var(--color-yolk)]/30 text-[var(--color-ink)] text-xs">Tenggat: {{ act.deadline }}</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -761,11 +738,20 @@ function removeApiKey() {
 function loadPreset(type) {
   if (type === 'mom') {
     transcriptText.value =
-      'Selamat pagi rekan-rekan semua. Hari ini kita meeting evaluasi peluncuran web kita. Desain antarmuka sudah selesai diuji dan responnya sangat positif. Kita sepakat untuk rilis jumat besok. Budi bisa siapkan server dan konfigurasi domain paling lambat besok sore. Davis akan menyelesaikan perbaikan bug sebelum jam lima sore. Tim QA diputuskan untuk pengujian akhir lusa pagi.';
+      'Selamat pagi rekan-rekan semua. Hari ini kita meeting evaluasi peluncuran web versi 2.0. Kita sepakat untuk rilis hari Jumat jam 23.00 malam. Budi ditugaskan menyiapkan 2 server dan domain dengan anggaran Rp 1.500.000 paling lambat besok sore. Davis akan menyelesaikan 3 perbaikan bug sebelum jam lima sore. Kemarin sempat dibahas sewa gedung pertemuan kapasitas 100 orang tapi Budi belum konfirmasi jadi statusnya belum ada keputusan. Eh kemarin nonton bola ga? Seru banget.';
   } else if (type === 'correction') {
     transcriptText.value =
       'eh anu apakah kita biaya hadir di ruang setting besok pagi jam sembilan saya saya mau bahas hasil kordinasi dgn tim';
   }
+}
+
+// Helper untuk merender Markdown inline list MoM (badge [PIC/Domain] dan bold)
+function formatMarkdownInline(str) {
+  if (!str) return '';
+  let clean = String(str).replace(/^\s*[\*\-]\s+/, '');
+  clean = clean.replace(/\[(.*?)\]/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-[var(--color-yolk)]/30 font-bold text-[var(--color-ink)] text-xs mr-1.5">[$1]</span>');
+  clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[var(--color-ink)]">$1</strong>');
+  return clean;
 }
 
 // -------------------------------------------------------------
@@ -818,9 +804,8 @@ const showMomModal = ref(false);
 const momData = ref({
   topic: '',
   summary: '',
-  keyTakeaways: [],
+  summaryItems: [],
   decisions: [],
-  actionItems: [],
   rawMarkdown: '',
   method: 'nlp_builtin'
 });
