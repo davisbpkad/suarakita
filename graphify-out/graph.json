@@ -1224,7 +1224,7 @@
       "file_type": "code",
       "norm_label": ".extractdecisions()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L208"
+      "source_location": "L212"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_extractsummaryitems",
@@ -1236,7 +1236,7 @@
       "file_type": "code",
       "norm_label": ".extractsummaryitems()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L125"
+      "source_location": "L142"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_extracttopicsentence",
@@ -1248,7 +1248,7 @@
       "file_type": "code",
       "norm_label": ".extracttopicsentence()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L74"
+      "source_location": "L98"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_formatmeetingnotesmarkdown",
@@ -1260,7 +1260,7 @@
       "file_type": "code",
       "norm_label": ".formatmeetingnotesmarkdown()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L284"
+      "source_location": "L276"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_generate",
@@ -1284,7 +1284,7 @@
       "file_type": "code",
       "norm_label": ".generatewithai()",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L305"
+      "source_location": "L297"
     },
     {
       "id": "app_services_meetingnotesservice_meetingnotesservice_generatewithnlp",
@@ -1297,6 +1297,18 @@
       "norm_label": ".generatewithnlp()",
       "source_file": "app/Services/MeetingNotesService.php",
       "source_location": "L40"
+    },
+    {
+      "id": "app_services_meetingnotesservice_meetingnotesservice_isdisallowedfromsummary",
+      "label": ".isDisallowedFromSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 119,
+      "community_name": "MeetingNotesService",
+      "file_type": "code",
+      "norm_label": ".isdisallowedfromsummary()",
+      "source_file": "app/Services/MeetingNotesService.php",
+      "source_location": "L74"
     },
     {
       "id": "app_services_transcriptcorrectionservice_closure_1",
@@ -1908,7 +1920,7 @@
       "file_type": "code",
       "norm_label": "extractdecisions()",
       "source_file": "meetingNotes.js",
-      "source_location": "L204"
+      "source_location": "L243"
     },
     {
       "id": "meetingnotes_extractsummaryitems",
@@ -1920,7 +1932,7 @@
       "file_type": "code",
       "norm_label": "extractsummaryitems()",
       "source_file": "meetingNotes.js",
-      "source_location": "L120"
+      "source_location": "L157"
     },
     {
       "id": "meetingnotes_extracttopicsentence",
@@ -1932,7 +1944,7 @@
       "file_type": "code",
       "norm_label": "extracttopicsentence()",
       "source_file": "meetingNotes.js",
-      "source_location": "L68"
+      "source_location": "L112"
     },
     {
       "id": "meetingnotes_formatmeetingnotesmarkdown",
@@ -1944,7 +1956,7 @@
       "file_type": "code",
       "norm_label": "formatmeetingnotesmarkdown()",
       "source_file": "meetingNotes.js",
-      "source_location": "L41"
+      "source_location": "L85"
     },
     {
       "id": "meetingnotes_generatemeetingnoteswithai",
@@ -1956,7 +1968,7 @@
       "file_type": "code",
       "norm_label": "generatemeetingnoteswithai()",
       "source_file": "meetingNotes.js",
-      "source_location": "L323"
+      "source_location": "L366"
     },
     {
       "id": "meetingnotes_generatemeetingnoteswithnlp",
@@ -1968,7 +1980,19 @@
       "file_type": "code",
       "norm_label": "generatemeetingnoteswithnlp()",
       "source_file": "meetingNotes.js",
-      "source_location": "L273"
+      "source_location": "L316"
+    },
+    {
+      "id": "meetingnotes_isdisallowedfromsummary",
+      "label": "isDisallowedFromSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "meetingNotes.js",
+      "file_type": "code",
+      "norm_label": "isdisallowedfromsummary()",
+      "source_file": "meetingNotes.js",
+      "source_location": "L55"
     },
     {
       "id": "netlify_functions_correct_transcript_handler",
@@ -14327,18 +14351,7 @@
       "file_type": "code",
       "norm_label": "casual_patterns",
       "source_file": "meetingNotes.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "meetingnotes_consensus_keywords",
-      "label": "CONSENSUS_KEYWORDS",
-      "_origin": "ast",
-      "community": 148,
-      "community_name": "meetingNotes.js",
-      "file_type": "code",
-      "norm_label": "consensus_keywords",
-      "source_file": "meetingNotes.js",
-      "source_location": "L28"
+      "source_location": "L44"
     },
     {
       "id": "meetingnotes_correcttranscriptwithnlp",
@@ -14349,7 +14362,18 @@
       "file_type": "code",
       "norm_label": "{ correcttranscriptwithnlp }",
       "source_file": "meetingNotes.js",
-      "source_location": "L16"
+      "source_location": "L25"
+    },
+    {
+      "id": "meetingnotes_disallowed_labels",
+      "label": "DISALLOWED_LABELS",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "meetingNotes.js",
+      "file_type": "code",
+      "norm_label": "disallowed_labels",
+      "source_file": "meetingNotes.js",
+      "source_location": "L28"
     },
     {
       "id": "meetingnotes_https",
@@ -14360,18 +14384,18 @@
       "file_type": "code",
       "norm_label": "https",
       "source_file": "meetingNotes.js",
-      "source_location": "L15"
+      "source_location": "L24"
     },
     {
-      "id": "meetingnotes_pending_patterns",
-      "label": "PENDING_PATTERNS",
+      "id": "meetingnotes_valid_divisions",
+      "label": "VALID_DIVISIONS",
       "_origin": "ast",
       "community": 148,
       "community_name": "meetingNotes.js",
       "file_type": "code",
-      "norm_label": "pending_patterns",
+      "norm_label": "valid_divisions",
       "source_file": "meetingNotes.js",
-      "source_location": "L34"
+      "source_location": "L38"
     },
     {
       "id": "netlify_functions_correct_transcript",
@@ -14493,6 +14517,17 @@
       "norm_label": "path",
       "source_file": "server.js",
       "source_location": "L2"
+    },
+    {
+      "id": "ref_express",
+      "label": "express",
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "meetingNotes.js",
+      "file_type": "concept",
+      "norm_label": "express",
+      "source_file": "package.json",
+      "source_location": "L23"
     },
     {
       "id": "public_app",
@@ -43736,17 +43771,6 @@
       "source_location": "L22"
     },
     {
-      "id": "ref_express",
-      "label": "express",
-      "_origin": "ast",
-      "community": 390,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "express",
-      "source_file": "package.json",
-      "source_location": "L23"
-    },
-    {
       "id": "ref_postcss",
       "label": "postcss",
       "_origin": "ast",
@@ -57959,6 +57983,18 @@
       "type": "external"
     },
     {
+      "id": "ref_child_process",
+      "label": "ref_child_process",
+      "_origin": "semantic",
+      "community": 120,
+      "community_name": "session-start.mjs",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_child_process",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "argparse",
       "label": "argparse",
       "_origin": "semantic",
@@ -58051,18 +58087,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "logging",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_child_process",
-      "label": "ref_child_process",
-      "_origin": "semantic",
-      "community": 38,
-      "community_name": "review-with-codex.js",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_child_process",
       "source_file": "",
       "type": "external"
     },
@@ -62209,6 +62233,30 @@
       "weight": 1.0
     },
     {
+      "source": "app_services_meetingnotesservice_meetingnotesservice_extractsummaryitems",
+      "target": "app_services_meetingnotesservice_meetingnotesservice_isdisallowedfromsummary",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/Services/MeetingNotesService.php",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_meetingnotesservice_meetingnotesservice_extracttopicsentence",
+      "target": "app_services_meetingnotesservice_meetingnotesservice_isdisallowedfromsummary",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "app/Services/MeetingNotesService.php",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
       "source": "app_services_meetingnotesservice_meetingnotesservice_generate",
       "target": "app_services_meetingnotesservice_meetingnotesservice_generatewithai",
       "relation": "calls",
@@ -62241,7 +62289,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L392",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -62329,6 +62377,30 @@
       "weight": 1.0
     },
     {
+      "source": "meetingnotes_extractsummaryitems",
+      "target": "meetingnotes_isdisallowedfromsummary",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "meetingNotes.js",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes_extracttopicsentence",
+      "target": "meetingnotes_isdisallowedfromsummary",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "meetingNotes.js",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
       "source": "meetingnotes_generatemeetingnoteswithai",
       "target": "meetingnotes_generatemeetingnoteswithnlp",
       "relation": "calls",
@@ -62337,7 +62409,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L325",
+      "source_location": "L368",
       "weight": 1.0
     },
     {
@@ -62349,7 +62421,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L431",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -62361,7 +62433,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L283",
+      "source_location": "L326",
       "weight": 1.0
     },
     {
@@ -62373,7 +62445,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L289",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -62385,7 +62457,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L299",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -62397,7 +62469,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L302",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -62409,7 +62481,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L305",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -64761,7 +64833,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "meetingNotes.js",
-      "source_location": "L16",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -65949,7 +66021,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "meetingNotes.js",
-      "source_location": "L15",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -65961,7 +66033,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "meetingNotes.js",
-      "source_location": "L16",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -109715,13 +109787,24 @@
     },
     {
       "source": "meetingnotes",
+      "target": "meetingnotes_extracttopicsentence",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
       "target": "meetingnotes_extractsummaryitems",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L120",
+      "source_location": "L157",
       "weight": 1.0
     },
     {
@@ -109732,29 +109815,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "meetingnotes",
-      "target": "meetingnotes_correcttranscriptwithnlp",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "meetingNotes.js",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "meetingnotes",
-      "target": "meetingnotes_casual_patterns",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "meetingNotes.js",
-      "source_location": "L19",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -109765,12 +109826,23 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L204",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
       "source": "meetingnotes",
-      "target": "meetingnotes_consensus_keywords",
+      "target": "meetingnotes_correcttranscriptwithnlp",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "meetingnotes_disallowed_labels",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -109781,24 +109853,35 @@
     },
     {
       "source": "meetingnotes",
-      "target": "meetingnotes_pending_patterns",
+      "target": "meetingnotes_valid_divisions",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L34",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
       "source": "meetingnotes",
-      "target": "meetingnotes_extracttopicsentence",
+      "target": "meetingnotes_casual_patterns",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
-      "source_location": "L68",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "meetingnotes_isdisallowedfromsummary",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -111800,7 +111883,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L125",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -111811,7 +111894,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L208",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -111833,7 +111916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L284",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -111844,7 +111927,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
-      "source_location": "L305",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -111860,13 +111943,24 @@
     },
     {
       "source": "app_services_meetingnotesservice_meetingnotesservice",
-      "target": "app_services_meetingnotesservice_meetingnotesservice_extracttopicsentence",
+      "target": "app_services_meetingnotesservice_meetingnotesservice_isdisallowedfromsummary",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/MeetingNotesService.php",
       "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_meetingnotesservice_meetingnotesservice",
+      "target": "app_services_meetingnotesservice_meetingnotesservice_extracttopicsentence",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/MeetingNotesService.php",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -116372,7 +116466,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L463",
+      "source_location": "L507",
       "weight": 1.0
     },
     {
@@ -116384,7 +116478,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L464",
+      "source_location": "L508",
       "weight": 1.0
     },
     {
@@ -116396,7 +116490,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L465",
+      "source_location": "L509",
       "weight": 1.0
     },
     {
@@ -116797,5 +116891,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8e6d605305ee26dbe084bec4a4c78d2138804750"
+  "built_at_commit": "1aab8b1b51688653471f5b92a575ab1f30041442"
 }

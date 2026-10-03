@@ -738,7 +738,7 @@ function removeApiKey() {
 function loadPreset(type) {
   if (type === 'mom') {
     transcriptText.value =
-      'Selamat pagi rekan-rekan semua. Hari ini kita meeting evaluasi peluncuran web versi 2.0. Kita sepakat untuk rilis hari Jumat jam 23.00 malam. Budi ditugaskan menyiapkan 2 server dan domain dengan anggaran Rp 1.500.000 paling lambat besok sore. Davis akan menyelesaikan 3 perbaikan bug sebelum jam lima sore. Kemarin sempat dibahas sewa gedung pertemuan kapasitas 100 orang tapi Budi belum konfirmasi jadi statusnya belum ada keputusan. Eh kemarin nonton bola ga? Seru banget.';
+      'Selamat pagi rekan-rekan semua, mari kita mulai meeting hari ini. Bagaimana progresnya Andi? Andi melaporkan integrasi API payment gateway sudah mencapai 80%. Lalu ada kendala apa di tim developer? Andi menyampaikan ada kendala latensi server staging yang sempat time out. Bagaimana dengan Rina dari tim Desain? Rina menyampaikan desain mockup versi mobile sudah selesai 100% dan sudah diserahkan ke developer. Dian dari Pemasaran melaporkan draf kampanye media sosial sudah disiapkan dengan anggaran Rp 2.500.000. Untuk keputusan akhir, Andi tolong pastikan perbaikan bug latensi server selesai besok sore. Lalu Dian siapkan draf konten promosi paling lambat H-7 sebelum peluncuran. Sekian dari saya, terima kasih atas kerjasamanya.';
   } else if (type === 'correction') {
     transcriptText.value =
       'eh anu apakah kita biaya hadir di ruang setting besok pagi jam sembilan saya saya mau bahas hasil kordinasi dgn tim';

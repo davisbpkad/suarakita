@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-04)
 
 ## Corpus Check
-- 418 files · ~283,901 words
+- 418 files · ~284,262 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4783 nodes · 5253 edges · 398 communities (365 shown, 33 thin omitted)
+- 4785 nodes · 5259 edges · 398 communities (365 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 164 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8e6d6053`
+- Built from commit: `1aab8b1b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -590,7 +590,7 @@ Cohesion: 0.10
 Nodes (19): /click-path-audit — Behavioural Flow Audit, Example: The Bug That Inspired This Skill, Execution Steps, How It Works, Integration with Other Skills, Pattern 1: Sequential Undo, Pattern 2: Async Race, Pattern 3: Stale Closure (+11 more)
 
 ### Community 38 - "review-with-codex.js"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (18): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+10 more)
 
 ### Community 39 - "grade"
@@ -918,7 +918,7 @@ Cohesion: 0.10
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
-Cohesion: 0.23
+Cohesion: 0.21
 Nodes (12): CK_HOME, CURRENT_SESSION, daysAgo(), extractClaudeMdGoal(), gitLogSince(), main(), parts, PROJECTS_FILE (+4 more)
 
 ### Community 121 - "Continuous Learning Skill - DEPRECATED"
@@ -1026,8 +1026,8 @@ Cohesion: 0.15
 Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Example Usage, HIGH (Should Fix), Integration with Other Commands, MEDIUM (Consider), Related (+4 more)
 
 ### Community 148 - "meetingNotes.js"
-Cohesion: 0.11
-Nodes (26): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, CASUAL_PATTERNS, CONSENSUS_KEYWORDS, { correctTranscriptWithNLP } (+18 more)
+Cohesion: 0.10
+Nodes (28): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, CASUAL_PATTERNS, { correctTranscriptWithNLP }, DISALLOWED_LABELS (+20 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13
@@ -1883,7 +1883,7 @@ Nodes (5): Coverage, Framework, Python Testing, Reference, Test Organization
 
 ### Community 390 - "package.json"
 Cohesion: 0.10
-Nodes (19): author, description, keywords, license, main, name, scripts, build (+11 more)
+Nodes (18): author, description, keywords, license, main, name, scripts, build (+10 more)
 
 ### Community 391 - "_load_instincts_from_dir"
 Cohesion: 0.08
