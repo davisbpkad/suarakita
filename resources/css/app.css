@@ -1,123 +1,251 @@
 @import "tailwindcss";
 
+/* === YOLKWORK-INSPIRED DESIGN SYSTEM === */
+/* Warm, clean, spacious — NO neobrutalism, NO dot patterns, NO hard shadows */
+
 @layer base {
+  :root {
+    --color-bg: #FBF7EF;
+    --color-cream: #F3EDE3;
+    --color-ink: #1A1712;
+    --color-muted: #6B6560;
+    --color-line: #E8E2D9;
+    --color-yolk: #FFC832;
+    --color-white: #FFFFFF;
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
   body {
-    background-color: #FAF5EF;
-    background-image: radial-gradient(#000000 0.8px, transparent 0.8px);
-    background-size: 22px 22px;
-    color: #000000;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Authentic Neobrutalism Component Classes */
-.neo-box {
-  background-color: #FFFFFF;
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0px 0px #000000;
-  border-radius: 14px;
+/* === DISPLAY TYPOGRAPHY (tight tracking, big weight) === */
+.display {
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
 }
 
-.neo-box-sm {
-  background-color: #FFFFFF;
-  border: 2px solid #000000;
-  box-shadow: 3px 3px 0px 0px #000000;
-  border-radius: 10px;
-}
-
-.neo-box-yellow {
-  background-color: #FFDE59;
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0px 0px #000000;
-  border-radius: 14px;
-}
-
-.neo-box-coral {
-  background-color: #FF6B6B;
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0px 0px #000000;
-  border-radius: 14px;
-}
-
-.neo-box-mint {
-  background-color: #A3E635;
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0px 0px #000000;
-  border-radius: 14px;
-}
-
-.neo-box-sky {
-  background-color: #38BDF8;
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0px 0px #000000;
-  border-radius: 14px;
-}
-
-.neo-btn {
+/* === BUTTONS (pill-shaped, hover-lift, smooth transitions) === */
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  border: 2px solid #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
-  border-radius: 12px;
+  gap: 0.5rem;
+  padding: 1rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background-color: var(--color-yolk);
+  color: var(--color-ink);
   cursor: pointer;
   user-select: none;
-  transition: all 0.15s ease-in-out;
+  white-space: nowrap;
+  transition: translate 300ms var(--ease-out-quint),
+              scale 100ms ease,
+              box-shadow 300ms var(--ease-out-quint);
 }
 
-.neo-btn:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0px 0px #000000;
+.btn-primary:hover:not(:disabled) {
+  translate: 0 -2px;
+  box-shadow: 0 10px 24px -12px rgba(26, 23, 18, 0.45);
 }
 
-.neo-btn:active:not(:disabled) {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0px 0px #000000;
+.btn-primary:active:not(:disabled) {
+  translate: 0 0;
+  scale: 0.97;
 }
 
-.neo-btn:disabled {
+.btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
-.neo-badge {
+.btn-outline {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 2px solid #000000;
-  box-shadow: 2px 2px 0px 0px #000000;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-ink);
+  background-color: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: translate 300ms var(--ease-out-quint),
+              scale 100ms ease,
+              background-color 300ms ease,
+              color 300ms ease,
+              box-shadow 300ms var(--ease-out-quint);
 }
 
-.neo-input {
-  width: 100%;
-  border: 2px solid #000000;
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
+.btn-outline:hover:not(:disabled) {
+  translate: 0 -2px;
+  background-color: var(--color-ink);
+  color: var(--color-bg);
+  box-shadow: 0 10px 24px -12px rgba(26, 23, 18, 0.45);
+}
+
+.btn-outline:active:not(:disabled) {
+  translate: 0 0;
+  scale: 0.97;
+}
+
+.btn-small {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-line);
+  background-color: var(--color-white);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: scale 100ms ease,
+              background-color 200ms ease,
+              border-color 200ms ease;
+}
+
+.btn-icon:hover {
+  background-color: var(--color-cream);
+  border-color: var(--color-ink);
+}
+
+.btn-icon:active {
+  scale: 0.90;
+}
+
+/* === CARDS (large radius, subtle border, hover elevation) === */
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: 1.75rem; /* 28px */
+  transition: translate 500ms var(--ease-out-quint),
+              box-shadow 500ms var(--ease-out-quint),
+              border-color 500ms var(--ease-out-quint);
+}
+
+.card:hover {
+  translate: 0 -6px;
+  border-color: var(--color-yolk);
+  box-shadow: 0 24px 48px -28px rgba(26, 23, 18, 0.35);
+}
+
+/* === TAG / BADGE (small pill) === */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: #000000;
-  box-shadow: 3px 3px 0px 0px #000000;
-  transition: all 0.15s ease;
+  border-radius: 9999px;
+  white-space: nowrap;
 }
 
-.neo-input:focus {
+/* === SECTION LABEL (small dot + uppercase text) === */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-muted);
+}
+
+.section-label::before {
+  content: '';
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background-color: var(--color-yolk);
+  flex-shrink: 0;
+}
+
+/* === INPUTS (clean, rounded, subtle border) === */
+.input-clean {
+  width: 100%;
+  border: 1.5px solid var(--color-line);
+  background-color: var(--color-white);
+  border-radius: 1rem;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.input-clean:focus {
   outline: none;
-  box-shadow: 4px 4px 0px 0px #000000;
+  border-color: var(--color-yolk);
+  box-shadow: 0 0 0 3px rgba(255, 200, 50, 0.2);
 }
 
-/* Sound Wave Audio Animation */
+.input-clean::placeholder {
+  color: var(--color-muted);
+  opacity: 0.6;
+}
+
+/* === MODAL OVERLAY === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(26, 23, 18, 0.5);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 48rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--color-white);
+  border-radius: 1.75rem;
+  padding: 2rem;
+  box-shadow: 0 24px 60px -20px rgba(26, 23, 18, 0.3);
+}
+
+/* === LAYOUT WRAPPER (mirrors yolkwork `wrap`) === */
+.wrap {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .wrap {
+    padding-inline: 2rem;
+  }
+}
+
+/* === SOUND WAVE (refined) === */
 @keyframes soundwave {
-  0%, 100% { height: 6px; }
-  50% { height: 28px; }
+  0%, 100% { height: 4px; }
+  50% { height: 24px; }
 }
 
 .animate-soundwave-1 { animation: soundwave 0.8s ease-in-out infinite; }
@@ -125,3 +253,36 @@
 .animate-soundwave-3 { animation: soundwave 0.7s ease-in-out infinite 0.3s; }
 .animate-soundwave-4 { animation: soundwave 1.3s ease-in-out infinite 0.1s; }
 .animate-soundwave-5 { animation: soundwave 0.9s ease-in-out infinite 0.25s; }
+
+/* === LIVE DOT (pulsing recording indicator) === */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+.live-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: #ef4444;
+  animation: live-pulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* === SCROLLBAR (minimal) === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
