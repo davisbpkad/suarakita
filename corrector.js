@@ -310,8 +310,36 @@ ${rawText}
     }
   });
 
-  return new Promise((resolve) => {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
+  const candidateModels = [
+    preferredModel || 'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-lite',
+    'gemini-1.5-flash'
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
+  for (const model of candidateModels) {
+    try {
+      const result = await callGeminiCorrectorSingleModel(model, apiKey, payload);
+      if (result && result.correctedText) {
+        return {
+          originalText: rawText,
+          correctedText: result.correctedText,
+          changes: result.changes || [`Pembersihan dan koreksi cerdas via Gemini AI (${model})`],
+          modelUsed: model,
+          method: 'gemini_ai'
+        };
+      }
+    } catch (e) {
+      // lanjut ke model berikutnya
+    }
+  }
+
+  return correctTranscriptWithNLP(rawText);
+}
+
+function callGeminiCorrectorSingleModel(modelName, apiKey, payload) {
+  return new Promise((resolve, reject) => {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
 
     const req = https.request(url, {
       method: 'POST',
@@ -319,38 +347,31 @@ ${rawText}
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload)
       },
-      timeout: 10000
+      timeout: 12000
     }, (res) => {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
         try {
+          if (res.statusCode !== 200) {
+            return reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+          }
           const parsed = JSON.parse(data);
           const rawJson = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawJson) {
-            const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-            const result = JSON.parse(cleanJson);
-            if (result && result.correctedText) {
-              resolve({
-                originalText: rawText,
-                correctedText: result.correctedText,
-                changes: result.changes || ['Pembersihan dan koreksi cerdas via Gemini 2.0 Flash AI'],
-                method: 'gemini_ai'
-              });
-              return;
-            }
-          }
+          if (!rawJson) return reject(new Error('Empty content'));
+          const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
+          const result = JSON.parse(cleanJson);
+          resolve(result);
         } catch (e) {
-          // fallback to local NLP
+          reject(e);
         }
-        resolve(correctTranscriptWithNLP(rawText));
       });
     });
 
-    req.on('error', () => resolve(correctTranscriptWithNLP(rawText)));
+    req.on('error', reject);
     req.on('timeout', () => {
       req.destroy();
-      resolve(correctTranscriptWithNLP(rawText));
+      reject(new Error('Timeout'));
     });
 
     req.write(payload);

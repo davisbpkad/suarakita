@@ -22,13 +22,13 @@ app.get('/api/status', (req, res) => {
 // Endpoint Koreksi Transkrip (Transcript Correction)
 app.post('/api/correct-transcript', async (req, res) => {
   try {
-    const { text, apiKey } = req.body;
+    const { text, apiKey, model } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ error: 'Teks transkrip tidak boleh kosong.' });
     }
 
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const result = await correctTranscriptWithAI(text, effectiveApiKey);
+    const result = await correctTranscriptWithAI(text, effectiveApiKey, model);
     res.json(result);
   } catch (err) {
     console.error('Error correcting transcript:', err);
@@ -39,7 +39,7 @@ app.post('/api/correct-transcript', async (req, res) => {
 // Endpoint Notulen Rapat (Minutes of Meeting / MoM)
 app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res) => {
   try {
-    const { text, apiKey } = req.body;
+    const { text, apiKey, model } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ error: 'Teks transkrip rapat tidak boleh kosong.' });
     }
@@ -49,7 +49,7 @@ app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res)
     const cleanedText = cleanObj.correctedText || text;
 
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const notesResult = await generateMeetingNotesWithAI(cleanedText, effectiveApiKey);
+    const notesResult = await generateMeetingNotesWithAI(cleanedText, effectiveApiKey, model);
     res.json(notesResult);
   } catch (err) {
     console.error('Error generating meeting notes:', err);

@@ -1887,6 +1887,18 @@
       "source_location": "L378"
     },
     {
+      "id": "corrector_callgeminicorrectorsinglemodel",
+      "label": "callGeminiCorrectorSingleModel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "meetingNotes.js",
+      "file_type": "code",
+      "norm_label": "callgeminicorrectorsinglemodel()",
+      "source_file": "corrector.js",
+      "source_location": "L340"
+    },
+    {
       "id": "corrector_correcttranscriptwithai",
       "label": "correctTranscriptWithAI()",
       "_callable": true,
@@ -1909,6 +1921,18 @@
       "norm_label": "correcttranscriptwithnlp()",
       "source_file": "corrector.js",
       "source_location": "L87"
+    },
+    {
+      "id": "meetingnotes_callgeminisinglemodel",
+      "label": "callGeminiSingleModel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 148,
+      "community_name": "meetingNotes.js",
+      "file_type": "code",
+      "norm_label": "callgeminisinglemodel()",
+      "source_file": "meetingNotes.js",
+      "source_location": "L470"
     },
     {
       "id": "meetingnotes_extractdecisions",
@@ -3192,7 +3216,7 @@
       "file_type": "code",
       "norm_label": "appendtranscriptcleanly()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L522"
+      "source_location": "L532"
     },
     {
       "id": "resources_js_app_applycorrection",
@@ -3204,7 +3228,7 @@
       "file_type": "code",
       "norm_label": "applycorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L793"
+      "source_location": "L810"
     },
     {
       "id": "resources_js_app_cleartranscript",
@@ -3216,7 +3240,7 @@
       "file_type": "code",
       "norm_label": "cleartranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L853"
+      "source_location": "L874"
     },
     {
       "id": "resources_js_app_collapseexcessiverepetitions",
@@ -3228,7 +3252,7 @@
       "file_type": "code",
       "norm_label": "collapseexcessiverepetitions()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L512"
+      "source_location": "L522"
     },
     {
       "id": "resources_js_app_copytext",
@@ -3240,7 +3264,7 @@
       "file_type": "code",
       "norm_label": "copytext()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L857"
+      "source_location": "L878"
     },
     {
       "id": "resources_js_app_copytranscript",
@@ -3252,7 +3276,7 @@
       "file_type": "code",
       "norm_label": "copytranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L866"
+      "source_location": "L887"
     },
     {
       "id": "resources_js_app_downloadmommarkdown",
@@ -3264,7 +3288,7 @@
       "file_type": "code",
       "norm_label": "downloadmommarkdown()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L838"
+      "source_location": "L859"
     },
     {
       "id": "resources_js_app_downloadtranscript",
@@ -3276,7 +3300,7 @@
       "file_type": "code",
       "norm_label": "downloadtranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L883"
+      "source_location": "L904"
     },
     {
       "id": "resources_js_app_formatmarkdowninline",
@@ -3288,7 +3312,7 @@
       "file_type": "code",
       "norm_label": "formatmarkdowninline()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L749"
+      "source_location": "L762"
     },
     {
       "id": "resources_js_app_initspeechrecognition",
@@ -3300,7 +3324,7 @@
       "file_type": "code",
       "norm_label": "initspeechrecognition()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L555"
+      "source_location": "L565"
     },
     {
       "id": "resources_js_app_loadpreset",
@@ -3312,7 +3336,7 @@
       "file_type": "code",
       "norm_label": "loadpreset()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L738"
+      "source_location": "L751"
     },
     {
       "id": "resources_js_app_removeapikey",
@@ -3324,7 +3348,7 @@
       "file_type": "code",
       "norm_label": "removeapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L729"
+      "source_location": "L742"
     },
     {
       "id": "resources_js_app_runcorrection",
@@ -3336,7 +3360,7 @@
       "file_type": "code",
       "norm_label": "runcorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L768"
+      "source_location": "L781"
     },
     {
       "id": "resources_js_app_runmeetingnotes",
@@ -3348,7 +3372,7 @@
       "file_type": "code",
       "norm_label": "runmeetingnotes()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L813"
+      "source_location": "L830"
     },
     {
       "id": "resources_js_app_saveapikey",
@@ -3360,7 +3384,7 @@
       "file_type": "code",
       "norm_label": "saveapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L724"
+      "source_location": "L736"
     },
     {
       "id": "resources_js_app_startrecording",
@@ -3372,7 +3396,7 @@
       "file_type": "code",
       "norm_label": "startrecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L658"
+      "source_location": "L668"
     },
     {
       "id": "resources_js_app_stoprecording",
@@ -3384,7 +3408,7 @@
       "file_type": "code",
       "norm_label": "stoprecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L687"
+      "source_location": "L697"
     },
     {
       "id": "resources_js_app_toggledownloadmenu",
@@ -3396,7 +3420,7 @@
       "file_type": "code",
       "norm_label": "toggledownloadmenu()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L849"
+      "source_location": "L870"
     },
     {
       "id": "resources_js_app_togglerecording",
@@ -3408,7 +3432,7 @@
       "file_type": "code",
       "norm_label": "togglerecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L650"
+      "source_location": "L660"
     },
     {
       "id": "resources_js_app_triggerdownload",
@@ -3420,7 +3444,7 @@
       "file_type": "code",
       "norm_label": "triggerdownload()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L902"
+      "source_location": "L923"
     },
     {
       "id": "agents_skills_skill_comply_scripts_grader_grade",
@@ -27656,6 +27680,22 @@
       "source_location": "L76"
     },
     {
+      "id": "agents_skills_strategic_compact_skill",
+      "label": "strategic-compact/SKILL.md",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "frontmatter": {
+        "name": "strategic-compact",
+        "description": "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction. Use when a session is approaching a context limit and a task phase is a natural place to compact."
+      },
+      "node_kind": "page",
+      "norm_label": "strategic-compact/skill.md",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L1"
+    },
+    {
       "id": "agents_skills_graphify_skill",
       "label": "graphify/SKILL.md",
       "_origin": "ast",
@@ -27946,6 +27986,174 @@
       "norm_label": "what you must do when invoked",
       "source_file": ".agents/skills/graphify/SKILL.md",
       "source_location": "L49"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_best_practices",
+      "label": "Best Practices",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "best practices",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_compaction_decision_guide",
+      "label": "Compaction Decision Guide",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "compaction decision guide",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_configuration",
+      "label": "Configuration",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "configuration",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_context_composition_awareness",
+      "label": "Context Composition Awareness",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "context composition awareness",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_context_optimization_tools",
+      "label": "Context Optimization Tools",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "context optimization tools",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_duplicate_instruction_detection",
+      "label": "Duplicate Instruction Detection",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "duplicate instruction detection",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_hook_setup",
+      "label": "Hook Setup",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "hook setup",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_related",
+      "label": "Related",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "related",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_strategic_compact_skill",
+      "label": "Strategic Compact Skill",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "strategic compact skill",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_token_optimization_patterns",
+      "label": "Token Optimization Patterns",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "token optimization patterns",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_trigger_table_lazy_loading",
+      "label": "Trigger-Table Lazy Loading",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "trigger-table lazy loading",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_what_survives_compaction",
+      "label": "What Survives Compaction",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "what survives compaction",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_when_to_activate",
+      "label": "When to Activate",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "when to activate",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "agents_skills_strategic_compact_skill_why_strategic_compaction",
+      "label": "Why Strategic Compaction?",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "What You Must Do When Invoked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "why strategic compaction?",
+      "source_file": ".agents/skills/strategic-compact/SKILL.md",
+      "source_location": "L20"
     },
     {
       "id": "agents_rules_vue_patterns",
@@ -43256,7 +43464,7 @@
       "file_type": "code",
       "norm_label": "availablelanguages",
       "source_file": "resources/js/App.vue",
-      "source_location": "L485"
+      "source_location": "L495"
     },
     {
       "id": "resources_js_app_charcount",
@@ -43267,7 +43475,7 @@
       "file_type": "code",
       "norm_label": "charcount",
       "source_file": "resources/js/App.vue",
-      "source_location": "L474"
+      "source_location": "L484"
     },
     {
       "id": "resources_js_app_copysuccess",
@@ -43278,7 +43486,7 @@
       "file_type": "code",
       "norm_label": "copysuccess",
       "source_file": "resources/js/App.vue",
-      "source_location": "L465"
+      "source_location": "L475"
     },
     {
       "id": "resources_js_app_correctiondata",
@@ -43289,7 +43497,7 @@
       "file_type": "code",
       "norm_label": "correctiondata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L761"
+      "source_location": "L774"
     },
     {
       "id": "resources_js_app_currentlanguage",
@@ -43300,7 +43508,7 @@
       "file_type": "code",
       "norm_label": "currentlanguage",
       "source_file": "resources/js/App.vue",
-      "source_location": "L491"
+      "source_location": "L501"
     },
     {
       "id": "resources_js_app_formattedrecordingtime",
@@ -43311,7 +43519,7 @@
       "file_type": "code",
       "norm_label": "formattedrecordingtime",
       "source_file": "resources/js/App.vue",
-      "source_location": "L493"
+      "source_location": "L503"
     },
     {
       "id": "resources_js_app_geminiapikey",
@@ -43322,7 +43530,7 @@
       "file_type": "code",
       "norm_label": "geminiapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L709"
+      "source_location": "L719"
     },
     {
       "id": "resources_js_app_hasapikey",
@@ -43333,7 +43541,7 @@
       "file_type": "code",
       "norm_label": "hasapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L710"
+      "source_location": "L721"
     },
     {
       "id": "resources_js_app_interimspeech",
@@ -43344,7 +43552,7 @@
       "file_type": "code",
       "norm_label": "interimspeech",
       "source_file": "resources/js/App.vue",
-      "source_location": "L480"
+      "source_location": "L490"
     },
     {
       "id": "resources_js_app_isrecording",
@@ -43355,7 +43563,7 @@
       "file_type": "code",
       "norm_label": "isrecording",
       "source_file": "resources/js/App.vue",
-      "source_location": "L479"
+      "source_location": "L489"
     },
     {
       "id": "resources_js_app_js_resources_js_app",
@@ -43377,7 +43585,7 @@
       "file_type": "code",
       "norm_label": "loadingaction",
       "source_file": "resources/js/App.vue",
-      "source_location": "L711"
+      "source_location": "L722"
     },
     {
       "id": "resources_js_app_momdata",
@@ -43388,7 +43596,7 @@
       "file_type": "code",
       "norm_label": "momdata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L804"
+      "source_location": "L821"
     },
     {
       "id": "resources_js_app_processedfinalmap",
@@ -43399,7 +43607,7 @@
       "file_type": "code",
       "norm_label": "processedfinalmap",
       "source_file": "resources/js/App.vue",
-      "source_location": "L507"
+      "source_location": "L517"
     },
     {
       "id": "resources_js_app_recordingseconds",
@@ -43410,7 +43618,18 @@
       "file_type": "code",
       "norm_label": "recordingseconds",
       "source_file": "resources/js/App.vue",
-      "source_location": "L481"
+      "source_location": "L491"
+    },
+    {
+      "id": "resources_js_app_selectedgeminimodel",
+      "label": "selectedGeminiModel",
+      "_origin": "ast",
+      "community": 388,
+      "community_name": "App.vue",
+      "file_type": "code",
+      "norm_label": "selectedgeminimodel",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L720"
     },
     {
       "id": "resources_js_app_showaiconfigmodal",
@@ -43421,7 +43640,7 @@
       "file_type": "code",
       "norm_label": "showaiconfigmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L708"
+      "source_location": "L718"
     },
     {
       "id": "resources_js_app_showcorrectionmodal",
@@ -43432,7 +43651,7 @@
       "file_type": "code",
       "norm_label": "showcorrectionmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L760"
+      "source_location": "L773"
     },
     {
       "id": "resources_js_app_showdownloadmenu",
@@ -43443,7 +43662,7 @@
       "file_type": "code",
       "norm_label": "showdownloadmenu",
       "source_file": "resources/js/App.vue",
-      "source_location": "L466"
+      "source_location": "L476"
     },
     {
       "id": "resources_js_app_showmommodal",
@@ -43454,7 +43673,7 @@
       "file_type": "code",
       "norm_label": "showmommodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L803"
+      "source_location": "L820"
     },
     {
       "id": "resources_js_app_transcripttext",
@@ -43465,7 +43684,7 @@
       "file_type": "code",
       "norm_label": "transcripttext",
       "source_file": "resources/js/App.vue",
-      "source_location": "L463"
+      "source_location": "L473"
     },
     {
       "id": "resources_js_app_vue_resources_js_app",
@@ -43487,7 +43706,7 @@
       "file_type": "code",
       "norm_label": "wordcount",
       "source_file": "resources/js/App.vue",
-      "source_location": "L468"
+      "source_location": "L478"
     },
     {
       "id": "ref_vue",
@@ -44086,190 +44305,6 @@
       "norm_label": "status.js",
       "source_file": "netlify/functions/status.js",
       "source_location": "L1"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill",
-      "label": "strategic-compact/SKILL.md",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "frontmatter": {
-        "name": "strategic-compact",
-        "description": "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction. Use when a session is approaching a context limit and a task phase is a natural place to compact."
-      },
-      "node_kind": "page",
-      "norm_label": "strategic-compact/skill.md",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_best_practices",
-      "label": "Best Practices",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "best practices",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L115"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_compaction_decision_guide",
-      "label": "Compaction Decision Guide",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "compaction decision guide",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L76"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_configuration",
-      "label": "Configuration",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "configuration",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L64"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_context_composition_awareness",
-      "label": "Context Composition Awareness",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "context composition awareness",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L135"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_context_optimization_tools",
-      "label": "Context Optimization Tools",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "context optimization tools",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L148"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_duplicate_instruction_detection",
-      "label": "Duplicate Instruction Detection",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "duplicate instruction detection",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L142"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_hook_setup",
-      "label": "Hook Setup",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "hook setup",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L41"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_related",
-      "label": "Related",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "related",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L152"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_strategic_compact_skill",
-      "label": "Strategic Compact Skill",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "strategic compact skill",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L8"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_token_optimization_patterns",
-      "label": "Token Optimization Patterns",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "token optimization patterns",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L124"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_trigger_table_lazy_loading",
-      "label": "Trigger-Table Lazy Loading",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "trigger-table lazy loading",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L126"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_what_survives_compaction",
-      "label": "What Survives Compaction",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what survives compaction",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L89"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_when_to_activate",
-      "label": "When to Activate",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "when to activate",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L12"
-    },
-    {
-      "id": "agents_skills_strategic_compact_skill_why_strategic_compaction",
-      "label": "Why Strategic Compaction?",
-      "_origin": "ast",
-      "community": 395,
-      "community_name": "Strategic Compact Skill",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "why strategic compaction?",
-      "source_file": ".agents/skills/strategic-compact/SKILL.md",
-      "source_location": "L20"
     },
     {
       "id": "artisan",
@@ -62377,6 +62412,18 @@
       "weight": 1.0
     },
     {
+      "source": "corrector_correcttranscriptwithai",
+      "target": "corrector_callgeminicorrectorsinglemodel",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "corrector.js",
+      "source_location": "L322",
+      "weight": 1.0
+    },
+    {
       "source": "meetingnotes_extractsummaryitems",
       "target": "meetingnotes_isdisallowedfromsummary",
       "relation": "calls",
@@ -62414,6 +62461,18 @@
     },
     {
       "source": "meetingnotes_generatemeetingnoteswithai",
+      "target": "meetingnotes_callgeminisinglemodel",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "meetingNotes.js",
+      "source_location": "L440",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes_generatemeetingnoteswithai",
       "target": "meetingnotes_formatmeetingnotesmarkdown",
       "relation": "calls",
       "_origin": "ast",
@@ -62421,7 +62480,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "meetingNotes.js",
-      "source_location": "L475",
+      "source_location": "L449",
       "weight": 1.0
     },
     {
@@ -62745,7 +62804,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L527",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -62757,7 +62816,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L843",
+      "source_location": "L864",
       "weight": 1.0
     },
     {
@@ -62769,7 +62828,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L895",
+      "source_location": "L916",
       "weight": 1.0
     },
     {
@@ -62781,7 +62840,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L600",
+      "source_location": "L610",
       "weight": 1.0
     },
     {
@@ -62793,7 +62852,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L626",
+      "source_location": "L636",
       "weight": 1.0
     },
     {
@@ -62805,7 +62864,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L667",
+      "source_location": "L677",
       "weight": 1.0
     },
     {
@@ -62817,7 +62876,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L652",
+      "source_location": "L662",
       "weight": 1.0
     },
     {
@@ -62829,7 +62888,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L654",
+      "source_location": "L664",
       "weight": 1.0
     },
     {
@@ -66117,7 +66176,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "resources/js/App.vue",
-      "source_location": "L458",
+      "source_location": "L468",
       "weight": 1.0
     },
     {
@@ -109776,6 +109835,17 @@
     },
     {
       "source": "corrector",
+      "target": "corrector_callgeminicorrectorsinglemodel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "corrector.js",
+      "source_location": "L340",
+      "weight": 1.0
+    },
+    {
+      "source": "corrector",
       "target": "corrector_tech_acronyms",
       "relation": "contains",
       "_origin": "ast",
@@ -109871,6 +109941,17 @@
       "confidence_score": 1.0,
       "source_file": "meetingNotes.js",
       "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "meetingnotes",
+      "target": "meetingnotes_callgeminisinglemodel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "meetingNotes.js",
+      "source_location": "L470",
       "weight": 1.0
     },
     {
@@ -110343,7 +110424,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L463",
+      "source_location": "L473",
       "weight": 1.0
     },
     {
@@ -110354,7 +110435,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L465",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -110365,7 +110446,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L466",
+      "source_location": "L476",
       "weight": 1.0
     },
     {
@@ -110376,7 +110457,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L468",
+      "source_location": "L478",
       "weight": 1.0
     },
     {
@@ -110387,7 +110468,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L474",
+      "source_location": "L484",
       "weight": 1.0
     },
     {
@@ -110398,7 +110479,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L479",
+      "source_location": "L489",
       "weight": 1.0
     },
     {
@@ -110409,7 +110490,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L480",
+      "source_location": "L490",
       "weight": 1.0
     },
     {
@@ -110420,7 +110501,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L481",
+      "source_location": "L491",
       "weight": 1.0
     },
     {
@@ -110431,7 +110512,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L485",
+      "source_location": "L495",
       "weight": 1.0
     },
     {
@@ -110442,7 +110523,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L491",
+      "source_location": "L501",
       "weight": 1.0
     },
     {
@@ -110453,7 +110534,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L493",
+      "source_location": "L503",
       "weight": 1.0
     },
     {
@@ -110464,7 +110545,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L507",
+      "source_location": "L517",
       "weight": 1.0
     },
     {
@@ -110475,7 +110556,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L512",
+      "source_location": "L522",
       "weight": 1.0
     },
     {
@@ -110486,7 +110567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L522",
+      "source_location": "L532",
       "weight": 1.0
     },
     {
@@ -110497,7 +110578,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L555",
+      "source_location": "L565",
       "weight": 1.0
     },
     {
@@ -110508,7 +110589,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L650",
+      "source_location": "L660",
       "weight": 1.0
     },
     {
@@ -110519,7 +110600,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L658",
+      "source_location": "L668",
       "weight": 1.0
     },
     {
@@ -110530,7 +110611,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L687",
+      "source_location": "L697",
       "weight": 1.0
     },
     {
@@ -110541,7 +110622,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L708",
+      "source_location": "L718",
       "weight": 1.0
     },
     {
@@ -110552,7 +110633,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L709",
+      "source_location": "L719",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_selectedgeminimodel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L720",
       "weight": 1.0
     },
     {
@@ -110563,7 +110655,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L710",
+      "source_location": "L721",
       "weight": 1.0
     },
     {
@@ -110574,7 +110666,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L711",
+      "source_location": "L722",
       "weight": 1.0
     },
     {
@@ -110585,7 +110677,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L724",
+      "source_location": "L736",
       "weight": 1.0
     },
     {
@@ -110596,7 +110688,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L729",
+      "source_location": "L742",
       "weight": 1.0
     },
     {
@@ -110607,7 +110699,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L738",
+      "source_location": "L751",
       "weight": 1.0
     },
     {
@@ -110618,7 +110710,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L749",
+      "source_location": "L762",
       "weight": 1.0
     },
     {
@@ -110629,7 +110721,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L760",
+      "source_location": "L773",
       "weight": 1.0
     },
     {
@@ -110640,7 +110732,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L761",
+      "source_location": "L774",
       "weight": 1.0
     },
     {
@@ -110651,7 +110743,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L768",
+      "source_location": "L781",
       "weight": 1.0
     },
     {
@@ -110662,7 +110754,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L793",
+      "source_location": "L810",
       "weight": 1.0
     },
     {
@@ -110673,7 +110765,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L803",
+      "source_location": "L820",
       "weight": 1.0
     },
     {
@@ -110684,7 +110776,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L804",
+      "source_location": "L821",
       "weight": 1.0
     },
     {
@@ -110695,7 +110787,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L813",
+      "source_location": "L830",
       "weight": 1.0
     },
     {
@@ -110706,7 +110798,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L838",
+      "source_location": "L859",
       "weight": 1.0
     },
     {
@@ -110717,7 +110809,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L849",
+      "source_location": "L870",
       "weight": 1.0
     },
     {
@@ -110728,7 +110820,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L853",
+      "source_location": "L874",
       "weight": 1.0
     },
     {
@@ -110739,7 +110831,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L857",
+      "source_location": "L878",
       "weight": 1.0
     },
     {
@@ -110750,7 +110842,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L866",
+      "source_location": "L887",
       "weight": 1.0
     },
     {
@@ -110761,7 +110853,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L883",
+      "source_location": "L904",
       "weight": 1.0
     },
     {
@@ -110772,7 +110864,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L902",
+      "source_location": "L923",
       "weight": 1.0
     },
     {
@@ -116442,7 +116534,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L362",
+      "source_location": "L383",
       "weight": 1.0
     },
     {
@@ -116454,7 +116546,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L363",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -116466,7 +116558,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L507",
+      "source_location": "L513",
       "weight": 1.0
     },
     {
@@ -116478,7 +116570,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L508",
+      "source_location": "L514",
       "weight": 1.0
     },
     {
@@ -116490,7 +116582,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "meetingNotes.js",
-      "source_location": "L509",
+      "source_location": "L515",
       "weight": 1.0
     },
     {
@@ -116891,5 +116983,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1aab8b1b51688653471f5b92a575ab1f30041442"
+  "built_at_commit": "76f892731eae91ce757ab841e02f6688f61784ca"
 }

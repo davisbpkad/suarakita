@@ -361,9 +361,9 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
 }
 
 /**
- * Pembuatan Notulen Rapat Menggunakan AI Gemini (Model Terbaru: gemini-2.0-flash)
+ * Pembuatan Notulen Rapat Menggunakan AI Gemini (Dukungan Model Terbaru & Fallback Otomatis)
  */
-async function generateMeetingNotesWithAI(rawTranscriptText, apiKey) {
+async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredModel = 'gemini-2.5-flash') {
   if (!apiKey || !apiKey.trim()) {
     return generateMeetingNotesWithNLP(rawTranscriptText);
   }
@@ -427,8 +427,49 @@ ${rawTranscriptText}
     }
   });
 
-  return new Promise((resolve) => {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
+  // Daftar model yang akan dicoba berjenjang (dimulai dari model yang dipilih)
+  const candidateModels = [
+    preferredModel || 'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-lite',
+    'gemini-1.5-flash'
+  ].filter((v, i, a) => a.indexOf(v) === i); // unique
+
+  for (const model of candidateModels) {
+    try {
+      const res = await callGeminiSingleModel(model, apiKey, payload);
+      if (res && res.topic) {
+        const topic = res.topic.trim();
+        let summaryItems = Array.isArray(res.summaryItems) ? res.summaryItems.filter(Boolean) : [];
+        let decisions = Array.isArray(res.decisions) ? res.decisions.filter(Boolean) : [];
+
+        if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+        if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
+
+        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
+
+        return {
+          topic,
+          summary: summaryItems.join('\n'),
+          summaryItems,
+          decisions,
+          rawMarkdown,
+          modelUsed: model,
+          method: 'gemini_ai'
+        };
+      }
+    } catch (err) {
+      // lanjut ke kandidat model berikutnya
+    }
+  }
+
+  // Fallback jika seluruh model AI gagal/kuota habis
+  return generateMeetingNotesWithNLP(rawTranscriptText);
+}
+
+function callGeminiSingleModel(modelName, apiKey, payload) {
+  return new Promise((resolve, reject) => {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
 
     const req = https.request(url, {
       method: 'POST',
@@ -442,60 +483,25 @@ ${rawTranscriptText}
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
         try {
+          if (res.statusCode !== 200) {
+            return reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+          }
           const parsed = JSON.parse(data);
           const rawJson = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawJson) {
-            const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-            const notes = JSON.parse(cleanJson);
-
-            if (notes && notes.topic) {
-              const topic = notes.topic.trim();
-              
-              let summaryItems = [];
-              if (Array.isArray(notes.summaryItems)) {
-                summaryItems = notes.summaryItems.filter(Boolean);
-              } else if (typeof notes.summary === 'string' && notes.summary.trim()) {
-                summaryItems = notes.summary.split('\n').map(s => s.trim()).filter(Boolean);
-              }
-
-              let decisions = [];
-              if (Array.isArray(notes.decisions)) {
-                decisions = notes.decisions.filter(Boolean);
-              } else if (typeof notes.decisions === 'string' && notes.decisions.trim()) {
-                decisions = notes.decisions.split('\n').map(s => s.trim()).filter(Boolean);
-              }
-
-              if (summaryItems.length === 0) {
-                summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-              }
-              if (decisions.length === 0) {
-                decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
-              }
-
-              const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
-
-              resolve({
-                topic,
-                summary: summaryItems.join('\n'),
-                summaryItems,
-                decisions,
-                rawMarkdown,
-                method: 'gemini_ai'
-              });
-              return;
-            }
-          }
+          if (!rawJson) return reject(new Error('Empty content'));
+          const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
+          const notes = JSON.parse(cleanJson);
+          resolve(notes);
         } catch (e) {
-          // fallback
+          reject(e);
         }
-        resolve(generateMeetingNotesWithNLP(rawTranscriptText));
       });
     });
 
-    req.on('error', () => resolve(generateMeetingNotesWithNLP(rawTranscriptText)));
+    req.on('error', reject);
     req.on('timeout', () => {
       req.destroy();
-      resolve(generateMeetingNotesWithNLP(rawTranscriptText));
+      reject(new Error('Timeout'));
     });
 
     req.write(payload);

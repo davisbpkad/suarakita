@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-04)
 
 ## Corpus Check
-- 418 files · ~284,262 words
+- 418 files · ~284,474 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4785 nodes · 5259 edges · 398 communities (365 shown, 33 thin omitted)
+- 4788 nodes · 5264 edges · 397 communities (364 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 164 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1aab8b1b`
+- Built from commit: `76f89273`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -406,7 +406,6 @@
 - _load_instincts_from_dir
 - 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
-- Strategic Compact Skill
 
 ## God Nodes (most connected - your core abstractions)
 1. `_make_project()` - 27 edges
@@ -435,7 +434,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (398 total, 33 thin omitted)
+## Communities (397 total, 33 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
@@ -530,8 +529,8 @@ Cohesion: 0.08
 Nodes (23): 1. Enable Observation Hooks, 2. Initialize Directory Structure, 3. Use the Instinct Commands, Backward Compatibility, Commands, Confidence Scoring, Configuration, Continuous Learning v2.1 - Instinct (+15 more)
 
 ### Community 23 - "What You Must Do When Invoked"
-Cohesion: 0.08
-Nodes (23): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+15 more)
+Cohesion: 0.05
+Nodes (37): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+29 more)
 
 ### Community 24 - "ObservationEvent"
 Cohesion: 0.17
@@ -1027,7 +1026,7 @@ Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Exampl
 
 ### Community 148 - "meetingNotes.js"
 Cohesion: 0.10
-Nodes (28): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, CASUAL_PATTERNS, { correctTranscriptWithNLP }, DISALLOWED_LABELS (+20 more)
+Nodes (30): callGeminiCorrectorSingleModel(), correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, callGeminiSingleModel(), CASUAL_PATTERNS (+22 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13
@@ -1875,7 +1874,7 @@ Nodes (3): Confidence Rule, Steps, Usage
 
 ### Community 388 - "App.vue"
 Cohesion: 0.05
-Nodes (30): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLanguage (+22 more)
+Nodes (31): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLanguage (+23 more)
 
 ### Community 389 - "Python Testing"
 Cohesion: 0.33
@@ -1893,13 +1892,9 @@ Nodes (15): _find_cross_project_instincts(), _load_instincts_from_dir(), _show_p
 Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
-### Community 395 - "Strategic Compact Skill"
-Cohesion: 0.13
-Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Composition Awareness, Context Optimization Tools, Duplicate Instruction Detection, Hook Setup, Related (+6 more)
-
 ## Knowledge Gaps
-- **3083 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3078 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **3084 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3079 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3458 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -1912,7 +1907,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3083 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3084 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.052600818234950324 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**

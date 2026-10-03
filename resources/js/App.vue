@@ -287,8 +287,8 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs">
-              {{ correctionData.method === 'gemini_ai' ? '✨ Gemini AI' : '⚡ NLP Lokal' }}
+            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs font-semibold">
+              {{ correctionData.method === 'gemini_ai' ? ('✨ ' + (correctionData.modelUsed ? correctionData.modelUsed.replace('gemini-', 'Gemini ').toUpperCase() : 'Gemini AI')) : '⚡ NLP Lokal' }}
             </span>
             <button @click="showCorrectionModal = false" class="btn-icon w-8 h-8">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -354,8 +354,8 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs">
-              {{ momData.method === 'gemini_ai' ? '✨ Gemini AI' : '⚡ NLP Lokal' }}
+            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs font-semibold">
+              {{ momData.method === 'gemini_ai' ? ('✨ ' + (momData.modelUsed ? momData.modelUsed.replace('gemini-', 'Gemini ').toUpperCase() : 'Gemini AI')) : '⚡ NLP Lokal' }}
             </span>
             <button @click="showMomModal = false" class="btn-icon w-8 h-8">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -432,6 +432,16 @@
         </p>
 
         <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[var(--color-ink)]">Model Gemini AI:</label>
+          <select v-model="selectedGeminiModel" class="input-clean text-sm bg-white cursor-pointer">
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Terbaru, Cerdas & Cepat — Gratis)</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Generasi 2.0 Stabil — Gratis)</option>
+            <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite (Ultra Cepat & Ringan — Gratis)</option>
+          </select>
+          <span class="text-xs text-[var(--color-muted)]">Tersedia kuota harian gratis resmi dari Google AI Studio (aistudio.google.com).</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
           <label class="text-xs font-bold text-[var(--color-ink)]">Gemini API Key:</label>
           <input
             v-model="geminiApiKey"
@@ -439,7 +449,7 @@
             placeholder="AIzaSy..."
             class="input-clean font-mono text-sm"
           />
-          <span class="text-xs text-[var(--color-muted)]">Tersimpan aman di browser (localStorage).</span>
+          <span class="text-xs text-[var(--color-muted)]">Tersimpan aman di browser Anda (localStorage).</span>
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-[var(--color-line)]">
@@ -707,11 +717,13 @@ function stopRecording() {
 // -------------------------------------------------------------
 const showAiConfigModal = ref(false);
 const geminiApiKey = ref('');
+const selectedGeminiModel = ref('gemini-2.5-flash');
 const hasApiKey = computed(() => Boolean(geminiApiKey.value && geminiApiKey.value.trim()));
 const loadingAction = ref(null);
 
 onMounted(() => {
   geminiApiKey.value = localStorage.getItem('gemini_api_key') || '';
+  selectedGeminiModel.value = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
 });
 
 onUnmounted(() => {
@@ -723,6 +735,7 @@ onUnmounted(() => {
 
 function saveApiKey() {
   localStorage.setItem('gemini_api_key', geminiApiKey.value.trim());
+  localStorage.setItem('gemini_model', selectedGeminiModel.value);
   showAiConfigModal.value = false;
 }
 
@@ -777,7 +790,11 @@ async function runCorrection() {
     const res = await fetch('/api/correct-transcript', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, apiKey: geminiApiKey.value })
+      body: JSON.stringify({
+        text,
+        apiKey: geminiApiKey.value,
+        model: selectedGeminiModel.value
+      })
     });
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const data = await res.json();
@@ -822,7 +839,11 @@ async function runMeetingNotes() {
     const res = await fetch('/api/meeting-notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, apiKey: geminiApiKey.value })
+      body: JSON.stringify({
+        text,
+        apiKey: geminiApiKey.value,
+        model: selectedGeminiModel.value
+      })
     });
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const data = await res.json();
