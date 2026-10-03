@@ -43965,19 +43965,19 @@
       "node_kind": "heading",
       "norm_label": "1. prasyarat",
       "source_file": "README.md",
-      "source_location": "L44"
+      "source_location": "L49"
     },
     {
-      "id": "readme_2_instalasi_menjalankan_aplikasi",
-      "label": "2. Instalasi & Menjalankan Aplikasi",
+      "id": "readme_2_langkah_instalasi_menjalankan",
+      "label": "2. Langkah Instalasi & Menjalankan",
       "_origin": "ast",
       "community": 392,
       "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "2. instalasi & menjalankan aplikasi",
+      "norm_label": "2. langkah instalasi & menjalankan",
       "source_file": "README.md",
-      "source_location": "L48"
+      "source_location": "L53"
     },
     {
       "id": "readme_cara_menjalankan_di_localhost",
@@ -43989,19 +43989,19 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\ude80 cara menjalankan di localhost",
       "source_file": "README.md",
-      "source_location": "L42"
+      "source_location": "L47"
     },
     {
-      "id": "readme_deploy_gratis_ke_netlify_1_klik",
-      "label": "\ud83c\udf10 Deploy Gratis ke Netlify (1-Klik)",
+      "id": "readme_deployment_di_netlify",
+      "label": "\ud83c\udf10 Deployment di Netlify",
       "_origin": "ast",
       "community": 392,
       "community_name": "\ud83c\udf99\ufe0f SuaraKita \u2014 Voice-to-Text & Notulen Rapat Cerdas",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\ud83c\udf10 deploy gratis ke netlify (1-klik)",
+      "norm_label": "\ud83c\udf10 deployment di netlify",
       "source_file": "README.md",
-      "source_location": "L71"
+      "source_location": "L77"
     },
     {
       "id": "readme_fitur_utama",
@@ -44013,7 +44013,7 @@
       "node_kind": "heading",
       "norm_label": "\u2728 fitur utama",
       "source_file": "README.md",
-      "source_location": "L11"
+      "source_location": "L9"
     },
     {
       "id": "readme_lisensi",
@@ -44025,7 +44025,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udcc4 lisensi",
       "source_file": "README.md",
-      "source_location": "L105"
+      "source_location": "L122"
     },
     {
       "id": "readme_struktur_direktori",
@@ -44037,7 +44037,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udcc1 struktur direktori",
       "source_file": "README.md",
-      "source_location": "L86"
+      "source_location": "L97"
     },
     {
       "id": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
@@ -109887,18 +109887,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L44",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
       "source": "readme_cara_menjalankan_di_localhost",
-      "target": "readme_2_instalasi_menjalankan_aplikasi",
+      "target": "readme_2_langkah_instalasi_menjalankan",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L48",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -109909,18 +109909,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L105",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
-      "target": "readme_fitur_utama",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L11",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -109931,18 +109920,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L42",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
       "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
-      "target": "readme_deploy_gratis_ke_netlify_1_klik",
+      "target": "readme_deployment_di_netlify",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L71",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_suarakita_voice_to_text_notulen_rapat_cerdas",
+      "target": "readme_fitur_utama",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -109953,7 +109953,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L86",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -116401,5 +116401,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3f2c0bb5e5aba1b40d1f1624e2662f51542be8d3"
+  "built_at_commit": "39fc1142cf714f1ca744052a985878474bf23c56"
 }

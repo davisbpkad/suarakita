@@ -1,7 +1,7 @@
 # Graph Report - web-saya  (2026-10-03)
 
 ## Corpus Check
-- 418 files · ~281,416 words
+- 418 files · ~281,650 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3f2c0bb5`
+- Built from commit: `39fc1142`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1890,7 +1890,7 @@ Nodes (6): cmd_prune(), _pending_item(), test_cmd_prune_deletes_only_expired(), 
 
 ### Community 392 - "🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas"
 Cohesion: 0.22
-Nodes (8): 1. Prasyarat, 2. Instalasi & Menjalankan Aplikasi, 🚀 Cara Menjalankan di Localhost, 🌐 Deploy Gratis ke Netlify (1-Klik), ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
+Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
 ## Knowledge Gaps
 - **3081 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3076 more)
