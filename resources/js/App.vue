@@ -380,16 +380,16 @@
             <p class="text-sm text-[var(--color-ink)] leading-relaxed">{{ momData.summary }}</p>
           </div>
 
-          <!-- Poin Kunci -->
-          <div class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
+          <!-- Poin Kunci (Hanya tampil jika ada poin penting nyata) -->
+          <div v-if="momData.keyTakeaways && momData.keyTakeaways.length" class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
             <div class="section-label text-xs mb-3">💡 Poin Utama</div>
             <ul class="flex flex-col gap-2 pl-5 list-disc text-sm text-[var(--color-ink)]">
               <li v-for="(point, idx) in momData.keyTakeaways" :key="idx">{{ point }}</li>
             </ul>
           </div>
 
-          <!-- Keputusan -->
-          <div class="p-5 bg-green-50 border border-green-200 rounded-2xl">
+          <!-- Keputusan (Hanya tampil jika ada keputusan/kesepakatan yang nyata disepakati) -->
+          <div v-if="momData.decisions && momData.decisions.length" class="p-5 bg-green-50 border border-green-200 rounded-2xl">
             <div class="text-xs font-bold text-green-700 mb-3 flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
               ⚖️ Keputusan yang Diambil

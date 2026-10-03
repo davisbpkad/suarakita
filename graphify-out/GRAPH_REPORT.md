@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-04)
 
 ## Corpus Check
-- 418 files · ~282,215 words
+- 418 files · ~283,251 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4776 nodes · 5236 edges · 398 communities (365 shown, 33 thin omitted)
+- 4781 nodes · 5249 edges · 396 communities (363 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 163 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `14256d44`
+- Built from commit: `0d6bb1c5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - Test-Driven Development Workflow
 - _make_project
 - Windows Desktop E2E Testing
-- load_all_instincts
+- _load_instincts_from_dir
 - PRP Plan
 - Web Performance Rules
 - runner.py
@@ -132,10 +132,10 @@
 - planner.md
 - Refactor & Dead Code Cleaner
 - common-testing.md
-- _load_instincts_from_dir
+- quality-gate.py
 - common-hooks.md
 - Dart/Flutter Testing
-- TranscriptCorrectionService
+- MeetingNotesService
 - session-start.mjs
 - Continuous Learning Skill - DEPRECATED
 - observer-loop.sh
@@ -164,7 +164,7 @@
 - /marketing-campaign
 - Resume Session Command
 - Rust Code Review
-- server.js
+- meetingNotes.js
 - app.js
 - Workflow
 - Kotlin Build Error Resolver
@@ -403,10 +403,8 @@
 - App.vue
 - Python Testing
 - package.json
-- cmd_prune
 - 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
-- Strategic Compact Skill
 
 ## God Nodes (most connected - your core abstractions)
 1. `_make_project()` - 27 edges
@@ -435,15 +433,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (398 total, 33 thin omitted)
+## Communities (396 total, 33 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
-Nodes (28): _append_observations(), _assign_unique_slugs(), _cluster_by_keyword_overlap(), cmd_evolve(), cmd_promote(), _collect_pending_dirs(), _collect_pending_instincts(), _ensure_global_dirs() (+20 more)
+Nodes (27): _append_observations(), _assign_unique_slugs(), _cluster_by_keyword_overlap(), cmd_evolve(), cmd_promote(), _collect_pending_dirs(), _collect_pending_instincts(), _ensure_global_dirs() (+19 more)
 
 ### Community 1 - "test_parse_instinct.py"
-Cohesion: 0.07
-Nodes (33): _normalize_remote_url(), parse_instinct_file(), _update_registry(), _validate_file_path(), test_empty_content_no_error(), test_multiple_instincts_preserve_content(), test_normalize_remote_url_empty_returns_empty(), test_normalize_remote_url_file_scheme_preserves_case() (+25 more)
+Cohesion: 0.06
+Nodes (39): cmd_prune(), _normalize_remote_url(), parse_instinct_file(), _update_registry(), _validate_file_path(), _pending_item(), test_cmd_prune_deletes_only_expired(), test_cmd_prune_dry_run_keeps_files() (+31 more)
 
 ### Community 2 - "Git Workflow Patterns"
 Cohesion: 0.04
@@ -455,15 +453,15 @@ Nodes (47): 1. Tests BEFORE Code, 2. Coverage Requirements, 3. Test Types, 4. Gi
 
 ### Community 4 - "_make_project"
 Cohesion: 0.07
-Nodes (33): cmd_projects(), _cmd_projects_delete(), _cmd_projects_gc(), _cmd_projects_merge(), load_registry(), _project_counts(), _remove_project_storage(), _validate_project_id() (+25 more)
+Nodes (34): cmd_projects(), _cmd_projects_delete(), _cmd_projects_gc(), _cmd_projects_merge(), load_registry(), _project_counts(), _registry_lock(), _remove_project_storage() (+26 more)
 
 ### Community 5 - "Windows Desktop E2E Testing"
 Cohesion: 0.05
 Nodes (41): Add Stable Identifiers to Qt Widgets, Anti-Patterns, Artifact Management, base_page.py, Caveats, CI/CD Integration, config.py, conftest.py (+33 more)
 
-### Community 6 - "load_all_instincts"
-Cohesion: 0.10
-Nodes (11): cmd_export(), cmd_import(), load_all_instincts(), load_project_only_instincts(), _yaml_quote(), test_load_all_empty(), test_load_all_global_only(), test_load_all_project_and_global() (+3 more)
+### Community 6 - "_load_instincts_from_dir"
+Cohesion: 0.06
+Nodes (21): cmd_export(), cmd_import(), load_all_instincts(), _load_instincts_from_dir(), load_project_only_instincts(), _yaml_quote(), test_load_all_empty(), test_load_all_global_only() (+13 more)
 
 ### Community 7 - "PRP Plan"
 Cohesion: 0.05
@@ -494,12 +492,12 @@ Cohesion: 0.07
 Nodes (28): 1. Current State Analysis, 1. Modularity & Separation of Concerns, 2. Requirements Gathering, 2. Scalability, 3. Design Proposal, 3. Maintainability, 4. Security, 4. Trade-Off Analysis (+20 more)
 
 ### Community 14 - "evaluate.py"
-Cohesion: 0.07
-Nodes (19): AxisScore, check_accuracy(), check_actionability(), check_clarity(), check_completeness(), check_conciseness(), _check_jargon(), _check_summary() (+11 more)
+Cohesion: 0.12
+Nodes (14): AxisScore, check_accuracy(), check_actionability(), check_clarity(), check_completeness(), check_conciseness(), _check_jargon(), _check_summary() (+6 more)
 
 ### Community 15 - "shared.mjs"
-Cohesion: 0.10
-Nodes (26): contextDirPath, projects, resolved, resolved, resolved, CK_HOME, contextMdPath(), contextPath() (+18 more)
+Cohesion: 0.15
+Nodes (16): resolved, resolved, CK_HOME, daysAgoLabel(), encodeProjectPath(), gitLogSince(), gitSummary(), nativeMemoryDir() (+8 more)
 
 ### Community 16 - "Review Checklist"
 Cohesion: 0.08
@@ -530,8 +528,8 @@ Cohesion: 0.08
 Nodes (23): 1. Enable Observation Hooks, 2. Initialize Directory Structure, 3. Use the Instinct Commands, Backward Compatibility, Commands, Confidence Scoring, Configuration, Continuous Learning v2.1 - Instinct (+15 more)
 
 ### Community 23 - "What You Must Do When Invoked"
-Cohesion: 0.08
-Nodes (23): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+15 more)
+Cohesion: 0.05
+Nodes (40): usage(), For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands (+32 more)
 
 ### Community 24 - "ObservationEvent"
 Cohesion: 0.17
@@ -590,8 +588,8 @@ Cohesion: 0.10
 Nodes (19): /click-path-audit — Behavioural Flow Audit, Example: The Bug That Inspired This Skill, Execution Steps, How It Works, Integration with Other Skills, Pattern 1: Sequential Undo, Pattern 2: Async Race, Pattern 3: Stale Closure (+11 more)
 
 ### Community 38 - "review-with-codex.js"
-Cohesion: 0.14
-Nodes (18): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+10 more)
+Cohesion: 0.18
+Nodes (15): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+7 more)
 
 ### Community 39 - "grade"
 Cohesion: 0.22
@@ -734,8 +732,8 @@ Cohesion: 0.12
 Nodes (15): 1. Connect the MCP server, 2. Call standalone tools only, 3. Interpret scores (1–10), 4. Run the feedback loop, Code Health MCP (CodeScene), Example: AGENTS.md enforcement block, Example: anti-patterns vs correct loop, Example: Flask maintainability improvement (+7 more)
 
 ### Community 74 - "save.mjs"
-Cohesion: 0.15
-Nodes (15): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+7 more)
+Cohesion: 0.14
+Nodes (16): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+8 more)
 
 ### Community 75 - "Inherit Legacy Style"
 Cohesion: 0.12
@@ -901,9 +899,9 @@ Nodes (13): 1. Analyze, 2. Verify, 3. Remove Safely, 4. Consolidate Duplicates, 
 Cohesion: 0.25
 Nodes (5): ASP.NET Core Integration Tests, C# Testing, Coverage, Test Framework, Test Organization
 
-### Community 116 - "_load_instincts_from_dir"
-Cohesion: 0.12
-Nodes (10): _load_instincts_from_dir(), test_load_annotates_metadata(), test_load_defaults_scope_from_label(), test_load_from_empty_dir(), test_load_from_nonexistent_dir(), test_load_handles_corrupt_file(), test_load_instincts_from_dir_uses_utf8_encoding(), test_load_preserves_explicit_scope() (+2 more)
+### Community 116 - "quality-gate.py"
+Cohesion: 0.16
+Nodes (5): check_disk(), check_stale_libs(), count_edits(), get_project_memory_dir(), main()
 
 ### Community 117 - "common-hooks.md"
 Cohesion: 0.14
@@ -913,12 +911,12 @@ Nodes (9): C# Hooks, PostToolUse Hooks, Stop Hooks, Go Hooks, PostToolUse Hooks,
 Cohesion: 0.14
 Nodes (13): Async Testing, BLoC with `bloc_test`, Coverage, Dart/Flutter Testing, Fakes Over Mocks, Golden Tests, Riverpod with `ProviderContainer`, Test Framework (+5 more)
 
-### Community 119 - "TranscriptCorrectionService"
+### Community 119 - "MeetingNotesService"
 Cohesion: 0.09
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
-Cohesion: 0.21
+Cohesion: 0.19
 Nodes (12): CK_HOME, CURRENT_SESSION, daysAgo(), extractClaudeMdGoal(), gitLogSince(), main(), parts, PROJECTS_FILE (+4 more)
 
 ### Community 121 - "Continuous Learning Skill - DEPRECATED"
@@ -1025,9 +1023,9 @@ Nodes (12): Candidate ranking for implicit and date-based lookup, Edge Cases, Ex
 Cohesion: 0.15
 Nodes (12): Approval Criteria, Automated Checks Run, CRITICAL (Must Fix), Example Usage, HIGH (Should Fix), Integration with Other Commands, MEDIUM (Consider), Related (+4 more)
 
-### Community 148 - "server.js"
-Cohesion: 0.12
-Nodes (22): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, { correctTranscriptWithNLP }, DEBATE_PATTERNS, DECISION_KEYWORDS (+14 more)
+### Community 148 - "meetingNotes.js"
+Cohesion: 0.11
+Nodes (25): correctTranscriptWithAI(), correctTranscriptWithNLP(), https, ORAL_CONTRACTIONS, TECH_ACRONYMS, cleanTopicString(), { correctTranscriptWithNLP }, DEBATE_PATTERNS (+17 more)
 
 ### Community 149 - "app.js"
 Cohesion: 0.13
@@ -1498,8 +1496,8 @@ Cohesion: 0.25
 Nodes (7): Content Security Policy, Forms, HTTPS and Headers, Nonce-Based CSP, Third-Party Scripts, Web Security Rules, XSS Prevention
 
 ### Community 267 - "migrate.mjs"
-Cohesion: 0.29
-Nodes (5): isDryRun, parseBullets(), parseLeftOff(), projects, shortId()
+Cohesion: 0.13
+Nodes (14): contextDirPath, projects, resolved, isDryRun, parseBullets(), parseLeftOff(), projects, contextMdPath() (+6 more)
 
 ### Community 268 - "skill-comply: Automated Compliance Measurement"
 Cohesion: 0.25
@@ -1885,21 +1883,13 @@ Nodes (5): Coverage, Framework, Python Testing, Reference, Test Organization
 Cohesion: 0.10
 Nodes (18): author, description, keywords, license, main, name, scripts, build (+10 more)
 
-### Community 391 - "cmd_prune"
-Cohesion: 0.38
-Nodes (6): cmd_prune(), _pending_item(), test_cmd_prune_deletes_only_expired(), test_cmd_prune_dry_run_keeps_files(), test_cmd_prune_empty_pending_nothing_to_do(), test_cmd_prune_quiet_suppresses_output()
-
 ### Community 392 - "🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas"
 Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
-### Community 395 - "Strategic Compact Skill"
-Cohesion: 0.13
-Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Composition Awareness, Context Optimization Tools, Duplicate Instruction Detection, Hook Setup, Related (+6 more)
-
 ## Knowledge Gaps
 - **3082 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3077 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3458 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -1914,8 +1904,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
   _3082 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.04864311315924219 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05081967213114754 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.06868686868686869 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06108597285067873 - nodes in this community are weakly interconnected._
 - **Should `Git Workflow Patterns` be split into smaller, more focused modules?**
   _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._

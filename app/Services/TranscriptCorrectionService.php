@@ -137,6 +137,15 @@ class TranscriptCorrectionService
         $text = preg_replace('/\bstejing\b|\bstageing\b/i', 'staging', $text);
         $text = preg_replace('/\bcek\s+out\b|\bcekot\b/i', 'checkout', $text);
         $text = preg_replace('/\btrefik\b|\btrafik\b/i', 'traffic', $text);
+        $text = preg_replace('/\bapdet\b|\bapdate\b|\bupdet\b/i', 'update', $text);
+        $text = preg_replace('/\breviu\b|\brepyu\b/i', 'review', $text);
+        $text = preg_replace('/\bklain\b|\bkelien\b/i', 'klien', $text);
+        $text = preg_replace('/\binvois\b|\binpois\b/i', 'invoice', $text);
+        $text = preg_replace('/\bpeimen\b|\bpemen\s+getwei\b/i', 'payment gateway', $text);
+        $text = preg_replace('/\bmerg\b/i', 'merge', $text);
+        $text = preg_replace('/\bklaud\b|\bklaut\b/i', 'cloud', $text);
+        $text = preg_replace('/\bsingkron\b|\bsingkrun\b/i', 'sinkronisasi', $text);
+        $text = preg_replace('/\brekues\b|\brekwest\b/i', 'request', $text);
 
         if ($text !== $beforePhonetic) {
             $changes[] = 'Koreksi salah dengar fonetis industri teknologi & bisnis (brainstorming, conversion rate, downtime, bug, Q4, dll)';
@@ -178,9 +187,13 @@ class TranscriptCorrectionService
             $text = preg_replace($pattern, $replacement, $text);
         }
 
+        $text = preg_replace('/\s+([,.?!;:])/u', '$1', $text);
         $text = preg_replace('/\s{2,}/', ' ', trim($text));
 
         if (!empty($text)) {
+            $text = preg_replace_callback('/([.?!])\s*([a-zÀ-ÿ])/u', function($matches) {
+                return $matches[1] . ' ' . mb_strtoupper($matches[2]);
+            }, $text);
             $text = ucfirst($text);
             if (!preg_match('/[.?!]$/', $text)) {
                 $text .= (preg_match('/^(?:apakah|bagaimana|kapan|kenapa|mengapa|siapa|berapa)\b/i', $text)) ? '?' : '.';

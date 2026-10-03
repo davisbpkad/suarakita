@@ -192,6 +192,15 @@ function correctTranscriptWithNLP(rawText) {
   text = text.replace(/\bstejing\b|\bstageing\b/gi, 'staging');
   text = text.replace(/\bcek\s+out\b|\bcekot\b/gi, 'checkout');
   text = text.replace(/\btrefik\b|\btrafik\b/gi, 'traffic');
+  text = text.replace(/\bapdet\b|\bapdate\b|\bupdet\b/gi, 'update');
+  text = text.replace(/\breviu\b|\brepyu\b/gi, 'review');
+  text = text.replace(/\bklain\b|\bkelien\b/gi, 'klien');
+  text = text.replace(/\binvois\b|\binpois\b/gi, 'invoice');
+  text = text.replace(/\bpeimen\b|\bpemen\s+getwei\b/gi, 'payment gateway');
+  text = text.replace(/\bmerg\b|\bmージ\b/gi, 'merge');
+  text = text.replace(/\bklaud\b|\bklaut\b/gi, 'cloud');
+  text = text.replace(/\bsingkron\b|\bsingkrun\b/gi, 'sinkronisasi');
+  text = text.replace(/\brekues\b|\brekwest\b/gi, 'request');
 
   if (text !== beforePhonetic) {
     changes.push('Koreksi salah dengar fonetis industri teknologi & bisnis (brainstorming, conversion rate, downtime, bug, Q4, dll)');
@@ -214,13 +223,17 @@ function correctTranscriptWithNLP(rawText) {
     text = text.replace(new RegExp(pattern.source, 'gi'), replacement);
   });
 
-  // 7. Perapihan spasi berlebih
+  // 7. Perapihan tanda baca dan spasi
+  text = text.replace(/\s+([,.?!;:])/g, '$1'); // Hapus spasi sebelum tanda baca
   text = text.replace(/\s{2,}/g, ' ').trim();
 
   // 8. Kapitalisasi awal kalimat dan tanda baca alami
   if (text.length > 0) {
+    // Kapitalisasi huruf pertama setelah tanda baca terminal (. ? !)
+    text = text.replace(/([.?!])\s*([a-zÀ-ÿ])/g, (m, punct, letter) => `${punct} ${letter.toUpperCase()}`);
     text = text.charAt(0).toUpperCase() + text.slice(1);
-    // Tambahkan tanda baca titik jika belum diakhiri tanda baca terminal
+
+    // Tambahkan tanda baca titik/tanya jika belum diakhiri tanda baca terminal
     if (!/[.?!]$/.test(text)) {
       if (/^(?:apakah|bagaimana|kapan|kenapa|mengapa|siapa|berapa)\b/i.test(text)) {
         text += '?';
@@ -246,27 +259,36 @@ async function correctTranscriptWithAI(rawText, apiKey) {
     return correctTranscriptWithNLP(rawText);
   }
 
-  const prompt = `Anda adalah editor transkrip percakapan bahasa Indonesia profesional khusus industri teknologi dan bisnis.
-Tugas Anda adalah membersihkan dan mengoreksi draf transkrip mentah berikut.
+  const prompt = `Anda adalah editor transkrip percakapan profesional tingkat tinggi khusus industri teknologi, operasional, dan bisnis di Indonesia.
+Tugas Anda adalah mentransformasikan draf transkrip mentah berikut menjadi teks transkrip percakapan yang BERSIH, KOHEREN, MENGALIR NATURAL, BERTATA BAHASA BAIK, SERTA MEMILIKI TANDA BACA DAN KAPITALISASI YANG TEPAT.
 
-Aturan Ketat Koreksi:
-1. PERBAIKAN KATA (Contextual Correction): Perbaiki kesalahan dengar berbasis fonetis secara otomatis berdasarkan konteks industri teknologi/bisnis:
-   - Contoh: "range roaming" -> "brainstorming"
-   - "convention Redmi" -> "conversion rate"
-   - "downline total" -> "downtime total"
-   - "bab/BAB" -> "bug" (kecuali jika merujuk pada Bab buku/laporan)
-   - "untuk 4 / di 4" -> "untuk Kuartal 4 / Q4"
-   - "ruang setting" -> "ruang meeting"
-   - "biaya hadir" -> "bisa hadir"
-2. Bersihkan interupsi pembicara (tes audio, cek mic, selaan "tunggu bentar", "sorry kepotong", dll).
-3. Hapus kata-kata berulang/gagap lisan dan filler words (eh, anu, um, hmmm).
-4. Ubah kata singkatan tidak baku (yg, dgn, utk, sdh, blm, sy, tdk) menjadi kata baku bahasa Indonesia.
-5. Pertahankan substansi dan fakta asli pembicaraan tanpa mengurangi informasi penting.
+ATURAN KETAT KOREKSI:
+1. PERBAIKAN SALAH DENGAR FONETIS KONTEKSTUAL:
+   - Perbaiki secara cerdas istilah teknologi/bisnis yang salah didengar oleh speech-to-text:
+     * "range roaming" -> "brainstorming"
+     * "convention Redmi" -> "conversion rate"
+     * "downline total" -> "downtime total"
+     * "bab/BAB" -> "bug" (kecuali jika merujuk pada Bab buku/laporan)
+     * "untuk 4 / di 4" -> "untuk Kuartal 4 / Q4"
+     * "ruang setting" -> "ruang meeting"
+     * "biaya hadir" -> "bisa hadir"
+     * Istilah lain seperti deploy, merge, pull request, backend, frontend, pipeline, staging, dll.
+2. RESTRUKTURISASI ALUR KALIMAT & TANDA BACA:
+   - Sambungkan kata-kata atau klausa yang terpotong menjadi kalimat yang utuh, mengalir, dan nyaman dibaca.
+   - Bubuhkan tanda baca koma, titik, tanda tanya di posisi jeda yang alami.
+   - Berikan huruf kapital di awal kalimat, nama orang, dan akronim (SOP, KPI, QA, UI/UX, API, CEO, Q1-Q4).
+3. PEMBERSIHAN GANGGUAN LISAN:
+   - Bersihkan interupsi pembicara (tes audio, cek mic, selaan "tunggu bentar", "sorry kepotong", dll).
+   - Hapus kata-kata berulang/gagap lisan dan filler words (eh, anu, um, hmmm, you know).
+4. NORMALISASI KATA LISAN & SINGKATAN:
+   - Ubah kata singkatan tidak baku (yg, dgn, utk, sdh, blm, sy, tdk, gmn, knp, dll.) menjadi kata baku bahasa Indonesia.
+5. INTEGRITAS FAKTA 100%:
+   - Pertahankan seluruh substansi, data, angka, nama orang, dan fakta asli pembicaraan tanpa distorsi.
 
 Format output WAJIB berupa JSON murni dengan skema:
 {
-  "correctedText": "Teks transkrip yang telah dikoreksi bersih dan rapi",
-  "changes": ["Daftar ringkas perbaikan yang telah dilakukan"]
+  "correctedText": "Teks transkrip yang telah dikoreksi bersih, mengalir natural, dan rapi",
+  "changes": ["Daftar ringkas perbaikan penting yang dilakukan"]
 }
 
 HANYA berikan JSON valid tanpa markdown formatting (jangan gunakan \`\`\`json).

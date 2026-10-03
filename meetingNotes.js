@@ -46,6 +46,88 @@ const DEBATE_PATTERNS = [
 ];
 
 /**
+ * Ekstraksi Topik Cerdas Berdasarkan Substansi Percakapan Nyata
+ * (Menghindari topik template generik)
+ */
+function extractSmartTopic(sentences, fullText) {
+  // 1. Deteksi penyebutan eksplisit topik atau agenda rapat
+  for (const s of sentences) {
+    const explicitMatch = s.match(/(?:agenda|topik|fokus|bahasan|membahas|pertemuan\s+hari\s+ini|meeting\s+hari\s+ini|rapat\s+hari\s+ini)\s+(?:tentang|mengenai|soal|adalah|yaitu)?\s*([^.?!,;]+)/i);
+    if (explicitMatch) {
+      let candidate = explicitMatch[1]
+        .replace(/^(?:rapat|meeting|diskusi|hari\s+ini|besok|pekan\s+ini)\s+/i, '')
+        .trim();
+      candidate = cleanTopicString(candidate);
+      if (candidate.length >= 4 && candidate.length <= 60) {
+        return candidate;
+      }
+    }
+  }
+
+  // 2. Ekstrak frasa inti dari kalimat pembuka yang bermakna (mengabaikan salam)
+  for (const s of sentences) {
+    if (/^(?:halo|selamat|hai|assalamu|pagi|siang|sore|malam|tes|cek)\b/i.test(s)) continue;
+
+    // Pola fokus spesifik: masalah, proyek, fitur, jadwal, kendala, server, dsb.
+    const patternMatch = s.match(/(?:terkait|soal|tentang|mengenai|rencana|masalah|kendala|evaluasi|proyek|fitur|jadwal|target|perbaikan|pengembangan|sistem|server|database|anggaran|biaya|rilis|deploy)\s+([^.?!,;]+)/i);
+    if (patternMatch) {
+      let candidate = cleanTopicString(patternMatch[0]);
+      if (candidate.length >= 6 && candidate.length <= 60) {
+        return candidate;
+      }
+    }
+
+    // Ambil klausa utama pertama yang padat
+    const firstClause = s.split(/[,;]/)[0].trim();
+    if (firstClause.length >= 8 && firstClause.length <= 55) {
+      let candidate = cleanTopicString(firstClause);
+      if (candidate.length >= 6) {
+        return candidate;
+      }
+    }
+  }
+
+  // 3. Ekstraksi kata-kata kunci utama jika kalimat tidak terstruktur formal
+  const cleanWords = fullText
+    .replace(/^(?:halo|selamat\s+(?:pagi|siang|sore|malam)|assalamualaikum|hai)\s*[,.?!]?\s*/i, '')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 7)
+    .join(' ')
+    .replace(/[.?!,]+$/, '');
+
+  if (cleanWords.length >= 5) {
+    return cleanTopicString(cleanWords);
+  }
+
+  return 'Catatan Percakapan';
+}
+
+function cleanTopicString(str) {
+  let s = (str || '').trim().replace(/\s+/g, ' ');
+  s = s.replace(/^(?:dan|lalu|kemudian|bahwa|kita|kami|saya|jadi|untuk)\s+/i, '');
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/**
+ * Format Output Markdown Resmi (Hanya menampilkan bagian yang benar-benar ada)
+ */
+function formatMeetingNotesMarkdown(topic, summary, keyTakeaways, decisions) {
+  let md = `NOTULEN RAPAT (Minutes of Meeting)\n\n📌 Topik / Konteks Pembicaraan:\n${topic}\n\n📝 Ringkasan Hasil Rapat:\n${summary}\n`;
+
+  if (Array.isArray(keyTakeaways) && keyTakeaways.length > 0) {
+    md += `\n💡 Poin-Poin Utama (Key Takeaways):\n${keyTakeaways.map(k => `* ${k}`).join('\n')}\n`;
+  }
+
+  if (Array.isArray(decisions) && decisions.length > 0) {
+    md += `\n⚖️ Keputusan yang Diambil (Decisions Made):\n${decisions.map(d => `* ${d}`).join('\n')}\n`;
+  }
+
+  return md.trim();
+}
+
+/**
  * Pembuatan Notulen Rapat Menggunakan Mesin NLP Lokal Bawaan
  */
 function generateMeetingNotesWithNLP(rawTranscriptText) {
@@ -70,27 +152,11 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
     .map(s => s.trim())
     .filter(s => s.length > 5);
 
-  // 2. EKSTRAKSI TOPIK / KONTEKS PEMBICARAAN
-  let topic = 'Evaluasi dan Koordinasi Rapat';
-  for (const s of rawSentences) {
-    const topicMatch = s.match(/(?:membahas|evaluasi|progres|peluncuran|pertemuan|agenda|topik|koordinasi|fokus|tinjauan)\s+([^.?!]+)/i);
-    if (topicMatch) {
-      let t = topicMatch[1]
-        .replace(/^(?:rapat\s+hari\s+ini|hari\s+ini|besok|pekan\s+ini|tentang|mengenai|soal|pada|terkait)\s+/i, '')
-        .replace(/\b(?:rapat\s+hari\s+ini|hari\s+ini|besok|pekan\s+ini)\b/gi, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (t.length > 3) {
-        topic = t.charAt(0).toUpperCase() + t.slice(1);
-        if (!topic.toLowerCase().startsWith('evaluasi') && !topic.toLowerCase().startsWith('pembahasan') && !topic.toLowerCase().startsWith('koordinasi')) {
-          topic = 'Evaluasi ' + topic;
-        }
-        break;
-      }
-    }
-  }
+  // 2. EKSTRAKSI TOPIK CERDAS (Berbasis isi percakapan nyata, bukan template)
+  const topic = extractSmartTopic(rawSentences, text);
 
   // 3. EKSTRAKSI KEPUTUSAN YANG DIAMBIL (Tanpa Argumen / Perdebatan)
+  // Aturan Ketat: Jika TIDAK ADA keputusan yang disepakati, decisions HARUS KOSONG ([]).
   const decisions = [];
   rawSentences.forEach(s => {
     const hasDecisionKw = DECISION_KEYWORDS.some(kw => new RegExp(`\\b${kw}\\b`, 'i').test(s));
@@ -100,11 +166,10 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
       cleanDecision = cleanDecision.replace(/^.*?(?:setelah\s+(?:perdebatan|diskusi\s+panjang|mempertimbangkan|pro\s+kontra)[^,]*,\s*)/i, '');
       cleanDecision = cleanDecision.replace(/^.*?(?:meskipun\s+sempat[^,]*,\s*)/i, '');
       
-      // Ambil inti hasil kesepakatan
-      const matchAgreed = cleanDecision.match(/(?:disepakati|sepakat|setuju|diputuskan|memutuskan|menetapkan|ditetapkan|mufakat)\s+(?:bahwa\s+)?([^.?!]+)/i);
+      // Ambil inti hasil kesepakatan (presisi tanpa memotong angka ber-titik seperti jam 23.00 atau 1.5)
+      const matchAgreed = cleanDecision.match(/(?:disepakati|sepakat|setuju|diputuskan|memutuskan|menetapkan|ditetapkan|mufakat)\s+(?:bahwa\s+)?([^\n]+?)(?=[.?!](?:\s+|$)|$)/i);
       if (matchAgreed) {
         let outcome = matchAgreed[1].trim();
-        // Bersihkan dari argumen sisa
         outcome = outcome.replace(/\s+karena\s+sebelumnya.*$/i, '');
         let formatted = `Disepakati ${outcome}`;
         formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -127,67 +192,65 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
     }
   });
 
-  if (decisions.length === 0) {
-    decisions.push('Seluruh tim menyepakati untuk mengeksekusi rencana kerja sesuai target yang telah ditetapkan.');
-  }
-
   // 4. EKSTRAKSI POIN-POIN UTAMA (Key Takeaways) - Termasuk Data/Angka
   const keyTakeaways = [];
   rawSentences.forEach(s => {
     // Abaikan salam pembuka, kalimat pengantar agenda, kalimat keputusan, dan perdebatan murni
     const isDebate = DEBATE_PATTERNS.some(p => p.test(s));
-    if (!/^(?:selamat|halo|assalamualaikum|hai|pagi|siang|sore|malam)\b/i.test(s) &&
-        !DECISION_KEYWORDS.some(kw => new RegExp(`\\b${kw}\\b`, 'i').test(s)) &&
+    const isGreeting = /^(?:selamat|halo|assalamualaikum|hai|pagi|siang|sore|malam)\b/i.test(s);
+    const isDecision = DECISION_KEYWORDS.some(kw => new RegExp(`\\b${kw}\\b`, 'i').test(s));
+
+    if (!isGreeting && !isDecision && !isDebate &&
         !s.toLowerCase().startsWith('agenda rapat') &&
-        !s.toLowerCase().startsWith('topik hari ini') &&
-        !isDebate) {
+        !s.toLowerCase().startsWith('topik hari ini')) {
       
       let pt = s.replace(/^(?:dan|lalu|kemudian|selanjutnya)\s+/i, '').trim();
       pt = pt.charAt(0).toUpperCase() + pt.slice(1);
       if (!pt.endsWith('.')) pt += '.';
       
-      // Prioritaskan poin yang memuat data/angka atau fakta teknis/bisnis
+      // Ambil poin yang berbobot dan belum ada di daftar
       if (!keyTakeaways.includes(pt) && pt.length > 10) {
         keyTakeaways.push(pt);
       }
     }
   });
 
-  if (keyTakeaways.length === 0 && rawSentences.length > 0) {
-    keyTakeaways.push(rawSentences[0]);
+  // 5. RINGKASAN HASIL PERCAKAPAN (Versi lebih jelas & padat dari percakapan nyata, BUKAN formula template)
+  let summary = '';
+  if (rawSentences.length === 1) {
+    summary = rawSentences[0];
+    if (!summary.endsWith('.')) summary += '.';
+  } else if (rawSentences.length === 2) {
+    summary = `${rawSentences[0]} ${rawSentences[1]}`;
+    if (!summary.endsWith('.')) summary += '.';
+  } else {
+    // Bangun 2-3 kalimat padat representatif dari percakapan nyata
+    let s1 = rawSentences[0].replace(/^(?:selamat\s+(?:pagi|siang|sore|malam)|halo|hai|assalamualaikum)\s*[,.?!]?\s*/i, '');
+    s1 = s1.charAt(0).toUpperCase() + s1.slice(1);
+    if (!s1.endsWith('.')) s1 += '.';
+
+    let s2 = '';
+    if (keyTakeaways.length > 0 && keyTakeaways[0] !== s1) {
+      s2 = keyTakeaways[0];
+    } else {
+      s2 = rawSentences[Math.floor(rawSentences.length / 2)];
+    }
+    if (!s2.endsWith('.')) s2 += '.';
+
+    let s3 = '';
+    if (decisions.length > 0) {
+      s3 = decisions[0];
+    } else if (rawSentences.length >= 3 && rawSentences[rawSentences.length - 1] !== s2 && rawSentences[rawSentences.length - 1] !== s1) {
+      s3 = rawSentences[rawSentences.length - 1];
+    }
+    if (s3 && !s3.endsWith('.')) s3 += '.';
+
+    const summaryParts = [s1, s2, s3].filter(Boolean);
+    summary = summaryParts.join(' ');
   }
 
-  // 5. RINGKASAN HASIL RAPAT (Tepat 2-3 Kalimat Padat)
-  const firstPoint = keyTakeaways[0] 
-    ? keyTakeaways[0].replace(/[.]$/, '').toLowerCase() 
-    : 'berbagai aspek operasional dan teknis telah ditinjau secara mendalam';
-  
-  const mainDecision = decisions[0] 
-    ? decisions[0].replace(/^[A-Z][a-z]+\s+/i, '').replace(/[.]$/, '').toLowerCase() 
-    : 'arah pelaksanaan tindak lanjut telah disepakati bersama';
-
-  // Susun tepat 2-3 kalimat eksekutif
-  const sentence1 = `Rapat ini difokuskan pada ${topic.toLowerCase()} guna menyelaraskan strategi dan operasional tim.`;
-  const sentence2 = `Dalam sesi pembahasan, dilaporkan bahwa ${firstPoint}.`;
-  const sentence3 = `Sebagai tindak lanjut konkret, disepakati bahwa ${mainDecision}.`;
-
-  const summary = `${sentence1} ${sentence2} ${sentence3}`;
-
-  // 6. FORMAT OUTPUT RESMI SESUAI SPESIFIKASI PENGGUNA
-  const rawMarkdown = `NOTULEN RAPAT (Minutes of Meeting)
-
-📌 Topik / Konteks Pembicaraan:
-${topic}
-
-📝 Ringkasan Hasil Rapat:
-${summary}
-
-💡 Poin-Poin Utama (Key Takeaways):
-${keyTakeaways.map(k => `* ${k}`).join('\n')}
-
-⚖️ Keputusan yang Diambil (Decisions Made):
-${decisions.map(d => `* ${d}`).join('\n')}
-`;
+  // 6. FORMAT OUTPUT MARKDOWN DINAMIS
+  const rawMarkdown = formatMeetingNotesMarkdown(topic, summary, keyTakeaways, decisions);
 
   return {
     topic,
@@ -207,39 +270,37 @@ async function generateMeetingNotesWithAI(rawTranscriptText, apiKey) {
     return generateMeetingNotesWithNLP(rawTranscriptText);
   }
 
-  const prompt = `Anda adalah sekretaris eksekutif profesional.
-Buat Notulen Rapat (Minutes of Meeting / MoM) resmi dari transkrip percakapan berikut dengan mematuhi ATURAN KETAT ini:
+  const prompt = `Anda adalah analis percakapan dan notulis eksekutif profesional.
+Tugas Anda adalah membuat Notulen Rapat (Minutes of Meeting / MoM) cerdas, presisi, dan kontekstual dari transkrip percakapan berikut.
 
-1. PERBAIKAN KATA (Contextual Correction):
-   Perbaiki semua kesalahan dengar berbasis fonetis industri teknologi/bisnis secara otomatis:
-   - "range roaming" -> "brainstorming"
-   - "convention Redmi" -> "conversion rate"
-   - "downline total" -> "downtime total"
-   - "bab/BAB" -> "bug" (kecuali jika Bab buku)
-   - "untuk 4 / di 4" -> "untuk Kuartal 4 / Q4"
-   - Bersihkan kata-kata berulang/gagap dan interupsi pembicara (tes audio, cek mic, selaan).
+ATURAN KETAT WAJIB DIPATUHI:
+1. TOPIK / KONTEKS PEMBICARAAN (topic):
+   - Simpulkan topik spesifik apa yang BENAR-BENAR dibicarakan dari konten percakapan.
+   - JANGAN PERNAH membuat topik template generik (seperti "Evaluasi dan Koordinasi Tim", "Pembahasan Proyek", "Rapat Koordinasi") jika percakapan membahas hal spesifik (misal: "Penanganan Downtime Database", "Rencana Peluncuran Fitur Pembayaran", "Jadwal Piket Kantor", atau "Diskusi Santai Menu Makan Siang").
+   - Judul topik harus singkat (3-8 kata), jelas, dan mencerminkan subjek pembicaraan.
 
-2. KEPUTUSAN YANG DIAMBIL:
-   Tuliskan HANYA poin hasil akhir yang disepakati secara ringkas.
-   JANGAN PERNAH memasukkan draf perdebatan, argumen pro-kontra, komparasi, atau dialog panjang pembicara di bagian ini. Ekstrak HANYA inti keputusan konkritnya.
+2. RINGKASAN HASIL PERCAKAPAN (summary):
+   - Buat ringkasan eksekutif tepat 2-3 kalimat yang merupakan VERSI LEBIH BERSIH, JELAS, DAN PADAT dari apa yang terekam.
+   - JANGAN PERNAH menggunakan rumus kalimat template kaku (seperti "Rapat ini difokuskan pada...", "Dalam sesi pembahasan dilaporkan bahwa...", "Sebagai tindak lanjut konkret...").
+   - Ceritakan secara mengalir apa inti duduk perkara yang dibicarakan, fakta/kendala yang muncul, dan dinamika akhirnya.
 
-3. RINGKASAN:
-   Buat ringkasan eksekutif dalam TEPAT 2-3 kalimat yang padat dan komprehensif.
+3. POIN-POIN UTAMA (keyTakeaways):
+   - Ekstrak fakta penting, angka, persentase, tenggat waktu, atau data krusial yang memang ada dalam pembicaraan.
+   - JIKA percakapan sangat pendek atau hanya obrolan biasa yang tidak memiliki poin-poin utama terpisah, KEMBALIKAN ARRAY KOSONG [].
 
-4. FORMAT OUTPUT:
-   Format output WAJIB berupa JSON murni dengan skema berikut:
-   {
-     "topic": "Tulis topik rapat dengan jelas di sini",
-     "summary": "Tulis tepat 2-3 kalimat ringkasan eksekutif padat di sini",
-     "keyTakeaways": [
-       "Poin penting 1 beserta data/angka jika ada",
-       "Poin penting 2"
-     ],
-     "decisions": [
-       "Keputusan konkrit 1 tanpa argumen perdebatan",
-       "Keputusan konkrit 2"
-     ]
-   }
+4. KEPUTUSAN YANG DIAMBIL (decisions):
+   - Ekstrak HANYA jika ada keputusan konkrit, kesepakatan mufakat, persetujuan bersama, atau tindakan final yang disepakati bersama.
+   - JANGAN PERNAH memasukkan perdebatan, argumen pro-kontra, komparasi, atau dialog panjang.
+   - SANGAT PENTING: Jika TIDAK ADA keputusan yang disepakati (misalnya hanya diskusi biasa, curhat masalah, brainstorming tanpa mufakat, atau percakapan belum selesai), KEMBALIKAN ARRAY KOSONG []. JANGAN PERNAH MENGARANG KEPUTUSAN TEMPLATE!
+
+Format output WAJIB berupa JSON murni dengan skema:
+{
+  "topic": "Topik spesifik hasil analisis isi percakapan",
+  "summary": "Ringkasan eksekutif 2-3 kalimat yang natural dan jelas",
+  "keyTakeaways": ["Poin penting 1", "Poin penting 2"],
+  "decisions": ["Keputusan konkrit 1"]
+}
+Jika tidak ada keyTakeaways atau decisions, kembalikan array kosong [] pada field terkait.
 
 HANYA berikan JSON yang valid tanpa Markdown code block (jangan gunakan \`\`\`json).
 
@@ -282,25 +343,12 @@ ${rawTranscriptText}
             const notes = JSON.parse(cleanJson);
 
             if (notes && notes.topic) {
-              const topic = notes.topic;
-              const summary = notes.summary || 'Rapat telah diselenggarakan dan keputusan penting telah disepakati bersama.';
-              const keyTakeaways = notes.keyTakeaways || [];
-              const decisions = notes.decisions || [];
+              const topic = notes.topic.trim();
+              const summary = notes.summary ? notes.summary.trim() : '';
+              const keyTakeaways = Array.isArray(notes.keyTakeaways) ? notes.keyTakeaways.filter(Boolean) : [];
+              const decisions = Array.isArray(notes.decisions) ? notes.decisions.filter(Boolean) : [];
 
-              const rawMarkdown = `NOTULEN RAPAT (Minutes of Meeting)
-
-📌 Topik / Konteks Pembicaraan:
-${topic}
-
-📝 Ringkasan Hasil Rapat:
-${summary}
-
-💡 Poin-Poin Utama (Key Takeaways):
-${keyTakeaways.map(k => `* ${k}`).join('\n')}
-
-⚖️ Keputusan yang Diambil (Decisions Made):
-${decisions.map(d => `* ${d}`).join('\n')}
-`;
+              const rawMarkdown = formatMeetingNotesMarkdown(topic, summary, keyTakeaways, decisions);
 
               resolve({
                 topic,

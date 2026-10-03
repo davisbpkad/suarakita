@@ -38,24 +38,22 @@ class MeetingNotesService
         $sentences = preg_split('/(?<=[.?!])\s+|\n+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
         $sentences = array_values(array_filter($sentences, fn($s) => strlen(trim($s)) > 5));
 
-        // 1. Topik Rapat
-        $topic = 'Evaluasi dan Koordinasi Rapat';
-        foreach ($sentences as $s) {
-            if (preg_match('/(?:membahas|evaluasi|progres|peluncuran|pertemuan|agenda|topik|koordinasi|fokus|tinjauan)\s+([^.?!]+)/i', $s, $m)) {
-                $t = preg_replace('/^(?:tentang|mengenai|soal|pada|terkait)\s+/i', '', trim($m[1]));
-                $t = preg_replace('/\b(?:hari\s+ini|besok|pekan\s+ini)\b/i', '', $t);
-                $t = trim($t);
-                if (strlen($t) > 3) {
-                    $topic = ucfirst($t);
-                    if (!str_starts_with(strtolower($topic), 'evaluasi') && !str_starts_with(strtolower($topic), 'pembahasan') && !str_starts_with(strtolower($topic), 'koordinasi')) {
-                        $topic = 'Pembahasan ' . $topic;
-                    }
-                    break;
-                }
-            }
+        if (empty($sentences)) {
+            return [
+                'topic' => 'Tidak ada teks transkrip untuk dianalisis.',
+                'summary' => 'Belum ada ringkasan hasil rapat yang dapat diproses.',
+                'keyTakeaways' => [],
+                'decisions' => [],
+                'rawMarkdown' => '',
+                'method' => 'nlp_builtin'
+            ];
         }
 
+        // 1. Topik Rapat Cerdas (Berbasis substansi pembicaraan nyata)
+        $topic = $this->extractSmartTopic($sentences, $text);
+
         // 2. Keputusan yang Diambil (Bebas Perdebatan / Argumen)
+        // Aturan: Jika tidak ada kesepakatan konkrit, kembalikan array kosong
         $decisions = [];
         foreach ($sentences as $s) {
             $hasDecision = false;
@@ -71,7 +69,7 @@ class MeetingNotesService
                 $cleanDecision = preg_replace('/^.*?(?:setelah\s+(?:perdebatan|diskusi\s+panjang|mempertimbangkan|pro\s+kontra)[^,]*,\s*)/i', '', $cleanDecision);
                 $cleanDecision = preg_replace('/^.*?(?:meskipun\s+sempat[^,]*,\s*)/i', '', $cleanDecision);
 
-                if (preg_match('/(?:disepakati|sepakat|setuju|diputuskan|memutuskan|menetapkan|ditetapkan|mufakat)\s+(?:bahwa\s+)?([^.?!]+)/i', $cleanDecision, $matchAgreed)) {
+                if (preg_match('/(?:disepakati|sepakat|setuju|diputuskan|memutuskan|menetapkan|ditetapkan|mufakat)\s+(?:bahwa\s+)?([^\n]+?)(?=[.?!](?:\s+|$)|$)/i', $cleanDecision, $matchAgreed)) {
                     $outcome = trim($matchAgreed[1]);
                     $outcome = preg_replace('/\s+karena\s+sebelumnya.*$/i', '', $outcome);
                     $formatted = 'Disepakati ' . $outcome;
@@ -98,10 +96,6 @@ class MeetingNotesService
                     }
                 }
             }
-        }
-
-        if (empty($decisions)) {
-            $decisions[] = 'Seluruh tim menyepakati untuk mengeksekusi rencana kerja sesuai target yang telah ditetapkan.';
         }
 
         // 3. Poin-Poin Utama (Key Takeaways)
@@ -138,24 +132,40 @@ class MeetingNotesService
             }
         }
 
-        if (empty($keyTakeaways) && !empty($sentences)) {
-            $keyTakeaways[] = ucfirst(trim($sentences[0]));
+        // 4. Ringkasan Hasil Percakapan (Versi lebih padat & jelas dari fakta nyata, bukan template)
+        $summary = '';
+        $count = count($sentences);
+        if ($count === 1) {
+            $summary = rtrim($sentences[0], '.') . '.';
+        } elseif ($count === 2) {
+            $summary = rtrim($sentences[0], '.') . '. ' . rtrim($sentences[1], '.') . '.';
+        } else {
+            $s1 = preg_replace('/^(?:selamat\s+(?:pagi|siang|sore|malam)|halo|hai|assalamualaikum)\s*[,.?!]?\s*/i', '', $sentences[0]);
+            $s1 = ucfirst(trim($s1));
+            if (!preg_match('/[.?!]$/', $s1)) $s1 .= '.';
+
+            $s2 = '';
+            if (!empty($keyTakeaways) && $keyTakeaways[0] !== $s1) {
+                $s2 = $keyTakeaways[0];
+            } else {
+                $s2 = $sentences[(int)floor($count / 2)];
+            }
+            if (!preg_match('/[.?!]$/', $s2)) $s2 .= '.';
+
+            $s3 = '';
+            if (!empty($decisions)) {
+                $s3 = $decisions[0];
+            } elseif ($count >= 3 && $sentences[$count - 1] !== $s2 && $sentences[$count - 1] !== $s1) {
+                $s3 = $sentences[$count - 1];
+            }
+            if ($s3 && !preg_match('/[.?!]$/', $s3)) $s3 .= '.';
+
+            $parts = array_filter([$s1, $s2, $s3]);
+            $summary = implode(' ', $parts);
         }
 
-        // 4. Ringkasan Eksekutif (2-3 Kalimat Padat)
-        $firstPoint = !empty($keyTakeaways) ? strtolower(rtrim($keyTakeaways[0], '.')) : 'berbagai aspek operasional dan teknis telah ditinjau';
-        $mainDecision = !empty($decisions) ? strtolower(rtrim(preg_replace('/^[A-Z][a-z]+\s+/i', '', $decisions[0]), '.')) : 'arah pelaksanaan tindak lanjut telah disepakati bersama';
-
-        $sentence1 = "Rapat ini difokuskan pada " . strtolower($topic) . " guna menyelaraskan strategi dan operasional tim.";
-        $sentence2 = "Dalam sesi pembahasan, dilaporkan bahwa {$firstPoint}.";
-        $sentence3 = "Sebagai tindak lanjut konkret, disepakati bahwa {$mainDecision}.";
-        $summary = "{$sentence1} {$sentence2} {$sentence3}";
-
-        // 5. Raw Markdown Format Wajib
-        $markdownTakeaways = implode("\n", array_map(fn($k) => "* {$k}", $keyTakeaways));
-        $markdownDecisions = implode("\n", array_map(fn($d) => "* {$d}", $decisions));
-
-        $rawMarkdown = "NOTULEN RAPAT (Minutes of Meeting)\n\n📌 Topik / Konteks Pembicaraan:\n{$topic}\n\n📝 Ringkasan Hasil Rapat:\n{$summary}\n\n💡 Poin-Poin Utama (Key Takeaways):\n{$markdownTakeaways}\n\n⚖️ Keputusan yang Diambil (Decisions Made):\n{$markdownDecisions}\n";
+        // 5. Raw Markdown Format Dinamis
+        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summary, $keyTakeaways, $decisions);
 
         return [
             'topic' => $topic,
@@ -167,37 +177,115 @@ class MeetingNotesService
         ];
     }
 
+    protected function extractSmartTopic(array $sentences, string $fullText): string
+    {
+        // 1. Deteksi penyebutan eksplisit topik atau agenda rapat
+        foreach ($sentences as $s) {
+            if (preg_match('/(?:agenda|topik|fokus|bahasan|membahas|pertemuan\s+hari\s+ini|meeting\s+hari\s+ini|rapat\s+hari\s+ini)\s+(?:tentang|mengenai|soal|adalah|yaitu)?\s*([^.?!,;]+)/i', $s, $m)) {
+                $candidate = preg_replace('/^(?:rapat|meeting|diskusi|hari\s+ini|besok|pekan\s+ini)\s+/i', '', trim($m[1]));
+                $candidate = $this->cleanTopicString($candidate);
+                if (strlen($candidate) >= 4 && strlen($candidate) <= 60) {
+                    return $candidate;
+                }
+            }
+        }
+
+        // 2. Ekstrak frasa inti dari kalimat pembuka yang bermakna
+        foreach ($sentences as $s) {
+            if (preg_match('/^(?:halo|selamat|hai|assalamu|pagi|siang|sore|malam|tes|cek)\b/i', $s)) continue;
+
+            if (preg_match('/(?:terkait|soal|tentang|mengenai|rencana|masalah|kendala|evaluasi|proyek|fitur|jadwal|target|perbaikan|pengembangan|sistem|server|database|anggaran|biaya|rilis|deploy)\s+([^.?!,;]+)/i', $s, $m)) {
+                $candidate = $this->cleanTopicString($m[0]);
+                if (strlen($candidate) >= 6 && strlen($candidate) <= 60) {
+                    return $candidate;
+                }
+            }
+
+            $clauses = preg_split('/[,;]/', $s);
+            $firstClause = trim($clauses[0] ?? '');
+            if (strlen($firstClause) >= 8 && strlen($firstClause) <= 55) {
+                $candidate = $this->cleanTopicString($firstClause);
+                if (strlen($candidate) >= 6) {
+                    return $candidate;
+                }
+            }
+        }
+
+        // 3. Fallback ekstraksi kata kunci awal
+        $cleanWords = preg_replace('/^(?:halo|selamat\s+(?:pagi|siang|sore|malam)|assalamualaikum|hai)\s*[,.?!]?\s*/i', '', $fullText);
+        $words = preg_split('/\s+/', trim($cleanWords));
+        $slice = implode(' ', array_slice($words, 0, 7));
+        $slice = preg_replace('/[.?!,]+$/', '', $slice);
+        if (strlen($slice) >= 5) {
+            return $this->cleanTopicString($slice);
+        }
+
+        return 'Catatan Percakapan';
+    }
+
+    protected function cleanTopicString(string $str): string
+    {
+        $s = trim(preg_replace('/\s+/', ' ', $str));
+        $s = preg_replace('/^(?:dan|lalu|kemudian|bahwa|kita|kami|saya|jadi|untuk)\s+/i', '', $s);
+        if ($s === '') return '';
+        return ucfirst($s);
+    }
+
+    protected function formatMeetingNotesMarkdown(string $topic, string $summary, array $keyTakeaways, array $decisions): string
+    {
+        $md = "NOTULEN RAPAT (Minutes of Meeting)\n\n📌 Topik / Konteks Pembicaraan:\n{$topic}\n\n📝 Ringkasan Hasil Rapat:\n{$summary}\n";
+
+        if (!empty($keyTakeaways)) {
+            $markdownTakeaways = implode("\n", array_map(fn($k) => "* {$k}", $keyTakeaways));
+            $md .= "\n💡 Poin-Poin Utama (Key Takeaways):\n{$markdownTakeaways}\n";
+        }
+
+        if (!empty($decisions)) {
+            $markdownDecisions = implode("\n", array_map(fn($d) => "* {$d}", $decisions));
+            $md .= "\n⚖️ Keputusan yang Diambil (Decisions Made):\n{$markdownDecisions}\n";
+        }
+
+        return trim($md);
+    }
+
     protected function generateWithAI(string $text, string $apiKey): ?array
     {
         try {
-            $prompt = "Anda adalah sekretaris eksekutif profesional.
-Buat Notulen Rapat (Minutes of Meeting / MoM) resmi dari transkrip percakapan berikut dengan mematuhi ATURAN KETAT ini:
+            $prompt = "Anda adalah analis percakapan dan notulis eksekutif profesional.
+Tugas Anda adalah membuat Notulen Rapat (Minutes of Meeting / MoM) cerdas, presisi, dan kontekstual dari transkrip percakapan berikut.
 
-1. PERBAIKAN KATA (Contextual Correction):
-   Perbaiki semua kesalahan dengar berbasis fonetis industri teknologi/bisnis secara otomatis:
-   - 'range roaming' -> 'brainstorming'
-   - 'convention Redmi' -> 'conversion rate'
-   - 'downline total' -> 'downtime total'
-   - 'bab/BAB' -> 'bug'
-   - 'untuk 4 / di 4' -> 'untuk Kuartal 4 / Q4'
-   - Bersihkan kata berulang dan interupsi pembicara.
+ATURAN KETAT WAJIB DIPATUHI:
+1. TOPIK / KONTEKS PEMBICARAAN (topic):
+   - Simpulkan topik spesifik apa yang BENAR-BENAR dibicarakan dari konten percakapan.
+   - JANGAN PERNAH membuat topik template generik (seperti 'Evaluasi dan Koordinasi Tim', 'Pembahasan Proyek', 'Rapat Koordinasi') jika percakapan membahas hal spesifik (misal: 'Penanganan Downtime Database', 'Rencana Peluncuran Fitur Pembayaran', 'Jadwal Piket Kantor', atau 'Diskusi Santai Menu Makan Siang').
+   - Judul topik harus singkat (3-8 kata), jelas, dan mencerminkan subjek pembicaraan.
 
-2. KEPUTUSAN YANG DIAMBIL:
-   Tuliskan HANYA poin hasil akhir yang disepakati secara ringkas. JANGAN PERNAH memasukkan draf perdebatan, argumen pro-kontra, komparasi, atau dialog panjang pembicara di bagian ini. Ekstrak HANYA inti keputusan konkritnya.
+2. RINGKASAN HASIL PERCAKAPAN (summary):
+   - Buat ringkasan eksekutif tepat 2-3 kalimat yang merupakan VERSI LEBIH BERSIH, JELAS, DAN PADAT dari apa yang terekam.
+   - JANGAN PERNAH menggunakan rumus kalimat template kaku (seperti 'Rapat ini difokuskan pada...', 'Dalam sesi pembahasan dilaporkan bahwa...', 'Sebagai tindak lanjut konkret...').
+   - Ceritakan secara mengalir apa inti duduk perkara yang dibicarakan, fakta/kendala yang muncul, dan dinamika akhirnya.
 
-3. RINGKASAN:
-   Buat ringkasan eksekutif dalam TEPAT 2-3 kalimat yang padat dan komprehensif.
+3. POIN-POIN UTAMA (keyTakeaways):
+   - Ekstrak fakta penting, angka, persentase, tenggat waktu, atau data krusial yang memang ada dalam pembicaraan.
+   - JIKA percakapan sangat pendek atau hanya obrolan biasa yang tidak memiliki poin-poin utama terpisah, KEMBALIKAN ARRAY KOSONG [].
 
-4. FORMAT OUTPUT WAJIB:
-   JSON murni:
-   {
-     \"topic\": \"Topik rapat dengan jelas\",
-     \"summary\": \"Tepat 2-3 kalimat ringkasan eksekutif padat\",
-     \"keyTakeaways\": [\"Poin penting 1 beserta data/angka\", \"Poin penting 2\"],
-     \"decisions\": [\"Keputusan konkrit 1\", \"Keputusan konkrit 2\"]
-   }
+4. KEPUTUSAN YANG DIAMBIL (decisions):
+   - Ekstrak HANYA jika ada keputusan konkrit, kesepakatan mufakat, persetujuan bersama, atau tindakan final yang disepakati bersama.
+   - JANGAN PERNAH memasukkan perdebatan, argumen pro-kontra, komparasi, atau dialog panjang.
+   - SANGAT PENTING: Jika TIDAK ADA keputusan yang disepakati (misalnya hanya diskusi biasa, curhat masalah, brainstorming tanpa mufakat, atau percakapan belum selesai), KEMBALIKAN ARRAY KOSONG []. JANGAN PERNAH MENGARANG KEPUTUSAN TEMPLATE!
 
-Transkrip:
+Format output WAJIB berupa JSON murni dengan skema:
+{
+  \"topic\": \"Topik spesifik hasil analisis isi percakapan\",
+  \"summary\": \"Ringkasan eksekutif 2-3 kalimat yang natural dan jelas\",
+  \"keyTakeaways\": [\"Poin penting 1\", \"Poin penting 2\"],
+  \"decisions\": [\"Keputusan konkrit 1\"]
+}
+Jika tidak ada keyTakeaways atau decisions, kembalikan array kosong [] pada field terkait.
+
+HANYA berikan JSON yang valid tanpa Markdown code block (jangan gunakan ```json).
+
+Transkrip Pembicaraan:
 \"\"\"
 {$text}
 \"\"\"";
@@ -219,15 +307,12 @@ Transkrip:
                     $clean = trim(preg_replace('/^```json\s*|\s*```$/i', '', $rawText));
                     $res = json_decode($clean, true);
                     if ($res && isset($res['topic'])) {
-                        $topic = $res['topic'];
-                        $summary = $res['summary'] ?? '';
-                        $keyTakeaways = $res['keyTakeaways'] ?? [];
-                        $decisions = $res['decisions'] ?? [];
+                        $topic = trim($res['topic']);
+                        $summary = trim($res['summary'] ?? '');
+                        $keyTakeaways = is_array($res['keyTakeaways'] ?? null) ? array_values(array_filter($res['keyTakeaways'])) : [];
+                        $decisions = is_array($res['decisions'] ?? null) ? array_values(array_filter($res['decisions'])) : [];
 
-                        $markdownTakeaways = implode("\n", array_map(fn($k) => "* {$k}", $keyTakeaways));
-                        $markdownDecisions = implode("\n", array_map(fn($d) => "* {$d}", $decisions));
-
-                        $rawMarkdown = "NOTULEN RAPAT (Minutes of Meeting)\n\n📌 Topik / Konteks Pembicaraan:\n{$topic}\n\n📝 Ringkasan Hasil Rapat:\n{$summary}\n\n💡 Poin-Poin Utama (Key Takeaways):\n{$markdownTakeaways}\n\n⚖️ Keputusan yang Diambil (Decisions Made):\n{$markdownDecisions}\n";
+                        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summary, $keyTakeaways, $decisions);
 
                         return [
                             'topic' => $topic,
