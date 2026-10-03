@@ -2400,9 +2400,9 @@
     "semantic_hash": ""
   },
   "public/index.html": {
-    "mtime": 1790844296.6980944,
-    "seen": 1790844314.555244,
-    "ast_hash": "ef8fafbfc39eebad8485704bfca48506",
+    "mtime": 1791008546.9898217,
+    "seen": 1791008700.865358,
+    "ast_hash": "528ea81d1816a8d15af2539f3fbdd875",
     "semantic_hash": ""
   },
   "corrector.js": {
@@ -2460,9 +2460,9 @@
     "semantic_hash": ""
   },
   "resources/js/App.vue": {
-    "mtime": 1790844272.5738575,
-    "seen": 1790844314.555107,
-    "ast_hash": "3d71203cd3e6efd41d2b044e9d3f00da",
+    "mtime": 1791008493.4540021,
+    "seen": 1791008700.86522,
+    "ast_hash": "d03a9ee6703e969cd3b91b1681d33f05",
     "semantic_hash": ""
   },
   "resources/js/app.js": {

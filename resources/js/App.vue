@@ -12,28 +12,40 @@
       <!-- Right Actions -->
       <div class="flex items-center gap-2">
         <!-- AI Config -->
-        <button
-          @click="showAiConfigModal = true"
-          class="btn-icon"
-          title="Pengaturan AI"
-        >
-          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
-        </button>
-        <!-- Status dot for API key -->
-        <span
-          v-if="hasApiKey"
-          class="w-2 h-2 rounded-full bg-green-500 -ml-3.5 mb-3 ring-2 ring-[var(--color-bg)]"
-        ></span>
+        <div class="relative group">
+          <button
+            @click="showAiConfigModal = true"
+            class="btn-icon"
+            aria-label="Pengaturan AI"
+          >
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
+          </button>
+          <!-- Status dot for API key -->
+          <span
+            v-if="hasApiKey"
+            class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[var(--color-bg)] pointer-events-none"
+          ></span>
+          <!-- Tooltip label -->
+          <div class="theme-tooltip" role="tooltip">
+            <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-yolk)] shrink-0"></span>
+            <span>Pengaturan AI</span>
+          </div>
+        </div>
 
         <!-- Download -->
-        <div class="relative">
+        <div class="relative group">
           <button
             @click="toggleDownloadMenu"
             class="btn-icon"
-            title="Download transkrip"
+            aria-label="Download transkrip"
           >
             <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
           </button>
+          <!-- Tooltip label (hidden when dropdown menu is open) -->
+          <div v-if="!showDownloadMenu" class="theme-tooltip" role="tooltip">
+            <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-yolk)] shrink-0"></span>
+            <span>Download Transkrip</span>
+          </div>
           <div
             v-if="showDownloadMenu"
             class="absolute right-0 mt-2 w-44 bg-white border border-[var(--color-line)] rounded-2xl py-2 z-40 shadow-xl"
@@ -56,23 +68,37 @@
         </div>
 
         <!-- Copy -->
-        <button
-          @click="copyTranscript"
-          class="btn-icon"
-          title="Salin transkrip"
-        >
-          <svg v-if="!copySuccess" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
-          <svg v-else class="w-[18px] h-[18px] text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-        </button>
+        <div class="relative group">
+          <button
+            @click="copyTranscript"
+            class="btn-icon"
+            aria-label="Salin transkrip"
+          >
+            <svg v-if="!copySuccess" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
+            <svg v-else class="w-[18px] h-[18px] text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          </button>
+          <!-- Tooltip label -->
+          <div class="theme-tooltip" role="tooltip">
+            <span class="w-1.5 h-1.5 rounded-full" :class="copySuccess ? 'bg-emerald-400' : 'bg-[var(--color-yolk)]'"></span>
+            <span>{{ copySuccess ? 'Tersalin ke Clipboard!' : 'Salin Transkrip' }}</span>
+          </div>
+        </div>
 
         <!-- Clear -->
-        <button
-          @click="clearTranscript"
-          class="btn-icon"
-          title="Hapus transkrip"
-        >
-          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-        </button>
+        <div class="relative group">
+          <button
+            @click="clearTranscript"
+            class="btn-icon hover:text-red-600"
+            aria-label="Hapus transkrip"
+          >
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+          </button>
+          <!-- Tooltip label (anchored right on mobile to avoid overflow) -->
+          <div class="theme-tooltip theme-tooltip-right" role="tooltip">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+            <span>Hapus Transkrip</span>
+          </div>
+        </div>
       </div>
     </header>
 

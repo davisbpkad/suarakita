@@ -1,7 +1,7 @@
-# Graph Report - web-saya  (2026-10-01)
+# Graph Report - web-saya  (2026-10-03)
 
 ## Corpus Check
-- 418 files · ~281,453 words
+- 418 files · ~281,405 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `71bad59f`
+- Built from commit: `2c9f094e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
