@@ -520,16 +520,35 @@ const formattedRecordingTime = computed(() => {
   return `${pad(mins)}:${pad(secs)}`;
 });
 
-// Pelacak hasil transkrip final per sesi (mencegah bug duplikasi kata di Android / Samsung)
+// Deteksi peramban mobile (Android / Samsung Internet / Chrome Mobile)
+const isMobileDevice = typeof navigator !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// Pelacak status kalimat final terakhir untuk mencegah ghost replay pada Android
+let lastFinalPhrase = '';
+let lastFinalTimestamp = 0;
+let restartTimer = null;
 const processedFinalMap = new Map();
 
 /**
- * Menggabungkan teks transkrip baru tanpa menduplikasi kata yang tumpang tindih (overlap) di batas sambungan.
+ * Pangkas pengulangan kata yang tidak wajar akibat echo/stutter mic (misal: "halo halo halo halo..." -> "halo halo")
+ */
+function collapseExcessiveRepetitions(text) {
+  if (!text) return '';
+  // Kata yang berulang 3 kali atau lebih berturut-turut dipangkas menjadi maksimal 2 kali
+  return text.replace(/\b([a-zA-ZÀ-ÿ0-9]{2,})(?:\s+\1){2,}\b/gi, '$1 $1');
+}
+
+/**
+ * Menggabungkan teks transkrip baru secara mulus tanpa menduplikasi kata yang tumpang tindih di batas sambungan.
  * Sangat penting untuk peramban Android (Chrome / Samsung Internet) yang sering mengirim buffer suara berulang.
  */
 function appendTranscriptCleanly(currentText, newAddition) {
-  const trimmedAddition = (newAddition || '').trim();
+  let trimmedAddition = (newAddition || '').trim();
   if (!trimmedAddition) return currentText || '';
+
+  // Bersihkan pengulangan internal berlebih jika ada
+  trimmedAddition = collapseExcessiveRepetitions(trimmedAddition);
+
   if (!currentText || !currentText.trim()) return trimmedAddition;
 
   const curTrimmed = currentText.trim();
@@ -564,13 +583,20 @@ function initSpeechRecognition() {
   }
 
   recognition = new SpeechRecognition();
-  recognition.continuous = true;
+
+  // KRUSIAL UNTUK ANDROID / SAMSUNG GALAXY S23:
+  // Pada Android / mobile, continuous HARUS false karena engine SpeechRecognizer bawaan OS
+  // hanya mendukung satu frasa per sesi. Jika continuous = true di Android, Chromium akan
+  // mencoba me-loop internal yang memicu bug resultIndex = 0 dan duplikasi kata 5-7x lipat.
+  // Pada desktop (PC/Mac), continuous = true berjalan lancar tanpa bug.
+  recognition.continuous = !isMobileDevice;
   recognition.interimResults = true;
   recognition.lang = currentLanguage.value;
 
   recognition.onresult = (event) => {
     let interim = '';
     let finalChunk = '';
+    const now = Date.now();
 
     for (let i = 0; i < event.results.length; i++) {
       const res = event.results[i];
@@ -578,6 +604,16 @@ function initSpeechRecognition() {
       if (!rawText) continue;
 
       if (res.isFinal) {
+        // Cek anti-ghost replay: jika kalimat yang sama persis diterima dalam rentang waktu < 2.5 detik
+        const isExactRecentDuplicate = (
+          rawText.toLowerCase() === lastFinalPhrase.toLowerCase() &&
+          (now - lastFinalTimestamp) < 2500
+        );
+
+        if (isExactRecentDuplicate) {
+          continue; // Abaikan replay buffer audio Android
+        }
+
         const prevText = processedFinalMap.get(i) || '';
         if (rawText !== prevText) {
           // Tangani kasus akumulasi teks Android (misal: "halo" -> "halo bandung" pada indeks yang sama)
@@ -591,6 +627,8 @@ function initSpeechRecognition() {
             finalChunk = appendTranscriptCleanly(finalChunk, rawText);
           }
           processedFinalMap.set(i, rawText);
+          lastFinalPhrase = rawText;
+          lastFinalTimestamp = now;
         }
       } else {
         // Teks sementara (interim)
@@ -607,7 +645,7 @@ function initSpeechRecognition() {
 
   recognition.onerror = (event) => {
     console.warn('Speech recognition error:', event.error);
-    if (event.error !== 'no-speech') {
+    if (event.error !== 'no-speech' && event.error !== 'aborted') {
       stopRecording();
     }
   };
@@ -616,12 +654,18 @@ function initSpeechRecognition() {
     processedFinalMap.clear();
 
     if (isRecording.value) {
-      try {
-        recognition.lang = currentLanguage.value;
-        recognition.start();
-      } catch (e) {
-        stopRecording();
-      }
+      clearTimeout(restartTimer);
+      // Berikan jeda 250ms pada mobile agar mic audio daemon Samsung melepaskan sesi sebelum mulai lagi
+      restartTimer = setTimeout(() => {
+        if (isRecording.value && recognition) {
+          try {
+            recognition.lang = currentLanguage.value;
+            recognition.start();
+          } catch (e) {
+            console.warn('SpeechRecognition restart error:', e);
+          }
+        }
+      }, isMobileDevice ? 250 : 50);
     }
   };
 }
@@ -642,8 +686,12 @@ function startRecording() {
   }
 
   try {
+    clearTimeout(restartTimer);
     if (!recognition) initSpeechRecognition();
     processedFinalMap.clear();
+    lastFinalPhrase = '';
+    lastFinalTimestamp = 0;
+    recognition.continuous = !isMobileDevice;
     recognition.lang = currentLanguage.value;
     recognition.start();
     isRecording.value = true;
@@ -662,7 +710,10 @@ function startRecording() {
 function stopRecording() {
   isRecording.value = false;
   interimSpeech.value = '';
+  clearTimeout(restartTimer);
   processedFinalMap.clear();
+  lastFinalPhrase = '';
+  lastFinalTimestamp = 0;
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;

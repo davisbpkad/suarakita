@@ -1323,6 +1323,18 @@
       "source_location": "L36"
     },
     {
+      "id": "app_services_transcriptcorrectionservice_closure_1",
+      "label": "{closure#1}()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 119,
+      "community_name": "TranscriptCorrectionService",
+      "file_type": "code",
+      "norm_label": "{closure#1}()",
+      "source_file": "app/Services/TranscriptCorrectionService.php",
+      "source_location": "L71"
+    },
+    {
       "id": "app_services_transcriptcorrectionservice_transcriptcorrectionservice_correct",
       "label": ".correct()",
       "_callable": true,
@@ -1344,7 +1356,7 @@
       "file_type": "code",
       "norm_label": ".correctwithai()",
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L190"
+      "source_location": "L198"
     },
     {
       "id": "app_services_transcriptcorrectionservice_transcriptcorrectionservice_correctwithnlp",
@@ -1944,7 +1956,7 @@
       "file_type": "code",
       "norm_label": "correcttranscriptwithai()",
       "source_file": "corrector.js",
-      "source_location": "L236"
+      "source_location": "L244"
     },
     {
       "id": "corrector_correcttranscriptwithnlp",
@@ -3192,7 +3204,7 @@
       "file_type": "code",
       "norm_label": "appendtranscriptcleanly()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L530"
+      "source_location": "L545"
     },
     {
       "id": "resources_js_app_applycorrection",
@@ -3204,7 +3216,7 @@
       "file_type": "code",
       "norm_label": "applycorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L756"
+      "source_location": "L807"
     },
     {
       "id": "resources_js_app_cleartranscript",
@@ -3216,7 +3228,19 @@
       "file_type": "code",
       "norm_label": "cleartranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L817"
+      "source_location": "L868"
+    },
+    {
+      "id": "resources_js_app_collapseexcessiverepetitions",
+      "label": "collapseExcessiveRepetitions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 388,
+      "community_name": "App.vue",
+      "file_type": "code",
+      "norm_label": "collapseexcessiverepetitions()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L535"
     },
     {
       "id": "resources_js_app_copytext",
@@ -3228,7 +3252,7 @@
       "file_type": "code",
       "norm_label": "copytext()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L821"
+      "source_location": "L872"
     },
     {
       "id": "resources_js_app_copytranscript",
@@ -3240,7 +3264,7 @@
       "file_type": "code",
       "norm_label": "copytranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L830"
+      "source_location": "L881"
     },
     {
       "id": "resources_js_app_downloadmommarkdown",
@@ -3252,7 +3276,7 @@
       "file_type": "code",
       "norm_label": "downloadmommarkdown()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L802"
+      "source_location": "L853"
     },
     {
       "id": "resources_js_app_downloadtranscript",
@@ -3264,7 +3288,7 @@
       "file_type": "code",
       "norm_label": "downloadtranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L847"
+      "source_location": "L898"
     },
     {
       "id": "resources_js_app_initspeechrecognition",
@@ -3276,7 +3300,7 @@
       "file_type": "code",
       "norm_label": "initspeechrecognition()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L559"
+      "source_location": "L578"
     },
     {
       "id": "resources_js_app_loadpreset",
@@ -3288,7 +3312,7 @@
       "file_type": "code",
       "norm_label": "loadpreset()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L710"
+      "source_location": "L761"
     },
     {
       "id": "resources_js_app_removeapikey",
@@ -3300,7 +3324,7 @@
       "file_type": "code",
       "norm_label": "removeapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L701"
+      "source_location": "L752"
     },
     {
       "id": "resources_js_app_runcorrection",
@@ -3312,7 +3336,7 @@
       "file_type": "code",
       "norm_label": "runcorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L731"
+      "source_location": "L782"
     },
     {
       "id": "resources_js_app_runmeetingnotes",
@@ -3324,7 +3348,7 @@
       "file_type": "code",
       "norm_label": "runmeetingnotes()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L777"
+      "source_location": "L828"
     },
     {
       "id": "resources_js_app_saveapikey",
@@ -3336,7 +3360,7 @@
       "file_type": "code",
       "norm_label": "saveapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L696"
+      "source_location": "L747"
     },
     {
       "id": "resources_js_app_startrecording",
@@ -3348,7 +3372,7 @@
       "file_type": "code",
       "norm_label": "startrecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L637"
+      "source_location": "L681"
     },
     {
       "id": "resources_js_app_stoprecording",
@@ -3360,7 +3384,7 @@
       "file_type": "code",
       "norm_label": "stoprecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L662"
+      "source_location": "L710"
     },
     {
       "id": "resources_js_app_toggledownloadmenu",
@@ -3372,7 +3396,7 @@
       "file_type": "code",
       "norm_label": "toggledownloadmenu()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L813"
+      "source_location": "L864"
     },
     {
       "id": "resources_js_app_togglerecording",
@@ -3384,7 +3408,7 @@
       "file_type": "code",
       "norm_label": "togglerecording()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L629"
+      "source_location": "L673"
     },
     {
       "id": "resources_js_app_triggerdownload",
@@ -3396,7 +3420,7 @@
       "file_type": "code",
       "norm_label": "triggerdownload()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L866"
+      "source_location": "L917"
     },
     {
       "id": "agents_skills_skill_comply_scripts_grader_grade",
@@ -43235,7 +43259,7 @@
       "file_type": "code",
       "norm_label": "correctiondata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L724"
+      "source_location": "L775"
     },
     {
       "id": "resources_js_app_currentlanguage",
@@ -43268,7 +43292,7 @@
       "file_type": "code",
       "norm_label": "geminiapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L681"
+      "source_location": "L732"
     },
     {
       "id": "resources_js_app_hasapikey",
@@ -43279,7 +43303,7 @@
       "file_type": "code",
       "norm_label": "hasapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L682"
+      "source_location": "L733"
     },
     {
       "id": "resources_js_app_interimspeech",
@@ -43323,7 +43347,7 @@
       "file_type": "code",
       "norm_label": "loadingaction",
       "source_file": "resources/js/App.vue",
-      "source_location": "L683"
+      "source_location": "L734"
     },
     {
       "id": "resources_js_app_momdata",
@@ -43334,7 +43358,7 @@
       "file_type": "code",
       "norm_label": "momdata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L767"
+      "source_location": "L818"
     },
     {
       "id": "resources_js_app_processedfinalmap",
@@ -43345,7 +43369,7 @@
       "file_type": "code",
       "norm_label": "processedfinalmap",
       "source_file": "resources/js/App.vue",
-      "source_location": "L524"
+      "source_location": "L530"
     },
     {
       "id": "resources_js_app_recordingseconds",
@@ -43367,7 +43391,7 @@
       "file_type": "code",
       "norm_label": "showaiconfigmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L680"
+      "source_location": "L731"
     },
     {
       "id": "resources_js_app_showcorrectionmodal",
@@ -43378,7 +43402,7 @@
       "file_type": "code",
       "norm_label": "showcorrectionmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L723"
+      "source_location": "L774"
     },
     {
       "id": "resources_js_app_showdownloadmenu",
@@ -43400,7 +43424,7 @@
       "file_type": "code",
       "norm_label": "showmommodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L766"
+      "source_location": "L817"
     },
     {
       "id": "resources_js_app_transcripttext",
@@ -62158,7 +62182,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "corrector.js",
-      "source_location": "L238",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -62438,6 +62462,18 @@
       "weight": 1.0
     },
     {
+      "source": "resources_js_app_appendtranscriptcleanly",
+      "target": "resources_js_app_collapseexcessiverepetitions",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L550",
+      "weight": 1.0
+    },
+    {
       "source": "resources_js_app_downloadmommarkdown",
       "target": "resources_js_app_triggerdownload",
       "relation": "calls",
@@ -62446,7 +62482,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L807",
+      "source_location": "L858",
       "weight": 1.0
     },
     {
@@ -62458,7 +62494,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L859",
+      "source_location": "L910",
       "weight": 1.0
     },
     {
@@ -62470,7 +62506,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L587",
+      "source_location": "L623",
       "weight": 1.0
     },
     {
@@ -62482,7 +62518,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L611",
+      "source_location": "L649",
       "weight": 1.0
     },
     {
@@ -62494,7 +62530,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L645",
+      "source_location": "L690",
       "weight": 1.0
     },
     {
@@ -62506,7 +62542,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L631",
+      "source_location": "L675",
       "weight": 1.0
     },
     {
@@ -62518,7 +62554,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L633",
+      "source_location": "L677",
       "weight": 1.0
     },
     {
@@ -109024,6 +109060,17 @@
       "weight": 1.0
     },
     {
+      "source": "app_services_transcriptcorrectionservice",
+      "target": "app_services_transcriptcorrectionservice_closure_1",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/TranscriptCorrectionService.php",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
       "source": "bootstrap_app",
       "target": "bootstrap_app_closure_1",
       "relation": "contains",
@@ -110120,7 +110167,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L524",
+      "source_location": "L530",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_collapseexcessiverepetitions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L535",
       "weight": 1.0
     },
     {
@@ -110131,7 +110189,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L530",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -110142,7 +110200,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L559",
+      "source_location": "L578",
       "weight": 1.0
     },
     {
@@ -110153,7 +110211,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L629",
+      "source_location": "L673",
       "weight": 1.0
     },
     {
@@ -110164,7 +110222,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L637",
+      "source_location": "L681",
       "weight": 1.0
     },
     {
@@ -110175,7 +110233,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L662",
+      "source_location": "L710",
       "weight": 1.0
     },
     {
@@ -110186,7 +110244,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L680",
+      "source_location": "L731",
       "weight": 1.0
     },
     {
@@ -110197,7 +110255,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L681",
+      "source_location": "L732",
       "weight": 1.0
     },
     {
@@ -110208,7 +110266,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L682",
+      "source_location": "L733",
       "weight": 1.0
     },
     {
@@ -110219,7 +110277,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L683",
+      "source_location": "L734",
       "weight": 1.0
     },
     {
@@ -110230,7 +110288,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L696",
+      "source_location": "L747",
       "weight": 1.0
     },
     {
@@ -110241,7 +110299,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L701",
+      "source_location": "L752",
       "weight": 1.0
     },
     {
@@ -110252,7 +110310,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L710",
+      "source_location": "L761",
       "weight": 1.0
     },
     {
@@ -110263,7 +110321,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L723",
+      "source_location": "L774",
       "weight": 1.0
     },
     {
@@ -110274,7 +110332,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L724",
+      "source_location": "L775",
       "weight": 1.0
     },
     {
@@ -110285,7 +110343,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L731",
+      "source_location": "L782",
       "weight": 1.0
     },
     {
@@ -110296,7 +110354,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L756",
+      "source_location": "L807",
       "weight": 1.0
     },
     {
@@ -110307,7 +110365,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L766",
+      "source_location": "L817",
       "weight": 1.0
     },
     {
@@ -110318,7 +110376,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L767",
+      "source_location": "L818",
       "weight": 1.0
     },
     {
@@ -110329,7 +110387,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L777",
+      "source_location": "L828",
       "weight": 1.0
     },
     {
@@ -110340,7 +110398,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L802",
+      "source_location": "L853",
       "weight": 1.0
     },
     {
@@ -110351,7 +110409,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L813",
+      "source_location": "L864",
       "weight": 1.0
     },
     {
@@ -110362,7 +110420,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L817",
+      "source_location": "L868",
       "weight": 1.0
     },
     {
@@ -110373,7 +110431,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L821",
+      "source_location": "L872",
       "weight": 1.0
     },
     {
@@ -110384,7 +110442,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L830",
+      "source_location": "L881",
       "weight": 1.0
     },
     {
@@ -110395,7 +110453,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L847",
+      "source_location": "L898",
       "weight": 1.0
     },
     {
@@ -110406,7 +110464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L866",
+      "source_location": "L917",
       "weight": 1.0
     },
     {
@@ -111550,7 +111608,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Services/TranscriptCorrectionService.php",
-      "source_location": "L190",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -116021,7 +116079,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L332",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -116033,7 +116091,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "corrector.js",
-      "source_location": "L333",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -116458,5 +116516,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "30169a67d29e8a7ada770b629d65a73cc04bb6d9"
+  "built_at_commit": "14256d44cf4b164db69f97345996f2c0584ced0f"
 }

@@ -1,17 +1,17 @@
-# Graph Report - web-saya  (2026-10-03)
+# Graph Report - web-saya  (2026-10-04)
 
 ## Corpus Check
-- 418 files · ~281,879 words
+- 418 files · ~282,215 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4774 nodes · 5233 edges · 398 communities (365 shown, 33 thin omitted)
+- 4776 nodes · 5236 edges · 398 communities (365 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 163 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `30169a67`
+- Built from commit: `14256d44`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -914,7 +914,7 @@ Cohesion: 0.14
 Nodes (13): Async Testing, BLoC with `bloc_test`, Coverage, Dart/Flutter Testing, Fakes Over Mocks, Golden Tests, Riverpod with `ProviderContainer`, Test Framework (+5 more)
 
 ### Community 119 - "TranscriptCorrectionService"
-Cohesion: 0.10
+Cohesion: 0.09
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
@@ -1875,7 +1875,7 @@ Nodes (3): Confidence Rule, Steps, Usage
 
 ### Community 388 - "App.vue"
 Cohesion: 0.06
-Nodes (29): vue, appendTranscriptCleanly(), availableLanguages, charCount, copySuccess, correctionData, currentLanguage, downloadMomMarkdown() (+21 more)
+Nodes (30): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLanguage (+22 more)
 
 ### Community 389 - "Python Testing"
 Cohesion: 0.33
@@ -1899,7 +1899,7 @@ Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Co
 
 ## Knowledge Gaps
 - **3082 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3077 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3458 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions

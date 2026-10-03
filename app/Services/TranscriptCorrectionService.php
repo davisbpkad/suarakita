@@ -68,8 +68,16 @@ class TranscriptCorrectionService
 
         // 3. Bersihkan kata gagap / kata berulang
         $beforeStutter = $text;
-        $text = preg_replace('/\b([a-zA-ZÀ-ÿ0-9]{2,})[,\s]+\1\b/i', '$1', $text);
-        $text = preg_replace('/\b(kita harus|saya mau|akan ada|bisa kita|sudah kita|untuk itu)[,\s]+\1\b/i', '$1', $text);
+        $text = preg_replace_callback('/\b([a-zA-ZÀ-ÿ0-9]{2,})(?:[,\s]+\1)+\b/i', function($matches) {
+            $word = $matches[1];
+            $lower = strtolower($word);
+            $legitimateDoubles = ['sama', 'hati', 'tiba', 'jalan', 'halo', 'pelan', 'kira', 'pura', 'moga', 'mudah'];
+            if (in_array($lower, $legitimateDoubles)) {
+                return "{$word} {$word}";
+            }
+            return $word;
+        }, $text);
+        $text = preg_replace('/\b(kita harus|saya mau|akan ada|bisa kita|sudah kita|untuk itu)(?:[,\s]+\1)+\b/i', '$1', $text);
         if ($text !== $beforeStutter) {
             $changes[] = 'Penghapusan kata berulang / gagap lisan';
         }

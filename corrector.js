@@ -118,8 +118,16 @@ function correctTranscriptWithNLP(rawText) {
 
   // 3. Bersihkan pengulangan kata gagap / kata berulang
   const beforeStutter = text;
-  text = text.replace(/\b([a-zA-ZÀ-ÿ0-9]{2,})[,\s]+\1\b/gi, '$1');
-  text = text.replace(/\b(kita harus|saya mau|akan ada|bisa kita|sudah kita|untuk itu)[,\s]+\1\b/gi, '$1');
+  // Tangani reduplikasi berlebih (misal "halo halo halo halo..." -> "halo halo", atau kata biasa berulang -> 1x)
+  text = text.replace(/\b([a-zA-ZÀ-ÿ0-9]{2,})(?:[,\s]+\1)+\b/gi, (match, word) => {
+    const lower = word.toLowerCase();
+    const legitimateDoubles = ['sama', 'hati', 'tiba', 'jalan', 'halo', 'pelan', 'kira', 'pura', 'moga', 'mudah'];
+    if (legitimateDoubles.includes(lower)) {
+      return `${word} ${word}`;
+    }
+    return word;
+  });
+  text = text.replace(/\b(kita harus|saya mau|akan ada|bisa kita|sudah kita|untuk itu)(?:[,\s]+\1)+\b/gi, '$1');
   if (text !== beforeStutter) {
     changes.push('Penghapusan pengulangan kata berulang / gagap');
   }
