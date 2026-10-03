@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-03)
 
 ## Corpus Check
-- 418 files · ~281,650 words
+- 418 files · ~281,879 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4772 nodes · 5230 edges · 397 communities (364 shown, 33 thin omitted)
+- 4774 nodes · 5233 edges · 398 communities (365 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 163 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `39fc1142`
+- Built from commit: `30169a67`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -240,7 +240,7 @@
 - seo-specialist.md
 - Evaluation Criteria
 - Angular Security
-- Go Coding Style
+- common-coding-style.md
 - F# Coding Style
 - Java Security
 - Kotlin Security
@@ -327,7 +327,7 @@
 - Dart/Flutter Hooks
 - Go Patterns
 - Go Testing
-- common-coding-style.md
+- Python Coding Style
 - Python Patterns
 - Low-Score Example: Adding Retry Logic
 - graphify reference: query, path, explain
@@ -406,6 +406,7 @@
 - cmd_prune
 - 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
+- Strategic Compact Skill
 
 ## God Nodes (most connected - your core abstractions)
 1. `_make_project()` - 27 edges
@@ -434,7 +435,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (397 total, 33 thin omitted)
+## Communities (398 total, 33 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
@@ -497,8 +498,8 @@ Cohesion: 0.07
 Nodes (19): AxisScore, check_accuracy(), check_actionability(), check_clarity(), check_completeness(), check_conciseness(), _check_jargon(), _check_summary() (+11 more)
 
 ### Community 15 - "shared.mjs"
-Cohesion: 0.15
-Nodes (16): resolved, resolved, CK_HOME, daysAgoLabel(), encodeProjectPath(), gitLogSince(), gitSummary(), nativeMemoryDir() (+8 more)
+Cohesion: 0.10
+Nodes (26): contextDirPath, projects, resolved, resolved, resolved, CK_HOME, contextMdPath(), contextPath() (+18 more)
 
 ### Community 16 - "Review Checklist"
 Cohesion: 0.08
@@ -529,8 +530,8 @@ Cohesion: 0.08
 Nodes (23): 1. Enable Observation Hooks, 2. Initialize Directory Structure, 3. Use the Instinct Commands, Backward Compatibility, Commands, Confidence Scoring, Configuration, Continuous Learning v2.1 - Instinct (+15 more)
 
 ### Community 23 - "What You Must Do When Invoked"
-Cohesion: 0.05
-Nodes (40): usage(), For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands (+32 more)
+Cohesion: 0.08
+Nodes (23): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+15 more)
 
 ### Community 24 - "ObservationEvent"
 Cohesion: 0.17
@@ -589,8 +590,8 @@ Cohesion: 0.10
 Nodes (19): /click-path-audit — Behavioural Flow Audit, Example: The Bug That Inspired This Skill, Execution Steps, How It Works, Integration with Other Skills, Pattern 1: Sequential Undo, Pattern 2: Async Race, Pattern 3: Stale Closure (+11 more)
 
 ### Community 38 - "review-with-codex.js"
-Cohesion: 0.18
-Nodes (15): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+7 more)
+Cohesion: 0.14
+Nodes (18): buildCodexArgs(), buildEnvironment(), fs, HOST_PROVIDERS, main(), os, parseArgs(), path (+10 more)
 
 ### Community 39 - "grade"
 Cohesion: 0.22
@@ -733,8 +734,8 @@ Cohesion: 0.12
 Nodes (15): 1. Connect the MCP server, 2. Call standalone tools only, 3. Interpret scores (1–10), 4. Run the feedback loop, Code Health MCP (CodeScene), Example: AGENTS.md enforcement block, Example: anti-patterns vs correct loop, Example: Flask maintainability improvement (+7 more)
 
 ### Community 74 - "save.mjs"
-Cohesion: 0.14
-Nodes (16): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+8 more)
+Cohesion: 0.15
+Nodes (15): enriched, entries, projects, table, context, existingIdx, gitActivity, isInit (+7 more)
 
 ### Community 75 - "Inherit Legacy Style"
 Cohesion: 0.12
@@ -917,7 +918,7 @@ Cohesion: 0.10
 Nodes (4): MeetingNotesController, TranscriptController, MeetingNotesService, TranscriptCorrectionService
 
 ### Community 120 - "session-start.mjs"
-Cohesion: 0.19
+Cohesion: 0.21
 Nodes (12): CK_HOME, CURRENT_SESSION, daysAgo(), extractClaudeMdGoal(), gitLogSince(), main(), parts, PROJECTS_FILE (+4 more)
 
 ### Community 121 - "Continuous Learning Skill - DEPRECATED"
@@ -1324,8 +1325,8 @@ Nodes (8): 1. Encapsulation, 2. Invariant Expression, 3. Invariant Usefulness, 4
 Cohesion: 0.22
 Nodes (8): Agent Support, Angular Security, Content Security Policy, HTTP Security, Route Guards, Secret Management, SSR Security, XSS Prevention
 
-### Community 224 - "Go Coding Style"
-Cohesion: 0.33
+### Community 224 - "common-coding-style.md"
+Cohesion: 0.25
 Nodes (5): Design Principles, Error Handling, Formatting, Go Coding Style, Reference
 
 ### Community 225 - "F# Coding Style"
@@ -1497,8 +1498,8 @@ Cohesion: 0.25
 Nodes (7): Content Security Policy, Forms, HTTPS and Headers, Nonce-Based CSP, Third-Party Scripts, Web Security Rules, XSS Prevention
 
 ### Community 267 - "migrate.mjs"
-Cohesion: 0.13
-Nodes (14): contextDirPath, projects, resolved, isDryRun, parseBullets(), parseLeftOff(), projects, contextMdPath() (+6 more)
+Cohesion: 0.29
+Nodes (5): isDryRun, parseBullets(), parseLeftOff(), projects, shortId()
 
 ### Community 268 - "skill-comply: Automated Compliance Measurement"
 Cohesion: 0.25
@@ -1672,8 +1673,8 @@ Nodes (5): Dependency Injection, Functional Options, Go Patterns, Reference, Sma
 Cohesion: 0.33
 Nodes (5): Coverage, Framework, Go Testing, Race Detection, Reference
 
-### Community 311 - "common-coding-style.md"
-Cohesion: 0.25
+### Community 311 - "Python Coding Style"
+Cohesion: 0.33
 Nodes (5): Formatting, Immutability, Python Coding Style, Reference, Standards
 
 ### Community 312 - "Python Patterns"
@@ -1874,7 +1875,7 @@ Nodes (3): Confidence Rule, Steps, Usage
 
 ### Community 388 - "App.vue"
 Cohesion: 0.06
-Nodes (27): vue, availableLanguages, charCount, copySuccess, correctionData, currentLanguage, downloadMomMarkdown(), downloadTranscript() (+19 more)
+Nodes (29): vue, appendTranscriptCleanly(), availableLanguages, charCount, copySuccess, correctionData, currentLanguage, downloadMomMarkdown() (+21 more)
 
 ### Community 389 - "Python Testing"
 Cohesion: 0.33
@@ -1892,9 +1893,13 @@ Nodes (6): cmd_prune(), _pending_item(), test_cmd_prune_deletes_only_expired(), 
 Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
+### Community 395 - "Strategic Compact Skill"
+Cohesion: 0.13
+Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Composition Awareness, Context Optimization Tools, Duplicate Instruction Detection, Hook Setup, Related (+6 more)
+
 ## Knowledge Gaps
-- **3081 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3076 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3456 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **3082 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3077 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3457 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -1907,7 +1912,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3081 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3082 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.04864311315924219 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**

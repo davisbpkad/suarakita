@@ -223,7 +223,7 @@
   "221": "seo-specialist.md",
   "222": "Evaluation Criteria",
   "223": "Angular Security",
-  "224": "Go Coding Style",
+  "224": "common-coding-style.md",
   "225": "F# Coding Style",
   "226": "Java Security",
   "227": "Kotlin Security",
@@ -310,7 +310,7 @@
   "308": "Dart/Flutter Hooks",
   "309": "Go Patterns",
   "310": "Go Testing",
-  "311": "common-coding-style.md",
+  "311": "Python Coding Style",
   "312": "Python Patterns",
   "313": "Low-Score Example: Adding Retry Logic",
   "314": "graphify reference: query, path, explain",
@@ -394,6 +394,7 @@
   "392": "🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas",
   "393": "app.php",
   "394": "status.js",
+  "395": "Strategic Compact Skill",
   "398": "application",
   "399": "app.blade.php"
 }

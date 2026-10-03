@@ -520,6 +520,42 @@ const formattedRecordingTime = computed(() => {
   return `${pad(mins)}:${pad(secs)}`;
 });
 
+// Pelacak hasil transkrip final per sesi (mencegah bug duplikasi kata di Android / Samsung)
+const processedFinalMap = new Map();
+
+/**
+ * Menggabungkan teks transkrip baru tanpa menduplikasi kata yang tumpang tindih (overlap) di batas sambungan.
+ * Sangat penting untuk peramban Android (Chrome / Samsung Internet) yang sering mengirim buffer suara berulang.
+ */
+function appendTranscriptCleanly(currentText, newAddition) {
+  const trimmedAddition = (newAddition || '').trim();
+  if (!trimmedAddition) return currentText || '';
+  if (!currentText || !currentText.trim()) return trimmedAddition;
+
+  const curTrimmed = currentText.trim();
+  const curWords = curTrimmed.split(/\s+/);
+  const newWords = trimmedAddition.split(/\s+/);
+
+  // Periksa overlap kata maksimal di ujung teks sebelumnya dengan awal teks baru
+  let maxOverlap = 0;
+  const maxCheck = Math.min(curWords.length, newWords.length, 6);
+  for (let len = maxCheck; len >= 1; len--) {
+    const endSlice = curWords.slice(-len).join(' ').toLowerCase();
+    const startSlice = newWords.slice(0, len).join(' ').toLowerCase();
+    if (endSlice === startSlice) {
+      maxOverlap = len;
+      break;
+    }
+  }
+
+  const remainingWords = newWords.slice(maxOverlap);
+  if (remainingWords.length === 0) {
+    return curTrimmed;
+  }
+
+  return curTrimmed + ' ' + remainingWords.join(' ');
+}
+
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -534,24 +570,38 @@ function initSpeechRecognition() {
 
   recognition.onresult = (event) => {
     let interim = '';
-    let finalTranscripts = '';
+    let finalChunk = '';
 
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        finalTranscripts += transcript + ' ';
+    for (let i = 0; i < event.results.length; i++) {
+      const res = event.results[i];
+      const rawText = res[0] ? res[0].transcript.trim() : '';
+      if (!rawText) continue;
+
+      if (res.isFinal) {
+        const prevText = processedFinalMap.get(i) || '';
+        if (rawText !== prevText) {
+          // Tangani kasus akumulasi teks Android (misal: "halo" -> "halo bandung" pada indeks yang sama)
+          if (prevText && rawText.toLowerCase().startsWith(prevText.toLowerCase())) {
+            const diff = rawText.slice(prevText.length).trim();
+            if (diff) {
+              finalChunk = appendTranscriptCleanly(finalChunk, diff);
+            }
+          } else if (!prevText) {
+            // Indeks baru yang pertama kali ditandai final
+            finalChunk = appendTranscriptCleanly(finalChunk, rawText);
+          }
+          processedFinalMap.set(i, rawText);
+        }
       } else {
-        interim += transcript;
+        // Teks sementara (interim)
+        interim = rawText;
       }
     }
 
     interimSpeech.value = interim;
 
-    if (finalTranscripts) {
-      if (transcriptText.value && !transcriptText.value.endsWith(' ')) {
-        transcriptText.value += ' ';
-      }
-      transcriptText.value += finalTranscripts;
+    if (finalChunk) {
+      transcriptText.value = appendTranscriptCleanly(transcriptText.value, finalChunk);
     }
   };
 
@@ -563,6 +613,8 @@ function initSpeechRecognition() {
   };
 
   recognition.onend = () => {
+    processedFinalMap.clear();
+
     if (isRecording.value) {
       try {
         recognition.lang = currentLanguage.value;
@@ -591,6 +643,7 @@ function startRecording() {
 
   try {
     if (!recognition) initSpeechRecognition();
+    processedFinalMap.clear();
     recognition.lang = currentLanguage.value;
     recognition.start();
     isRecording.value = true;
@@ -609,6 +662,7 @@ function startRecording() {
 function stopRecording() {
   isRecording.value = false;
   interimSpeech.value = '';
+  processedFinalMap.clear();
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
