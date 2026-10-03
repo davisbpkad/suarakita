@@ -26,7 +26,7 @@ exports.handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body || '{}');
-    const { text, apiKey } = data;
+    const { text, apiKey, model } = data;
     if (!text || !text.trim()) {
       return {
         statusCode: 400,
@@ -40,7 +40,7 @@ exports.handler = async (event, context) => {
     const cleanedText = cleanObj.correctedText || text;
 
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const notesResult = await generateMeetingNotesWithAI(cleanedText, effectiveApiKey);
+    const notesResult = await generateMeetingNotesWithAI(cleanedText, effectiveApiKey, model);
 
     return {
       statusCode: 200,

@@ -7,12 +7,26 @@ use Illuminate\Support\Facades\Http;
 class MeetingNotesService
 {
     protected array $disallowedLabels = [
-        'pertama', 'kedua', 'ketiga', 'keempat', 'kelima', 'terakhir',
-        'lanjut', 'selanjutnya', 'kemudian', 'lalu', 'setelahnya',
-        'baik', 'bagus', 'cepat', 'penting', 'umum', 'tanya', 'pertanyaan',
-        'bagaimana', 'gimana', 'kapan', 'siapa', 'kenapa', 'mengapa', 'apakah',
-        'kita', 'kami', 'saya', 'anda', 'mereka', 'semua', 'tim', 'rekan',
-        'hari', 'kemarin', 'besok', 'tadi', 'nanti', 'halo', 'selamat'
+        // Kata bilangan urut & penunjuk urutan
+        'pertama', 'kedua', 'ketiga', 'keempat', 'kelima', 'keenam', 'terakhir',
+        'awal', 'akhir', 'lanjut', 'selanjutnya', 'kemudian', 'lalu', 'setelahnya',
+        // Kata tanya & pengantar
+        'bagaimana', 'gimana', 'kapan', 'siapa', 'kenapa', 'mengapa', 'apakah', 'ada',
+        // Kata sifat & keterangan umum
+        'baik', 'bagus', 'cepat', 'penting', 'umum', 'tanya', 'pertanyaan', 'kendala',
+        'masalah', 'progres', 'update', 'laporan', 'evaluasi', 'catatan', 'poin', 'hasil',
+        // Kata ganti orang / sebutan kolektif (bukan nama asli)
+        'kita', 'kami', 'saya', 'aku', 'anda', 'kamu', 'mereka', 'semua', 'tim', 'rekan',
+        'kawan', 'teman', 'orang', 'pihak',
+        // Kata hubung & kata depan
+        'dan', 'atau', 'tetapi', 'namun', 'karena', 'sebab', 'sehingga', 'supaya', 'agar',
+        'untuk', 'dari', 'pada', 'ke', 'di', 'dengan', 'oleh', 'tentang', 'mengenai', 'terkait',
+        'soal', 'jika', 'kalau', 'bila', 'apabila', 'saat', 'ketika', 'waktu', 'setelah',
+        'sesudah', 'sebelum', 'sambil', 'bisa', 'dapat', 'sudah', 'telah', 'sedang', 'akan',
+        'mau', 'ingin', 'boleh', 'harus', 'wajib', 'pastikan', 'tolong', 'mohon', 'silakan',
+        // Waktu & sapaan
+        'hari', 'kemarin', 'besok', 'tadi', 'nanti', 'pagi', 'siang', 'sore', 'malam',
+        'halo', 'hai', 'selamat', 'oke', 'siap', 'iya', 'ya'
     ];
 
     protected array $casualPatterns = [
@@ -23,14 +37,14 @@ class MeetingNotesService
         '/\b(?:mager|wkwk|haha|canda|jokes)\b/i'
     ];
 
-    public function generate(string $text, ?string $apiKey = null): array
+    public function generate(string $text, ?string $apiKey = null, string $preferredModel = 'gemini-2.5-flash'): array
     {
         $corrector = new TranscriptCorrectionService();
         $corrected = $corrector->correctWithNLP($text);
         $cleanText = $corrected['correctedText'] ?? $text;
 
         if ($apiKey && trim($apiKey) !== '') {
-            $ai = $this->generateWithAI($cleanText, $apiKey);
+            $ai = $this->generateWithAI($cleanText, $apiKey, $preferredModel);
             if ($ai) return $ai;
         }
 
@@ -42,13 +56,15 @@ class MeetingNotesService
         if (trim($text) === '') {
             $topic = 'Topik pembicaraan tidak spesifik / Obrolan kasual';
             $summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+            $keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
             $decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
             return [
                 'topic' => $topic,
                 'summary' => implode("\n", $summaryItems),
                 'summaryItems' => $summaryItems,
+                'keyPoints' => $keyPoints,
                 'decisions' => $decisions,
-                'rawMarkdown' => $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions),
+                'rawMarkdown' => $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions),
                 'method' => 'nlp_builtin'
             ];
         }
@@ -58,17 +74,25 @@ class MeetingNotesService
 
         $topic = $this->extractTopicSentence($sentences, $text);
         $summaryItems = $this->extractSummaryItems($sentences);
+        $keyPoints = $this->extractKeyPoints($sentences, $summaryItems, $text);
         $decisions = $this->extractDecisions($sentences, $text);
-        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions);
+        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions);
 
         return [
             'topic' => $topic,
             'summary' => implode("\n", $summaryItems),
             'summaryItems' => $summaryItems,
+            'keyPoints' => $keyPoints,
             'decisions' => $decisions,
             'rawMarkdown' => $rawMarkdown,
             'method' => 'nlp_builtin'
         ];
+    }
+
+    protected function cleanDuplicateWords(string $text): string
+    {
+        if (trim($text) === '') return '';
+        return trim(preg_replace('/\b([a-zA-ZÀ-ÿ0-9]+)(?:\s+\1\b)+/i', '$1', $text));
     }
 
     protected function isDisallowedFromSummary(string $sentence): bool
@@ -104,7 +128,7 @@ class MeetingNotesService
 
         $hasStructuredWork = false;
         foreach ($sentences as $s) {
-            if (preg_match('/(?:progres|peluncuran|rilis|deploy|evaluasi|anggaran|biaya|fitur|perbaikan|bug|konfigurasi|draf\s+konten|pemasaran|desain|tenggat|deadline)\b/i', $s)) {
+            if (preg_match('/(?:progres|peluncuran|rilis|deploy|evaluasi|anggaran|biaya|fitur|perbaikan|bug|latensi|draf\s+konten|pemasaran|desain|tenggat|deadline)\b/i', $s)) {
                 $hasStructuredWork = true;
                 break;
             }
@@ -114,21 +138,39 @@ class MeetingNotesService
             return 'Topik pembicaraan tidak spesifik / Obrolan kasual';
         }
 
+        // 1. Deteksi agenda eksplisit
         foreach ($sentences as $s) {
             if (preg_match('/(?:agenda|topik|fokus|membahas|pertemuan\s+hari\s+ini|meeting\s+hari\s+ini|rapat\s+hari\s+ini)\s+(?:tentang|mengenai|soal|adalah|yaitu)?\s*([^\n]+?)(?=[.?!](?:\s+|$)|$)/i', $s, $m)) {
                 $t = preg_replace('/^(?:rapat|meeting|diskusi|hari\s+ini|besok|pekan\s+ini)\s+/i', '', trim($m[1]));
+                $t = $this->cleanDuplicateWords($t);
                 if (strlen($t) >= 4) {
-                    return 'Penyelarasan dan peninjauan progres ' . strtolower($t) . '.';
+                    return $this->cleanDuplicateWords('Penyelarasan dan peninjauan progres ' . strtolower($t) . '.');
                 }
             }
+        }
+
+        // 2. Deteksi domain substantif utama
+        $topicsFound = [];
+        if (preg_match('/(?:api|payment|gateway|server|latensi|deploy|database|developer)/i', $fullText)) {
+            $topicsFound[] = 'integrasi sistem';
+        }
+        if (preg_match('/(?:desain|mockup|ui|ux|antarmuka)/i', $fullText)) {
+            $topicsFound[] = 'kesiapan desain antarmuka';
+        }
+        if (preg_match('/(?:pemasaran|kampanye|marketing|draf\s+konten|promosi)/i', $fullText)) {
+            $topicsFound[] = 'kampanye pemasaran';
+        }
+
+        if (count($topicsFound) >= 2) {
+            return $this->cleanDuplicateWords('Koordinasi progres ' . implode(', ', $topicsFound) . ', serta peninjauan kendala teknis dan target tenggat waktu.');
         }
 
         foreach ($sentences as $s) {
             if ($this->isDisallowedFromSummary($s)) continue;
 
             if (preg_match('/(?:terkait|soal|tentang|mengenai|rencana|evaluasi|proyek|fitur|perbaikan|pengembangan|sistem|server|rilis|deploy|anggaran|kampanye)\s+([^\n]+?)(?=[.?!](?:\s+|$)|$)/i', $s, $m)) {
-                $subject = trim($m[0]);
-                return 'Koordinasi progres kerja dan evaluasi kendala ' . strtolower($subject) . '.';
+                $subject = $this->cleanDuplicateWords(trim($m[0]));
+                return $this->cleanDuplicateWords('Koordinasi progres kerja dan evaluasi kendala ' . strtolower($subject) . '.');
             }
         }
 
@@ -186,7 +228,10 @@ class MeetingNotesService
 
             if (!$label) continue;
 
-            $updateText = preg_replace('/^(?:dan|lalu|kemudian|untuk|dari)?\s*(?:si\s+)?' . preg_quote($label, '/') . '\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|bilang)?\s*/i', '', $updateText);
+            $updateText = preg_replace('/^(?:dan|lalu|kemudian|untuk|dari)?\s*(?:si\s+)?' . preg_quote($label, '/') . '\s*(?:dari\s+(?:tim\s+)?[A-Za-z]+)?\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|menjelaskan|bilang)?\s*/i', '', $updateText);
+            $updateText = preg_replace('/^(?:ada\s+kendala\s+apa\s+di\s+tim\s+[a-z]+\??\s*)/i', '', $updateText);
+            $updateText = preg_replace('/^(?:ada\s+kendala\s+)/i', 'Terdapat kendala ', $updateText);
+            $updateText = $this->cleanDuplicateWords($updateText);
             $updateText = ucfirst($updateText);
             if (!preg_match('/[.?!]$/', $updateText)) $updateText .= '.';
 
@@ -209,10 +254,39 @@ class MeetingNotesService
         return $items;
     }
 
+    protected function extractKeyPoints(array $sentences, array $summaryItems, string $fullText): array
+    {
+        $points = [];
+
+        foreach ($sentences as $s) {
+            if ($this->isDisallowedFromSummary($s)) continue;
+            if (preg_match('/(?:\b\d+%|\bRp\s*[\d.,]+|\bselesai\s+100%|\bmencapai\s+\d+)/i', $s)) {
+                $clean = preg_replace('/^(?:dan|lalu|kemudian|untuk|dari|bagaimana\s+dengan)\s+/i', '', trim($s));
+                $clean = preg_replace('/^(?:[A-Z][a-z]+\s+(?:dari\s+(?:tim\s+)?[A-Za-z]+\s+)?(?:melaporkan|menyampaikan|menjelaskan)\s+)/i', '', $clean);
+                $clean = ucfirst($clean);
+                if (!preg_match('/[.?!]$/', $clean)) $clean .= '.';
+                $points[] = "* {$clean}";
+            }
+        }
+
+        if (empty($points) && !empty($summaryItems) && !str_contains($summaryItems[0], 'Tidak ada poin')) {
+            foreach (array_slice($summaryItems, 0, 3) as $item) {
+                $cleanItem = preg_replace('/^\*\s+\*\*\[.*?\]:\*\*\s*/', '', $item);
+                $points[] = "* {$cleanItem}";
+            }
+        }
+
+        if (empty($points)) {
+            return ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+        }
+
+        return array_slice($points, 0, 3);
+    }
+
     protected function extractDecisions(array $sentences, string $rawText): array
     {
         $decisions = [];
-        $processedDecisions = [];
+        $processedCategories = [];
 
         foreach ($sentences as $s) {
             $hasFinalInstruction = preg_match('/\b(?:pastikan|wajib|harus|siapkan|jaga|selesaikan|kirimkan|buatkan|eksekusi)\b/i', $s);
@@ -235,17 +309,35 @@ class MeetingNotesService
                     else $category = 'Arahan Kerja';
                 }
 
-                $detail = preg_replace('/^(?:dan|lalu|kemudian|selain\s+itu|terakhir|untuk\s+itu|untuk\s+keputusan\s+akhir[,.]?)\s*/i', '', trim($s));
-                if ($category && preg_match('/^' . preg_quote($category, '/') . '\s*(?:tolong)?\s*/i', $detail)) {
-                    $detail = preg_replace('/^' . preg_quote($category, '/') . '\s*(?:tolong)?\s*/i', '', $detail);
+                $deadlineStr = '';
+                if (preg_match('/\b(?:paling\s+lambat\s+H-\d+\s+sebelum\s+[a-z]+|H-\d+|besok\s+(?:pagi|siang|sore|malam)|paling\s+lambat\s+[^\n.,]+|sebelum\s+jam\s+[\d.:]+|hari\s+(?:senin|selasa|rabu|kamis|jumat|sabtu|minggu))\b/i', $s, $dMatch)) {
+                    $deadlineStr = trim($dMatch[0]);
                 }
-                $detail = ucfirst($detail);
-                if (!preg_match('/[.?!]$/', $detail)) $detail .= '.';
 
-                $item = "* **[{$category}]:** {$detail}";
-                if (!isset($processedDecisions[$category])) {
+                $action = preg_replace('/^(?:untuk\s+keputusan\s+akhir[,.]?|lalu|kemudian|dan|selain\s+itu|terakhir)\s*/i', '', trim($s));
+                if ($category && preg_match('/^' . preg_quote($category, '/') . '\s*(?:tolong)?\s*/i', $action)) {
+                    $action = preg_replace('/^' . preg_quote($category, '/') . '\s*(?:tolong)?\s*/i', '', $action);
+                }
+                $action = preg_replace('/^(?:pastikan|tolong\s+pastikan|wajib|harus|siapkan)\s*/i', '', $action);
+                if ($deadlineStr) {
+                    $action = preg_replace('/(?:selesai\s+)?' . preg_quote($deadlineStr, '/') . '/i', '', $action);
+                }
+                $action = trim(rtrim($action, '.,;'));
+                if (preg_match('/^draf\s+/i', $action)) {
+                    $action = 'penyiapan ' . $action;
+                }
+
+                if ($hasConsensus && !$hasFinalInstruction) {
+                    $deadlinePart = $deadlineStr ? " pada {$deadlineStr}" : '';
+                    $item = "* **[{$category}]:** Diputuskan bahwa {$action} akan dijalankan{$deadlinePart}.";
+                } else {
+                    $deadlinePart = $deadlineStr ? " dengan tenggat waktu {$deadlineStr}" : '';
+                    $item = "* **[{$category}]:** Ditargetkan untuk {$action} yang wajib diselesaikan oleh {$category}{$deadlinePart}.";
+                }
+
+                if (!isset($processedCategories[$category])) {
                     $decisions[] = $item;
-                    $processedDecisions[$category] = true;
+                    $processedCategories[$category] = true;
                 }
             }
         }
@@ -253,15 +345,11 @@ class MeetingNotesService
         if (empty($decisions)) {
             foreach ($sentences as $s) {
                 if (preg_match('/(?:ga\s+tau\s+deh|belum\s+tau|belum\s+pasti|mager|belum\s+dikonfirmasi|belum\s+konfirmasi|ditunda|pending)/i', $s)) {
-                    $actor = 'pihak terkait';
-                    if (preg_match('/\bsi\s+([A-Za-z]+)\b/i', $s, $siM)) {
-                        $actor = ucfirst(strtolower($siM[1]));
-                    }
                     $topic = 'Pembahasan Terkait';
                     if (preg_match('/(?:gedung|tempat|ruangan|booking)/i', $s)) $topic = 'Booking Gedung';
                     elseif (preg_match('/(?:anggaran|biaya|dana)/i', $s)) $topic = 'Persetujuan Anggaran';
 
-                    $decisions[] = "* [{$topic}]: Tidak ada keputusan yang diambil / Status belum dikonfirmasi oleh {$actor}.";
+                    $decisions[] = "* [{$topic}]: Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.";
                 }
             }
         }
@@ -273,9 +361,9 @@ class MeetingNotesService
         return $decisions;
     }
 
-    protected function formatMeetingNotesMarkdown(string $topic, array $summaryItems, array $decisions): string
+    protected function formatMeetingNotesMarkdown(string $topic, array $summaryItems, array $keyPoints, array $decisions): string
     {
-        $md = "📌 **Topik / Konteks Pembicaraan:**\n" . trim($topic) . "\n\n📝 **Ringkasan Hasil Rapat:**\n";
+        $md = "📌 **Topik / Konteks Pembicaraan:**\n" . $this->cleanDuplicateWords($topic) . "\n\n📝 **Ringkasan Hasil Rapat (Progress & Substansi):**\n";
 
         if (!empty($summaryItems)) {
             $md .= implode("\n", $summaryItems);
@@ -283,7 +371,11 @@ class MeetingNotesService
             $md .= "* Tidak ada poin utama yang relevan untuk dirangkum.";
         }
 
-        $md .= "\n\n⚖️ **Keputusan yang Diambil (Decisions Made):**\n";
+        if (!empty($keyPoints)) {
+            $md .= "\n\n⚡ **Poin-Poin Utama:**\n" . implode("\n", $keyPoints);
+        }
+
+        $md .= "\n\n🎯 **Keputusan yang Diambil (Decisions Made):**\n";
 
         if (!empty($decisions)) {
             $md .= implode("\n", $decisions);
@@ -294,11 +386,10 @@ class MeetingNotesService
         return trim($md);
     }
 
-    protected function generateWithAI(string $text, string $apiKey): ?array
+    protected function generateWithAI(string $text, string $apiKey, string $preferredModel = 'gemini-2.5-flash'): ?array
     {
-        try {
-            $prompt = "# ROLE & GOAL
-Fitur Notulen Rapat Otomatis (Automated Meeting Minutes Feature) berbasis kecerdasan buatan. Tugas utama fitur ini adalah mengolah komponen teks mentah hasil Voice-to-Text (STT), melakukan pembersihan data, serta mentransformasikannya menjadi dokumen Notulen Rapat (Minutes of Meeting) eksekutif yang ringkas, berstruktur tinggi, akurat, dan siap pakai oleh organisasi.
+        $prompt = "# ROLE & GOAL Perbaikan Fitur Notulen
+Sistem Anda adalah Fitur Notulen Rapat Otomatis (Automated Meeting Minutes Feature) berbasis kecerdasan buatan. Tugas utama fitur ini adalah mengolah komponen teks mentah hasil Voice-to-Text (STT), melakukan pembersihan data, serta mentransformasikannya menjadi dokumen Notulen Rapat (Minutes of Meeting) eksekutif yang ringkas, berstruktur tinggi, akurat, dan siap pakai oleh organisasi.
 
 <instruction>
 Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan mematuhi secara mutlak aturan ketat di bawah ini.
@@ -306,9 +397,13 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 
 <rules>
 1. DILARANG KERAS menyalin kalimat tanya, instruksi pembuka, atau basa-basi penutup ke dalam hasil ringkasan. Ringkasan HANYA berisi update progres atau informasi substantif yang valid.
-2. ATURAN PENAMAAN PIC/BIDANG: Gunakan label di dalam kurung siku '* **[Nama PIC / Bidang]:**' HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid (seperti Developer, Desain, Pemasaran). DILARANG menggunakan kata sifat, kata keterangan, bilangan urut (seperti Pertama, Kedua), atau teks pertanyaan acak dari transkrip sebagai nama label.
-3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang. Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Sintesis lengkap mengenai update progres dan kendala dalam maksimal 2 kalimat pendek.
-4. LOGIKA EVALUASI KEPUTUSAN: Poin keputusan (Decisions Made) wajib diekstraksi jika terdapat instruksi kerja final, target tenggat waktu (deadline seperti H-7, besok sore), atau arahan penegasan di akhir rapat (misalnya kalimat: 'pastikan selesai besok', 'jaga cadangan', 'siapkan draf konten'). Pindahkan instruksi final tersebut menjadi poin keputusan yang konkrit. Format: '* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada]'. Jika rapat benar-benar tanpa keputusan, tulis: '* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'
+2. ATURAN PENAMAAN PIC/BIDANG (GEMINI 2.5 STRICTION): Gunakan label di dalam kurung siku '* **[Nama PIC / Bidang]:**' HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid (seperti Developer, Desain, Pemasaran). Abaikan dan DILARANG keras menggunakan kata depan, kata sifat, kata keterangan, bilangan urut (seperti Pertama, Kedua, Ada), atau teks pertanyaan acak dari transkrip sebagai nama label. Jangan biarkan noise hasil parsing NLP lokal lolos menjadi nama label.
+3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang menggunakan kalimat buatanmu sendiri berdasarkan fakta transkrip. Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Maksimal 2 kalimat pendek dan DILARANG menyalin teks asli percakapan secara verbatim.
+4. LOGIKA EVALUASI KEPUTUSAN (DECISIONS MADE): Poin keputusan wajib diekstraksi jika terdapat instruksi kerja final, target tenggat waktu (deadline), atau arahan penegasan di akhir rapat (misalnya kalimat: 'pastikan selesai besok', 'jaga cadangan', 'siapkan draf konten'). Ubah instruksi tersebut menjadi kalimat konkrit menggunakan format awalan:
+   - '* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].'
+   ATAU
+   - '* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].'
+   Jika rapat benar-benar tanpa keputusan, tulis: '* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'
 5. AKURASI NUMERIK: Salin data persentase, angka biaya, kapasitas, dan deadline waktu (seperti H-7, besok sore) secara presisi 100% sesuai teks asli tanpa modifikasi, pembulatan, atau kalkulasi mandiri.
 6. Hasilkan HANYA output dengan format di bawah ini, tanpa teks pengantar atau penutup dari AI.
 </rules>
@@ -316,87 +411,118 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 # FORMAT OUTPUT NOTULEN RAPAT
 
 📌 **Topik / Konteks Pembicaraan:**
-[Tulis 1 kalimat ringkas mengenai tujuan utama rapat]
+[Tulis 1 kalimat ringkas mengenai tujuan utama rapat. DILARANG mengulang kata yang sama seperti 'progres progres']
 
-📝 **Ringkasan Hasil Rapat:**
-* **[Nama PIC / Divisi]:** [Sintesis lengkap mengenai update progres dan kendala. Maksimal 2 kalimat pendek]
+📝 **Ringkasan Hasil Rapat (Progress & Substansi):**
+* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]
+* **[Nama PIC / Bidang]:** ...
 
-⚖️ **Keputusan yang Diambil (Decisions Made):**
-* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada]
+⚡ **Poin-Poin Utama:**
+* [Poin substantif 1]
+* [Poin substantif 2]
+
+🎯 **Keputusan yang Diambil (Decisions Made):**
+* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
+* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].
 
 # FORMAT OUTPUT JSON:
 Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (```json) dengan skema:
 {
-  \"topic\": \"1 kalimat ringkas mengenai tujuan utama rapat\",
+  \"topic\": \"1 kalimat ringkas mengenai tujuan utama rapat tanpa kata berulang\",
   \"summaryItems\": [
-    \"* **[Nama PIC / Divisi]:** Sintesis lengkap mengenai update progres dan kendala (maksimal 2 kalimat pendek)\"
+    \"* **[Nama PIC / Bidang]:** Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik\"
+  ],
+  \"keyPoints\": [
+    \"* Poin substantif 1\",
+    \"* Poin substantif 2\"
   ],
   \"decisions\": [
-    \"* **[Kategori Keputusan / PIC]:** Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada\"
+    \"* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].\"
   ]
 }
 
 Jika rapat benar-benar tanpa keputusan, isi decisions dengan:
 [\"* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.\"]
 
+Jika seluruh transkrip tidak memiliki poin utama yang relevan, isi keyPoints dengan:
+[\"* Tidak ada poin utama yang relevan untuk dirangkum.\"]
+
 Transkrip Mentah:
 \"\"\"
 {$text}
 \"\"\"";
 
-            $response = Http::timeout(15)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $prompt]]]
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.1,
-                    'responseMimeType' => 'application/json'
-                ]
-            ]);
+        $candidateModels = array_values(array_unique([
+            $preferredModel ?: 'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-1.5-flash'
+        ]));
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $rawText = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                if ($rawText) {
-                    $clean = trim(preg_replace('/^```json\s*|\s*```$/i', '', $rawText));
-                    $res = json_decode($clean, true);
-                    if ($res && isset($res['topic'])) {
-                        $topic = trim($res['topic']);
+        foreach ($candidateModels as $model) {
+            try {
+                $response = Http::timeout(15)->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        ['parts' => [['text' => $prompt]]]
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.1,
+                        'responseMimeType' => 'application/json'
+                    ]
+                ]);
 
-                        $summaryItems = [];
-                        if (isset($res['summaryItems']) && is_array($res['summaryItems'])) {
-                            $summaryItems = array_values(array_filter($res['summaryItems']));
-                        } elseif (isset($res['summary']) && is_string($res['summary'])) {
-                            $summaryItems = array_values(array_filter(explode("\n", $res['summary'])));
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $rawText = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                    if ($rawText) {
+                        $clean = trim(preg_replace('/^```json\s*|\s*```$/i', '', $rawText));
+                        $res = json_decode($clean, true);
+                        if ($res && isset($res['topic'])) {
+                            $topic = $this->cleanDuplicateWords(trim($res['topic']));
+
+                            $summaryItems = [];
+                            if (isset($res['summaryItems']) && is_array($res['summaryItems'])) {
+                                $summaryItems = array_values(array_filter($res['summaryItems']));
+                            }
+
+                            $keyPoints = [];
+                            if (isset($res['keyPoints']) && is_array($res['keyPoints'])) {
+                                $keyPoints = array_values(array_filter($res['keyPoints']));
+                            }
+
+                            $decisions = [];
+                            if (isset($res['decisions']) && is_array($res['decisions'])) {
+                                $decisions = array_values(array_filter($res['decisions']));
+                            }
+
+                            if (empty($summaryItems)) {
+                                $summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+                            }
+                            if (empty($keyPoints)) {
+                                $keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+                            }
+                            if (empty($decisions)) {
+                                $decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
+                            }
+
+                            $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $keyPoints, $decisions);
+
+                            return [
+                                'topic' => $topic,
+                                'summary' => implode("\n", $summaryItems),
+                                'summaryItems' => $summaryItems,
+                                'keyPoints' => $keyPoints,
+                                'decisions' => $decisions,
+                                'rawMarkdown' => $rawMarkdown,
+                                'modelUsed' => $model,
+                                'method' => 'gemini_ai'
+                            ];
                         }
-
-                        $decisions = [];
-                        if (isset($res['decisions']) && is_array($res['decisions'])) {
-                            $decisions = array_values(array_filter($res['decisions']));
-                        }
-
-                        if (empty($summaryItems)) {
-                            $summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-                        }
-                        if (empty($decisions)) {
-                            $decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
-                        }
-
-                        $rawMarkdown = $this->formatMeetingNotesMarkdown($topic, $summaryItems, $decisions);
-
-                        return [
-                            'topic' => $topic,
-                            'summary' => implode("\n", $summaryItems),
-                            'summaryItems' => $summaryItems,
-                            'decisions' => $decisions,
-                            'rawMarkdown' => $rawMarkdown,
-                            'method' => 'gemini_ai'
-                        ];
                     }
                 }
+            } catch (\Throwable $e) {
+                // lanjut ke model berikutnya
             }
-        } catch (\Throwable $e) {
-            // fallback
         }
 
         return null;

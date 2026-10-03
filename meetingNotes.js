@@ -5,20 +5,23 @@
  * Aturan Ketat:
  * 1. DILARANG KERAS menyalin kalimat tanya, instruksi pembuka, atau basa-basi penutup ke dalam hasil ringkasan.
  *    Ringkasan HANYA berisi update progres atau informasi substantif yang valid.
- * 2. ATURAN PENAMAAN PIC/BIDANG: Gunakan label di dalam kurung siku `* **[Nama PIC / Bidang]:**`
+ * 2. ATURAN PENAMAAN PIC/BIDANG (GEMINI 2.5 STRICTION): Gunakan label di dalam kurung siku `* **[Nama PIC / Bidang]:**`
  *    HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid
- *    (seperti Developer, Desain, Pemasaran). DILARANG menggunakan kata sifat, kata keterangan, bilangan urut
- *    (seperti Pertama, Kedua), atau teks pertanyaan acak dari transkrip sebagai nama label.
- * 3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang.
- *    Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Maksimal 2 kalimat pendek.
- * 4. LOGIKA EVALUASI KEPUTUSAN: Poin keputusan (Decisions Made) wajib diekstraksi jika terdapat instruksi kerja
- *    final, target tenggat waktu (deadline), atau arahan penegasan di akhir rapat (misalnya: "pastikan selesai besok",
- *    "jaga cadangan", "siapkan draf konten"). Pindahkan instruksi final tersebut menjadi poin keputusan yang konkrit.
- *    Format: `* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja beserta deadline jika ada]`.
+ *    (seperti Developer, Desain, Pemasaran). Abaikan dan DILARANG keras menggunakan kata depan, kata sifat, kata keterangan,
+ *    bilangan urut (seperti Pertama, Kedua, Ada), atau teks pertanyaan acak dari transkrip sebagai nama label.
+ * 3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang
+ *    menggunakan kalimat buatan sendiri (sintesis mandiri) berdasarkan fakta transkrip. Jangan memecah satu subjek orang
+ *    menjadi banyak poin terpisah yang berulang. Maksimal 2 kalimat pendek dan DILARANG menyalin teks asli percakapan secara verbatim.
+ * 4. LOGIKA EVALUASI KEPUTUSAN (DECISIONS MADE): Poin keputusan wajib diekstraksi jika terdapat instruksi kerja final,
+ *    target tenggat waktu (deadline), atau arahan penegasan di akhir rapat (misalnya kalimat: "pastikan selesai besok",
+ *    "jaga cadangan", "siapkan draf konten"). Ubah instruksi tersebut menjadi kalimat konkrit menggunakan format awalan:
+ *    - `* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].`
+ *    ATAU
+ *    - `* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].`
  *    Jika rapat benar-benar tanpa keputusan, tulis: "* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan."
  * 5. AKURASI NUMERIK: Salin data persentase, angka biaya, kapasitas, dan deadline waktu (seperti H-7, besok sore)
  *    secara presisi 100% sesuai teks asli tanpa modifikasi, pembulatan, atau kalkulasi mandiri.
- * 6. Hasilkan HANYA output format resmi tanpa teks pengantar atau penutup.
+ * 6. Hasilkan HANYA output format resmi tanpa teks pengantar atau penutup dari AI.
  */
 
 const https = require('https');
@@ -26,12 +29,26 @@ const { correctTranscriptWithNLP } = require('./corrector.js');
 
 // Label terlarang yang bukan nama orang asli atau divisi valid
 const DISALLOWED_LABELS = new Set([
-  'pertama', 'kedua', 'ketiga', 'keempat', 'kelima', 'terakhir',
-  'lanjut', 'selanjutnya', 'kemudian', 'lalu', 'setelahnya',
-  'baik', 'bagus', 'cepat', 'penting', 'umum', 'tanya', 'pertanyaan',
-  'bagaimana', 'gimana', 'kapan', 'siapa', 'kenapa', 'mengapa', 'apakah',
-  'kita', 'kami', 'saya', 'anda', 'mereka', 'semua', 'tim', 'rekan',
-  'hari', 'kemarin', 'besok', 'tadi', 'nanti', 'halo', 'selamat'
+  // Kata bilangan urut & penunjuk urutan
+  'pertama', 'kedua', 'ketiga', 'keempat', 'kelima', 'keenam', 'terakhir',
+  'awal', 'akhir', 'lanjut', 'selanjutnya', 'kemudian', 'lalu', 'setelahnya',
+  // Kata tanya & pengantar
+  'bagaimana', 'gimana', 'kapan', 'siapa', 'kenapa', 'mengapa', 'apakah', 'ada',
+  // Kata sifat & keterangan umum
+  'baik', 'bagus', 'cepat', 'penting', 'umum', 'tanya', 'pertanyaan', 'kendala',
+  'masalah', 'progres', 'update', 'laporan', 'evaluasi', 'catatan', 'poin', 'hasil',
+  // Kata ganti orang / sebutan kolektif (bukan nama asli)
+  'kita', 'kami', 'saya', 'aku', 'anda', 'kamu', 'mereka', 'semua', 'tim', 'rekan',
+  'kawan', 'teman', 'orang', 'pihak',
+  // Kata hubung & kata depan
+  'dan', 'atau', 'tetapi', 'namun', 'karena', 'sebab', 'sehingga', 'supaya', 'agar',
+  'untuk', 'dari', 'pada', 'ke', 'di', 'dengan', 'oleh', 'tentang', 'mengenai', 'terkait',
+  'soal', 'jika', 'kalau', 'bila', 'apabila', 'saat', 'ketika', 'waktu', 'setelah',
+  'sesudah', 'sebelum', 'sambil', 'bisa', 'dapat', 'sudah', 'telah', 'sedang', 'akan',
+  'mau', 'ingin', 'boleh', 'harus', 'wajib', 'pastikan', 'tolong', 'mohon', 'silakan',
+  // Waktu & sapaan
+  'hari', 'kemarin', 'besok', 'tadi', 'nanti', 'pagi', 'siang', 'sore', 'malam',
+  'halo', 'hai', 'selamat', 'oke', 'siap', 'iya', 'ya'
 ]);
 
 // Divisi kerja resmi yang valid
@@ -48,6 +65,14 @@ const CASUAL_PATTERNS = [
   /\b(?:tes\s+tes|cek\s+suara|cek\s+audio|mic\s+saya)\b/i,
   /\b(?:mager|wkwk|haha|canda|jokes)\b/i
 ];
+
+/**
+ * Pembersihan pengulangan kata berturut-turut (misal: "progres progres" -> "progres")
+ */
+function cleanDuplicateWords(text) {
+  if (!text) return '';
+  return text.replace(/\b([a-zA-ZÀ-ÿ0-9]+)(?:\s+\1\b)+/gi, '$1').trim();
+}
 
 /**
  * Filter kalimat tanya, instruksi pembuka, atau basa-basi penutup
@@ -80,10 +105,10 @@ function isDisallowedFromSummary(sentence) {
 }
 
 /**
- * Format Output Markdown Resmi Sesuai Spesifikasi
+ * Format Output Markdown Resmi Sesuai Spesifikasi Notulen Rapat
  */
-function formatMeetingNotesMarkdown(topic, summaryItems, decisions) {
-  let md = `📌 **Topik / Konteks Pembicaraan:**\n${topic.trim()}\n\n📝 **Ringkasan Hasil Rapat:**\n`;
+function formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions) {
+  let md = `📌 **Topik / Konteks Pembicaraan:**\n${cleanDuplicateWords(topic)}\n\n📝 **Ringkasan Hasil Rapat (Progress & Substansi):**\n`;
   
   if (Array.isArray(summaryItems) && summaryItems.length > 0) {
     md += summaryItems.join('\n');
@@ -93,7 +118,13 @@ function formatMeetingNotesMarkdown(topic, summaryItems, decisions) {
     md += `* Tidak ada poin utama yang relevan untuk dirangkum.`;
   }
 
-  md += `\n\n⚖️ **Keputusan yang Diambil (Decisions Made):**\n`;
+  if (Array.isArray(keyPoints) && keyPoints.length > 0) {
+    md += `\n\n⚡ **Poin-Poin Utama:**\n` + keyPoints.join('\n');
+  } else if (typeof keyPoints === 'string' && keyPoints.trim()) {
+    md += `\n\n⚡ **Poin-Poin Utama:**\n` + keyPoints.trim();
+  }
+
+  md += `\n\n🎯 **Keputusan yang Diambil (Decisions Made):**\n`;
   
   if (Array.isArray(decisions) && decisions.length > 0) {
     md += decisions.join('\n');
@@ -108,26 +139,44 @@ function formatMeetingNotesMarkdown(topic, summaryItems, decisions) {
 
 /**
  * Ekstraksi Topik 1 Kalimat Ringkas
+ * Mematuhi aturan: DILARANG mengulang kata yang sama (seperti 'progres progres')
  */
 function extractTopicSentence(sentences, fullText) {
   const casualHits = CASUAL_PATTERNS.filter(p => p.test(fullText)).length;
   const hasStructuredWork = sentences.some(s => {
-    return /(?:progres|peluncuran|rilis|deploy|evaluasi|anggaran|biaya|fitur|perbaikan|bug|konfigurasi|draf\s+konten|pemasaran|desain|tenggat|deadline)/i.test(s);
+    return /(?:progres|peluncuran|rilis|deploy|evaluasi|anggaran|biaya|fitur|perbaikan|bug|latensi|draf\s+konten|pemasaran|desain|tenggat|deadline)/i.test(s);
   });
 
   if (casualHits >= 1 && !hasStructuredWork) {
     return 'Topik pembicaraan tidak spesifik / Obrolan kasual';
   }
 
-  // Cari penyebutan eksplisit topik atau tujuan rapat
+  // 1. Deteksi agenda eksplisit
   for (const s of sentences) {
     const match = s.match(/(?:agenda|topik|fokus|membahas|pertemuan\s+hari\s+ini|meeting\s+hari\s+ini|rapat\s+hari\s+ini)\s+(?:tentang|mengenai|soal|adalah|yaitu)?\s*([^\n]+?)(?=[.?!](?:\s+|$)|$)/i);
     if (match) {
       let t = match[1].replace(/^(?:rapat|meeting|diskusi|hari\s+ini|besok|pekan\s+ini)\s+/i, '').trim();
+      t = cleanDuplicateWords(t);
       if (t.length >= 4) {
-        return `Penyelarasan dan peninjauan progres ${t.toLowerCase()}.`;
+        return cleanDuplicateWords(`Penyelarasan dan peninjauan progres ${t.toLowerCase()}.`);
       }
     }
+  }
+
+  // 2. Deteksi domain substantif utama
+  const topicsFound = [];
+  if (/(?:api|payment|gateway|server|latensi|deploy|database|developer)/i.test(fullText)) {
+    topicsFound.push('integrasi sistem');
+  }
+  if (/(?:desain|mockup|ui|ux|antarmuka)/i.test(fullText)) {
+    topicsFound.push('kesiapan desain antarmuka');
+  }
+  if (/(?:pemasaran|kampanye|marketing|draf\s+konten|promosi)/i.test(fullText)) {
+    topicsFound.push('kampanye pemasaran');
+  }
+
+  if (topicsFound.length >= 2) {
+    return cleanDuplicateWords(`Koordinasi progres ${topicsFound.join(', ')}, serta peninjauan kendala teknis dan target tenggat waktu.`);
   }
 
   for (const s of sentences) {
@@ -135,8 +184,8 @@ function extractTopicSentence(sentences, fullText) {
 
     const patternMatch = s.match(/(?:terkait|soal|tentang|mengenai|rencana|evaluasi|proyek|fitur|perbaikan|pengembangan|sistem|server|rilis|deploy|anggaran|kampanye)\s+([^\n]+?)(?=[.?!](?:\s+|$)|$)/i);
     if (patternMatch) {
-      let subject = patternMatch[0].trim();
-      return `Koordinasi progres kerja dan evaluasi kendala ${subject.toLowerCase()}.`;
+      let subject = cleanDuplicateWords(patternMatch[0].trim());
+      return cleanDuplicateWords(`Koordinasi progres kerja dan evaluasi kendala ${subject.toLowerCase()}.`);
     }
   }
 
@@ -152,7 +201,7 @@ function extractTopicSentence(sentences, fullText) {
  * - Dilarang menyalin kalimat tanya, instruksi pembuka, atau basa-basi penutup
  * - Penamaan label HANYA untuk nama orang asli ATAU divisi valid (Developer, Desain, Pemasaran, dll.)
  * - Gabungkan update yang terpecah menjadi 1 kesatuan utuh per PIC/Bidang (maksimal 2 kalimat pendek)
- * - Kalimat instruksi final / keputusan dieksklusikan dari ringkasan (masuk ke Decisions Made)
+ * - Non-verbatim: memparafrasekan teks transkrip agar profesional
  */
 function extractSummaryItems(sentences) {
   const subjectGroups = new Map();
@@ -161,7 +210,7 @@ function extractSummaryItems(sentences) {
     // 1. Buang kalimat tanya, pembuka, penutup, atau celetukan
     if (isDisallowedFromSummary(s)) return;
 
-    // 2. Eksklusikan instruksi kerja final atau keputusan dari ringkasan
+    // 2. Eksklusikan instruksi kerja final atau keputusan dari ringkasan (masuk ke Decisions Made)
     const isFinalInstruction = /\b(?:pastikan|wajib|harus|siapkan\s+draf|untuk\s+keputusan\s+akhir|disepakati|sepakat|diputuskan)\b/i.test(s) &&
       /\b(?:besok|H-\d+|deadline|tenggat|paling\s+lambat|sebelum\s+jam|selesai)\b/i.test(s);
     if (isFinalInstruction) return;
@@ -206,8 +255,11 @@ function extractSummaryItems(sentences) {
 
     if (!label) return;
 
-    // Bersihkan updateText dari awalan penunjuk nama agar menjadi sintesis bersih
-    updateText = updateText.replace(new RegExp(`^(?:dan|lalu|kemudian|untuk|dari)?\\s*(?:si\\s+)?${label}\\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|bilang)?\\s*`, 'i'), '');
+    // Bersihkan updateText dari awalan percakapan / verba verbalistis untuk sintesis mandiri non-verbatim
+    updateText = updateText.replace(new RegExp(`^(?:dan|lalu|kemudian|untuk|dari)?\\s*(?:si\\s+)?${label}\\s*(?:dari\\s+(?:tim\\s+)?[A-Za-z]+)?\\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|menjelaskan|bilang)?\\s*`, 'i'), '');
+    updateText = updateText.replace(/^(?:ada\s+kendala\s+apa\s+di\s+tim\s+[a-z]+\??\s*)/i, '');
+    updateText = updateText.replace(/^(?:ada\s+kendala\s+)/i, 'Terdapat kendala ');
+    updateText = cleanDuplicateWords(updateText);
     updateText = updateText.charAt(0).toUpperCase() + updateText.slice(1);
     if (!/[.?!]$/.test(updateText)) updateText += '.';
 
@@ -233,16 +285,52 @@ function extractSummaryItems(sentences) {
 }
 
 /**
+ * Ekstraksi Poin-Poin Utama Rapat (Key Points)
+ */
+function extractKeyPoints(sentences, summaryItems, fullText) {
+  const points = [];
+
+  // Cari angka metrik substantif (persentase, nominal anggaran, dsb.)
+  sentences.forEach(s => {
+    if (isDisallowedFromSummary(s)) return;
+    if (/(?:\b\d+%|\bRp\s*[\d.,]+|\bselesai\s+100%|\bmencapai\s+\d+)/i.test(s)) {
+      let clean = s.replace(/^(?:dan|lalu|kemudian|untuk|dari|bagaimana\s+dengan)\s+/i, '').trim();
+      clean = clean.replace(/^(?:[A-Z][a-z]+\s+(?:dari\s+(?:tim\s+)?[A-Za-z]+\s+)?(?:melaporkan|menyampaikan|menjelaskan)\s+)/i, '');
+      clean = clean.charAt(0).toUpperCase() + clean.slice(1);
+      if (!/[.?!]$/.test(clean)) clean += '.';
+      points.push(`* ${clean}`);
+    }
+  });
+
+  // Jika belum ada poin substantif berangka, ambil dari kesimpulan ringkasan
+  if (points.length === 0 && Array.isArray(summaryItems) && summaryItems.length > 0 && !summaryItems[0].includes('Tidak ada poin')) {
+    summaryItems.slice(0, 3).forEach(item => {
+      const cleanItem = item.replace(/^\*\s+\*\*\[.*?\]:\*\*\s*/, '');
+      points.push(`* ${cleanItem}`);
+    });
+  }
+
+  if (points.length === 0) {
+    return ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+  }
+
+  return points.slice(0, 3);
+}
+
+/**
  * Ekstraksi Keputusan yang Diambil (Decisions Made):
  * Poin keputusan wajib diekstraksi jika terdapat:
  * - Instruksi kerja final (pastikan, jaga, siapkan, selesaikan, wajib, harus)
  * - Target tenggat waktu (deadline seperti H-7, besok sore, jam 23.00, paling lambat)
  * - Arahan penegasan di akhir rapat
- * Format: `* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja beserta deadline jika ada]`
+ * Format:
+ * `* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].`
+ * ATAU
+ * `* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].`
  */
 function extractDecisions(sentences, rawText) {
   const decisions = [];
-  const processedDecisions = new Set();
+  const processedCategories = new Set();
 
   sentences.forEach(s => {
     // 1. Deteksi Instruksi Kerja Final, Deadline Waktu, atau Arahan Penegasan
@@ -270,18 +358,38 @@ function extractDecisions(sentences, rawText) {
         else category = 'Arahan Kerja';
       }
 
-      // Bersihkan dan ekstrak detail instruksi kerja
-      let detail = s.replace(/^(?:dan|lalu|kemudian|selain\s+itu|terakhir|untuk\s+itu|untuk\s+keputusan\s+akhir[,.]?)\s*/i, '').trim();
-      if (category && new RegExp(`^${category}\\s*(?:tolong)?\\s*`, 'i').test(detail)) {
-        detail = detail.replace(new RegExp(`^${category}\\s*(?:tolong)?\\s*`, 'i'), '');
+      // Deteksi tenggat waktu (deadline)
+      let deadlineStr = '';
+      const deadlineMatch = s.match(/\b(?:paling\s+lambat\s+H-\d+\s+sebelum\s+[a-z]+|H-\d+|besok\s+(?:pagi|siang|sore|malam)|paling\s+lambat\s+[^\n.,]+|sebelum\s+jam\s+[\d.:]+|hari\s+(?:senin|selasa|rabu|kamis|jumat|sabtu|minggu))\b/i);
+      if (deadlineMatch) {
+        deadlineStr = deadlineMatch[0].trim();
       }
-      detail = detail.charAt(0).toUpperCase() + detail.slice(1);
-      if (!/[.?!]$/.test(detail)) detail += '.';
 
-      const item = `* **[${category}]:** ${detail}`;
-      if (!processedDecisions.has(category)) {
+      // Ekstraksi tindakan konkrit
+      let action = s.replace(/^(?:untuk\s+keputusan\s+akhir[,.]?|lalu|kemudian|dan|selain\s+itu|terakhir)\s*/i, '').trim();
+      if (category && new RegExp(`^${category}\\s*(?:tolong)?\\s*`, 'i').test(action)) {
+        action = action.replace(new RegExp(`^${category}\\s*(?:tolong)?\\s*`, 'i'), '');
+      }
+      action = action.replace(/^(?:pastikan|tolong\s+pastikan|wajib|harus|siapkan)\s*/i, '');
+      if (deadlineStr) {
+        action = action.replace(new RegExp(`(?:selesai\\s+)?${deadlineStr}`, 'i'), '').trim();
+      }
+      action = action.replace(/[.,;]+$/, '').trim();
+      if (/^draf\s+/i.test(action)) {
+        action = 'penyiapan ' + action;
+      }
+
+      let item = '';
+      if (hasConsensus && !hasFinalInstruction) {
+        item = `* **[${category}]:** Diputuskan bahwa ${action} akan dijalankan${deadlineStr ? ' pada ' + deadlineStr : ''}.`;
+      } else {
+        const deadlinePart = deadlineStr ? ` dengan tenggat waktu ${deadlineStr}` : '';
+        item = `* **[${category}]:** Ditargetkan untuk ${action} yang wajib diselesaikan oleh ${category}${deadlinePart}.`;
+      }
+
+      if (!processedCategories.has(category)) {
         decisions.push(item);
-        processedDecisions.add(category);
+        processedCategories.add(category);
       }
     }
   });
@@ -290,15 +398,11 @@ function extractDecisions(sentences, rawText) {
   if (decisions.length === 0) {
     sentences.forEach(s => {
       if (/(?:ga\s+tau\s+deh|belum\s+tau|belum\s+pasti|mager|belum\s+dikonfirmasi|belum\s+konfirmasi|ditunda|pending)/i.test(s)) {
-        let actor = 'pihak terkait';
-        const siMatch = s.match(/\bsi\s+([A-Za-z]+)\b/i);
-        if (siMatch) actor = siMatch[1].charAt(0).toUpperCase() + siMatch[1].slice(1);
-
         let topic = 'Pembahasan Terkait';
         if (/(?:gedung|tempat|ruangan|booking)/i.test(s)) topic = 'Booking Gedung';
         else if (/(?:anggaran|biaya|dana)/i.test(s)) topic = 'Persetujuan Anggaran';
 
-        decisions.push(`* [${topic}]: Tidak ada keputusan yang diambil / Status belum dikonfirmasi oleh ${actor}.`);
+        decisions.push(`* [${topic}]: Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.`);
       }
     });
   }
@@ -317,13 +421,15 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
   if (!rawTranscriptText || !rawTranscriptText.trim()) {
     const topic = 'Topik pembicaraan tidak spesifik / Obrolan kasual';
     const summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+    const keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
     const decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
     return {
       topic,
       summary: summaryItems.join('\n'),
       summaryItems,
+      keyPoints,
       decisions,
-      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
+      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions),
       method: 'nlp_builtin'
     };
   }
@@ -338,22 +444,26 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
     .map(s => s.trim())
     .filter(s => s.length > 4);
 
-  // 2. Ekstraksi Topik 1 Kalimat Ringkas
+  // 2. Ekstraksi Topik 1 Kalimat Ringkas (tanpa duplikasi kata)
   const topic = extractTopicSentence(rawSentences, text);
 
-  // 3. Ekstraksi Ringkasan Hasil Rapat (tergabung utuh per PIC/Divisi)
+  // 3. Ekstraksi Ringkasan Hasil Rapat (tergabung utuh per PIC/Divisi, non-verbatim)
   const summaryItems = extractSummaryItems(rawSentences);
 
-  // 4. Ekstraksi Keputusan yang Diambil (Instruksi kerja final, deadline, konsensus)
+  // 4. Ekstraksi Poin-Poin Utama
+  const keyPoints = extractKeyPoints(rawSentences, summaryItems, text);
+
+  // 5. Ekstraksi Keputusan yang Diambil (Format keputusan terstruktur)
   const decisions = extractDecisions(rawSentences, text);
 
-  // 5. Format Markdown Output
-  const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
+  // 6. Format Markdown Output
+  const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions);
 
   return {
     topic,
     summary: summaryItems.join('\n'),
     summaryItems,
+    keyPoints,
     decisions,
     rawMarkdown,
     method: 'nlp_builtin'
@@ -368,8 +478,8 @@ async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredMo
     return generateMeetingNotesWithNLP(rawTranscriptText);
   }
 
-  const prompt = `# ROLE & GOAL
-Fitur Notulen Rapat Otomatis (Automated Meeting Minutes Feature) berbasis kecerdasan buatan. Tugas utama fitur ini adalah mengolah komponen teks mentah hasil Voice-to-Text (STT), melakukan pembersihan data, serta mentransformasikannya menjadi dokumen Notulen Rapat (Minutes of Meeting) eksekutif yang ringkas, berstruktur tinggi, akurat, dan siap pakai oleh organisasi.
+  const prompt = `# ROLE & GOAL Perbaikan Fitur Notulen
+Sistem Anda adalah Fitur Notulen Rapat Otomatis (Automated Meeting Minutes Feature) berbasis kecerdasan buatan. Tugas utama fitur ini adalah mengolah komponen teks mentah hasil Voice-to-Text (STT), melakukan pembersihan data, serta mentransformasikannya menjadi dokumen Notulen Rapat (Minutes of Meeting) eksekutif yang ringkas, berstruktur tinggi, akurat, dan siap pakai oleh organisasi.
 
 <instruction>
 Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan mematuhi secara mutlak aturan ketat di bawah ini.
@@ -377,9 +487,13 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 
 <rules>
 1. DILARANG KERAS menyalin kalimat tanya, instruksi pembuka, atau basa-basi penutup ke dalam hasil ringkasan. Ringkasan HANYA berisi update progres atau informasi substantif yang valid.
-2. ATURAN PENAMAAN PIC/BIDANG: Gunakan label di dalam kurung siku '* **[Nama PIC / Bidang]:**' HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid (seperti Developer, Desain, Pemasaran). DILARANG menggunakan kata sifat, kata keterangan, bilangan urut (seperti Pertama, Kedua), atau teks pertanyaan acak dari transkrip sebagai nama label.
-3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang. Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Sintesis lengkap mengenai update progres dan kendala dalam maksimal 2 kalimat pendek.
-4. LOGIKA EVALUASI KEPUTUSAN: Poin keputusan (Decisions Made) wajib diekstraksi jika terdapat instruksi kerja final, target tenggat waktu (deadline seperti H-7, besok sore), atau arahan penegasan di akhir rapat (misalnya kalimat: "pastikan selesai besok", "jaga cadangan", "siapkan draf konten"). Pindahkan instruksi final tersebut menjadi poin keputusan yang konkrit. Format: '* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada]'. Jika rapat benar-benar tanpa keputusan, tulis: '* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'
+2. ATURAN PENAMAAN PIC/BIDANG (GEMINI 2.5 STRICTION): Gunakan label di dalam kurung siku '* **[Nama PIC / Bidang]:**' HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid (seperti Developer, Desain, Pemasaran). Abaikan dan DILARANG keras menggunakan kata depan, kata sifat, kata keterangan, bilangan urut (seperti Pertama, Kedua, Ada), atau teks pertanyaan acak dari transkrip sebagai nama label. Jangan biarkan noise hasil parsing NLP lokal lolos menjadi nama label.
+3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang menggunakan kalimat buatanmu sendiri berdasarkan fakta transkrip. Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Maksimal 2 kalimat pendek dan DILARANG menyalin teks asli percakapan secara verbatim.
+4. LOGIKA EVALUASI KEPUTUSAN (DECISIONS MADE): Poin keputusan wajib diekstraksi jika terdapat instruksi kerja final, target tenggat waktu (deadline), atau arahan penegasan di akhir rapat (misalnya kalimat: "pastikan selesai besok", "jaga cadangan", "siapkan draf konten"). Ubah instruksi tersebut menjadi kalimat konkrit menggunakan format awalan:
+   - '* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].'
+   ATAU
+   - '* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].'
+   Jika rapat benar-benar tanpa keputusan, tulis: '* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'
 5. AKURASI NUMERIK: Salin data persentase, angka biaya, kapasitas, dan deadline waktu (seperti H-7, besok sore) secara presisi 100% sesuai teks asli tanpa modifikasi, pembulatan, atau kalkulasi mandiri.
 6. Hasilkan HANYA output dengan format di bawah ini, tanpa teks pengantar atau penutup dari AI.
 </rules>
@@ -387,28 +501,41 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 # FORMAT OUTPUT NOTULEN RAPAT
 
 📌 **Topik / Konteks Pembicaraan:**
-[Tulis 1 kalimat ringkas mengenai tujuan utama rapat]
+[Tulis 1 kalimat ringkas mengenai tujuan utama rapat. DILARANG mengulang kata yang sama seperti 'progres progres']
 
-📝 **Ringkasan Hasil Rapat:**
-* **[Nama PIC / Divisi]:** [Sintesis lengkap mengenai update progres dan kendala. Maksimal 2 kalimat pendek]
+📝 **Ringkasan Hasil Rapat (Progress & Substansi):**
+* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]
+* **[Nama PIC / Bidang]:** ...
 
-⚖️ **Keputusan yang Diambil (Decisions Made):**
-* **[Kategori Keputusan / PIC]:** [Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada]
+⚡ **Poin-Poin Utama:**
+* [Poin substantif 1]
+* [Poin substantif 2]
+
+🎯 **Keputusan yang Diambil (Decisions Made):**
+* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
+* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].
 
 # FORMAT OUTPUT JSON:
 Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (\`\`\`json) dengan skema:
 {
-  "topic": "1 kalimat ringkas mengenai tujuan utama rapat",
+  "topic": "1 kalimat ringkas mengenai tujuan utama rapat tanpa kata berulang",
   "summaryItems": [
-    "* **[Nama PIC / Divisi]:** Sintesis lengkap mengenai update progres dan kendala (maksimal 2 kalimat pendek)"
+    "* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]"
+  ],
+  "keyPoints": [
+    "* [Poin substantif 1]",
+    "* [Poin substantif 2]"
   ],
   "decisions": [
-    "* **[Kategori Keputusan / PIC]:** Detail tindakan final atau instruksi kerja yang wajib dieksekusi pasca-rapat beserta deadline jika ada"
+    "* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada]."
   ]
 }
 
 Jika rapat benar-benar tanpa keputusan, isi decisions dengan:
 ["* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan."]
+
+Jika seluruh transkrip tidak memiliki poin utama yang relevan, isi keyPoints dengan:
+["* Tidak ada poin utama yang relevan untuk dirangkum."]
 
 Transkrip Mentah:
 """
@@ -439,19 +566,22 @@ ${rawTranscriptText}
     try {
       const res = await callGeminiSingleModel(model, apiKey, payload);
       if (res && res.topic) {
-        const topic = res.topic.trim();
+        const topic = cleanDuplicateWords(res.topic.trim());
         let summaryItems = Array.isArray(res.summaryItems) ? res.summaryItems.filter(Boolean) : [];
+        let keyPoints = Array.isArray(res.keyPoints) ? res.keyPoints.filter(Boolean) : [];
         let decisions = Array.isArray(res.decisions) ? res.decisions.filter(Boolean) : [];
 
         if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+        if (keyPoints.length === 0) keyPoints = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
         if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
 
-        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
+        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, keyPoints, decisions);
 
         return {
           topic,
           summary: summaryItems.join('\n'),
           summaryItems,
+          keyPoints,
           decisions,
           rawMarkdown,
           modelUsed: model,
