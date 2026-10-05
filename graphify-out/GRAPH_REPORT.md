@@ -1,17 +1,17 @@
 # Graph Report - web-saya  (2026-10-05)
 
 ## Corpus Check
-- 418 files · ~285,588 words
+- 418 files · ~285,818 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4793 nodes · 5277 edges · 397 communities (364 shown, 33 thin omitted)
+- 4795 nodes · 5280 edges · 400 communities (366 shown, 34 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 164 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3e8e9d6a`
+- Built from commit: `3065173b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -406,6 +406,9 @@
 - Strategic Compact Skill
 - 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
+- initSpeechRecognition
+- vue
+- triggerDownload
 
 ## God Nodes (most connected - your core abstractions)
 1. `_make_project()` - 27 edges
@@ -434,7 +437,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (397 total, 33 thin omitted)
+## Communities (400 total, 34 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
@@ -1874,7 +1877,7 @@ Nodes (3): Confidence Rule, Steps, Usage
 
 ### Community 388 - "App.vue"
 Cohesion: 0.05
-Nodes (33): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLangObj (+25 more)
+Nodes (24): availableLanguages, charCount, copySuccess, correctionData, currentLangObj, currentLanguage, formattedRecordingTime, geminiApiKey (+16 more)
 
 ### Community 389 - "Python Testing"
 Cohesion: 0.33
@@ -1892,10 +1895,18 @@ Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Co
 Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
+### Community 395 - "initSpeechRecognition"
+Cohesion: 0.33
+Nodes (7): appendTranscriptCleanly(), collapseExcessiveRepetitions(), initSpeechRecognition(), scrollToBottom(), startRecording(), stopRecording(), toggleRecording()
+
+### Community 397 - "triggerDownload"
+Cohesion: 0.67
+Nodes (3): downloadMomMarkdown(), downloadTranscript(), triggerDownload()
+
 ## Knowledge Gaps
-- **3086 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3081 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3461 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3087 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3082 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3462 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -1909,7 +1920,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3086 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3087 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.05081967213114754 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**

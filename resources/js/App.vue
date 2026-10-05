@@ -222,16 +222,27 @@
         <!-- Live Interim Speech & Soundwave Banner (Only when recording) -->
         <div
           v-if="isRecording"
-          class="flex items-center justify-between gap-3 px-3.5 py-2 bg-red-50/70 border border-red-200/80 rounded-xl"
+          class="flex items-center justify-between gap-3 px-3.5 py-2.5 bg-gradient-to-r from-red-50 via-rose-50/60 to-amber-50/40 border border-red-200/90 rounded-xl shadow-xs transition-all"
         >
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="live-dot"></span>
-            <p class="text-xs sm:text-sm text-red-900 italic truncate font-medium">
-              {{ interimSpeech ? '"' + interimSpeech + '"' : 'Mendengarkan suara Anda...' }}
-            </p>
+          <div class="flex items-start gap-2.5 min-w-0 flex-1">
+            <span class="live-dot mt-1 shrink-0"></span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 text-[11px] font-bold text-red-600 uppercase tracking-wider mb-0.5">
+                <span>{{ interimSpeech ? 'Sedang Berbicara' : 'Mikrofon Aktif' }}</span>
+                <span class="text-red-400 font-normal">({{ currentLangObj.name }})</span>
+              </div>
+              <p class="text-xs sm:text-sm text-red-950 font-medium leading-relaxed break-words">
+                <span v-if="interimSpeech" class="italic font-semibold text-red-900 bg-red-100/70 px-1.5 py-0.5 rounded">
+                  "{{ interimSpeech }}"
+                </span>
+                <span v-else class="text-red-500/80 italic">
+                  Mendengarkan suara secara real-time... Silakan bicara dengan santai atau jelas.
+                </span>
+              </p>
+            </div>
           </div>
           <!-- Mini Soundwave -->
-          <div class="flex items-end gap-1 h-5 shrink-0 px-1">
+          <div class="flex items-end gap-1 h-6 shrink-0 px-1.5 self-center">
             <span class="w-1 rounded-full bg-red-400 animate-soundwave-1"></span>
             <span class="w-1 rounded-full bg-red-600 animate-soundwave-2"></span>
             <span class="w-1 rounded-full bg-red-400 animate-soundwave-3"></span>
@@ -243,9 +254,10 @@
         <!-- Textarea Workspace -->
         <div class="relative">
           <textarea
+            ref="textareaRef"
             v-model="transcriptText"
             rows="8"
-            placeholder="Tekan 'Mulai Rekam' untuk bicara atau ketik/tempel transkrip di sini..."
+            :placeholder="isRecording ? 'Mendengarkan suara Anda... Hasil transkrip akan otomatis masuk ke sini.' : 'Tekan \'Mulai Rekam\' untuk bicara atau ketik/tempel transkrip di sini...'"
             class="input-clean resize-y leading-relaxed min-h-[160px] text-base"
           ></textarea>
         </div>
@@ -512,6 +524,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 // STATE: TRANSCRIPT WORKSPACE
 // -------------------------------------------------------------
 const transcriptText = ref('');
+const textareaRef = ref(null);
 
 const copySuccess = ref(false);
 const showDownloadMenu = ref(false);
@@ -523,6 +536,14 @@ const wordCount = computed(() => {
 });
 
 const charCount = computed(() => transcriptText.value.length);
+
+function scrollToBottom() {
+  setTimeout(() => {
+    if (textareaRef.value) {
+      textareaRef.value.scrollTop = textareaRef.value.scrollHeight;
+    }
+  }, 10);
+}
 
 // -------------------------------------------------------------
 // STATE: VOICE TO TEXT (STT) - HERO FOCUS
@@ -553,6 +574,8 @@ function setLanguage(code) {
   if (isRecording.value && recognition) {
     try {
       recognition.lang = code;
+      // Abort sesi saat ini agar engine STT langsung restart dengan acoustic model bahasa baru
+      recognition.abort();
     } catch (e) {}
   }
 }
@@ -570,6 +593,7 @@ const isMobileDevice = typeof navigator !== 'undefined' && /Android|webOS|iPhone
 // Pelacak status kalimat final terakhir untuk mencegah ghost replay pada Android
 let lastFinalPhrase = '';
 let lastFinalTimestamp = 0;
+let sessionStartTime = 0;
 let restartTimer = null;
 const processedFinalMap = new Map();
 
@@ -599,7 +623,7 @@ function appendTranscriptCleanly(currentText, newAddition) {
   const curWords = curTrimmed.split(/\s+/);
   const newWords = trimmedAddition.split(/\s+/);
 
-  // Periksa overlap kata maksimal di ujung teks sebelumnya dengan awal teks baru
+  // Periksa overlap kata maksimal di ujung teks sebelumnya dengan awal teks baru (maksimal 6 kata)
   let maxOverlap = 0;
   const maxCheck = Math.min(curWords.length, newWords.length, 6);
   for (let len = maxCheck; len >= 1; len--) {
@@ -613,7 +637,13 @@ function appendTranscriptCleanly(currentText, newAddition) {
 
   const remainingWords = newWords.slice(maxOverlap);
   if (remainingWords.length === 0) {
-    return curTrimmed;
+    // Jika seluruh kata newAddition cocok dengan ujung teks sebelumnya:
+    // HANYA abaikan jika ini overlap multi-kata (>= 2 kata) ATAU terjadi dalam jeda audio sangat singkat (< 400ms)
+    if (maxOverlap >= 2 || (Date.now() - lastFinalTimestamp < 400)) {
+      return curTrimmed;
+    }
+    // Jika hanya 1 kata setelah jeda normal, pembicara memang sengaja mengulang kata tsb ("tes... tes", "halo... halo")
+    return curTrimmed + ' ' + trimmedAddition;
   }
 
   return curTrimmed + ' ' + remainingWords.join(' ');
@@ -628,13 +658,14 @@ function initSpeechRecognition() {
 
   recognition = new SpeechRecognition();
 
-  // KRUSIAL UNTUK ANDROID / SAMSUNG GALAXY S23:
+  // KRUSIAL UNTUK ANDROID / SAMSUNG GALAXY:
   // Pada Android / mobile, continuous HARUS false karena engine SpeechRecognizer bawaan OS
   // hanya mendukung satu frasa per sesi. Jika continuous = true di Android, Chromium akan
-  // mencoba me-loop internal yang memicu bug resultIndex = 0 dan duplikasi kata 5-7x lipat.
-  // Pada desktop (PC/Mac), continuous = true berjalan lancar tanpa bug.
+  // memicu bug resultIndex = 0 dan duplikasi kata 5-7x lipat.
+  // Pada desktop (PC/Mac), continuous = true berjalan sangat lancar dan efisien tanpa jeda restart.
   recognition.continuous = !isMobileDevice;
   recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
   recognition.lang = currentLanguage.value;
 
   recognition.onresult = (event) => {
@@ -642,41 +673,31 @@ function initSpeechRecognition() {
     let finalChunk = '';
     const now = Date.now();
 
-    for (let i = 0; i < event.results.length; i++) {
+    // Mulai iterasi dari event.resultIndex untuk efisiensi maksimal tanpa memproses ulang teks final lama
+    for (let i = event.resultIndex; i < event.results.length; i++) {
       const res = event.results[i];
       const rawText = res[0] ? res[0].transcript.trim() : '';
       if (!rawText) continue;
 
       if (res.isFinal) {
-        // Cek anti-ghost replay: jika kalimat yang sama persis diterima dalam rentang waktu < 2.5 detik
-        const isExactRecentDuplicate = (
-          rawText.toLowerCase() === lastFinalPhrase.toLowerCase() &&
-          (now - lastFinalTimestamp) < 2500
-        );
+        // Cek anti-ghost replay:
+        // Hanya aktif di mobile jika event final ini tiba sangat cepat (< 400ms) setelah sesi di-restart
+        // dan kata/frasanya persis sama dengan akhir sesi sebelumnya (sisa buffer audio Samsung/Android).
+        const isGhostReplay = isMobileDevice &&
+          (now - sessionStartTime < 400) &&
+          lastFinalPhrase &&
+          (rawText.toLowerCase() === lastFinalPhrase.toLowerCase());
 
-        if (isExactRecentDuplicate) {
-          continue; // Abaikan replay buffer audio Android
+        if (isGhostReplay) {
+          continue; // Abaikan buffer replay Android
         }
 
-        const prevText = processedFinalMap.get(i) || '';
-        if (rawText !== prevText) {
-          // Tangani kasus akumulasi teks Android (misal: "halo" -> "halo bandung" pada indeks yang sama)
-          if (prevText && rawText.toLowerCase().startsWith(prevText.toLowerCase())) {
-            const diff = rawText.slice(prevText.length).trim();
-            if (diff) {
-              finalChunk = appendTranscriptCleanly(finalChunk, diff);
-            }
-          } else if (!prevText) {
-            // Indeks baru yang pertama kali ditandai final
-            finalChunk = appendTranscriptCleanly(finalChunk, rawText);
-          }
-          processedFinalMap.set(i, rawText);
-          lastFinalPhrase = rawText;
-          lastFinalTimestamp = now;
-        }
+        finalChunk = appendTranscriptCleanly(finalChunk, rawText);
+        lastFinalPhrase = rawText;
+        lastFinalTimestamp = now;
       } else {
-        // Teks sementara (interim)
-        interim = rawText;
+        // Akumulasi teks sementara (interim)
+        interim += (interim ? ' ' : '') + rawText;
       }
     }
 
@@ -684,12 +705,17 @@ function initSpeechRecognition() {
 
     if (finalChunk) {
       transcriptText.value = appendTranscriptCleanly(transcriptText.value, finalChunk);
+      scrollToBottom();
     }
   };
 
   recognition.onerror = (event) => {
     console.warn('Speech recognition error:', event.error);
-    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+    if (event.error === 'no-speech' || event.error === 'aborted') {
+      return;
+    }
+    if (event.error === 'not-allowed') {
+      alert('Izin akses mikrofon tidak diizinkan. Silakan aktifkan izin mikrofon pada browser Anda.');
       stopRecording();
     }
   };
@@ -699,17 +725,29 @@ function initSpeechRecognition() {
 
     if (isRecording.value) {
       clearTimeout(restartTimer);
-      // Berikan jeda 250ms pada mobile agar mic audio daemon Samsung melepaskan sesi sebelum mulai lagi
+      // Restart cepat (15ms di mobile, 10ms di desktop) agar mic tetap 'panas' dan tidak memotong kata pertama
       restartTimer = setTimeout(() => {
         if (isRecording.value && recognition) {
           try {
+            sessionStartTime = Date.now();
             recognition.lang = currentLanguage.value;
             recognition.start();
           } catch (e) {
-            console.warn('SpeechRecognition restart error:', e);
+            // Jika audio subsystem masih menyelesaikan unbind, coba lagi dalam 40ms
+            setTimeout(() => {
+              if (isRecording.value && recognition) {
+                try {
+                  sessionStartTime = Date.now();
+                  recognition.lang = currentLanguage.value;
+                  recognition.start();
+                } catch (err) {
+                  console.warn('SpeechRecognition restart retry error:', err);
+                }
+              }
+            }, 40);
           }
         }
-      }, isMobileDevice ? 250 : 50);
+      }, isMobileDevice ? 15 : 10);
     }
   };
 }
@@ -735,7 +773,10 @@ function startRecording() {
     processedFinalMap.clear();
     lastFinalPhrase = '';
     lastFinalTimestamp = 0;
+    sessionStartTime = Date.now();
     recognition.continuous = !isMobileDevice;
+    recognition.maxAlternatives = 1;
+    recognition.interimResults = true;
     recognition.lang = currentLanguage.value;
     recognition.start();
     isRecording.value = true;

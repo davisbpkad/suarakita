@@ -3255,18 +3255,6 @@
       "source_location": "L129"
     },
     {
-      "id": "resources_js_app_appendtranscriptcleanly",
-      "label": "appendTranscriptCleanly()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "appendtranscriptcleanly()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L589"
-    },
-    {
       "id": "resources_js_app_applycorrection",
       "label": "applyCorrection()",
       "_callable": true,
@@ -3276,7 +3264,7 @@
       "file_type": "code",
       "norm_label": "applycorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L867"
+      "source_location": "L908"
     },
     {
       "id": "resources_js_app_cleartranscript",
@@ -3288,19 +3276,7 @@
       "file_type": "code",
       "norm_label": "cleartranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L931"
-    },
-    {
-      "id": "resources_js_app_collapseexcessiverepetitions",
-      "label": "collapseExcessiveRepetitions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "collapseexcessiverepetitions()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L579"
+      "source_location": "L972"
     },
     {
       "id": "resources_js_app_copytext",
@@ -3312,7 +3288,7 @@
       "file_type": "code",
       "norm_label": "copytext()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L935"
+      "source_location": "L976"
     },
     {
       "id": "resources_js_app_copytranscript",
@@ -3324,31 +3300,7 @@
       "file_type": "code",
       "norm_label": "copytranscript()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L944"
-    },
-    {
-      "id": "resources_js_app_downloadmommarkdown",
-      "label": "downloadMomMarkdown()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "downloadmommarkdown()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L916"
-    },
-    {
-      "id": "resources_js_app_downloadtranscript",
-      "label": "downloadTranscript()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "downloadtranscript()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L961"
+      "source_location": "L985"
     },
     {
       "id": "resources_js_app_formatmarkdowninline",
@@ -3360,19 +3312,7 @@
       "file_type": "code",
       "norm_label": "formatmarkdowninline()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L819"
-    },
-    {
-      "id": "resources_js_app_initspeechrecognition",
-      "label": "initSpeechRecognition()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "initspeechrecognition()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L622"
+      "source_location": "L860"
     },
     {
       "id": "resources_js_app_loadpreset",
@@ -3384,7 +3324,7 @@
       "file_type": "code",
       "norm_label": "loadpreset()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L808"
+      "source_location": "L849"
     },
     {
       "id": "resources_js_app_removeapikey",
@@ -3396,7 +3336,7 @@
       "file_type": "code",
       "norm_label": "removeapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L799"
+      "source_location": "L840"
     },
     {
       "id": "resources_js_app_runcorrection",
@@ -3408,7 +3348,7 @@
       "file_type": "code",
       "norm_label": "runcorrection()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L838"
+      "source_location": "L879"
     },
     {
       "id": "resources_js_app_runmeetingnotes",
@@ -3420,7 +3360,7 @@
       "file_type": "code",
       "norm_label": "runmeetingnotes()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L887"
+      "source_location": "L928"
     },
     {
       "id": "resources_js_app_saveapikey",
@@ -3432,7 +3372,7 @@
       "file_type": "code",
       "norm_label": "saveapikey()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L793"
+      "source_location": "L834"
     },
     {
       "id": "resources_js_app_setlanguage",
@@ -3444,31 +3384,7 @@
       "file_type": "code",
       "norm_label": "setlanguage()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L550"
-    },
-    {
-      "id": "resources_js_app_startrecording",
-      "label": "startRecording()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "startrecording()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L725"
-    },
-    {
-      "id": "resources_js_app_stoprecording",
-      "label": "stopRecording()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "stoprecording()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L754"
+      "source_location": "L571"
     },
     {
       "id": "resources_js_app_toggledownloadmenu",
@@ -3480,31 +3396,7 @@
       "file_type": "code",
       "norm_label": "toggledownloadmenu()",
       "source_file": "resources/js/App.vue",
-      "source_location": "L927"
-    },
-    {
-      "id": "resources_js_app_togglerecording",
-      "label": "toggleRecording()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "togglerecording()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L717"
-    },
-    {
-      "id": "resources_js_app_triggerdownload",
-      "label": "triggerDownload()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "triggerdownload()",
-      "source_file": "resources/js/App.vue",
-      "source_location": "L980"
+      "source_location": "L968"
     },
     {
       "id": "agents_skills_skill_comply_scripts_grader_grade",
@@ -3721,6 +3613,126 @@
       "norm_label": "handler()",
       "source_file": "netlify/functions/status.js",
       "source_location": "L4"
+    },
+    {
+      "id": "resources_js_app_appendtranscriptcleanly",
+      "label": "appendTranscriptCleanly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "appendtranscriptcleanly()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L613"
+    },
+    {
+      "id": "resources_js_app_collapseexcessiverepetitions",
+      "label": "collapseExcessiveRepetitions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "collapseexcessiverepetitions()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L603"
+    },
+    {
+      "id": "resources_js_app_initspeechrecognition",
+      "label": "initSpeechRecognition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "initspeechrecognition()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L652"
+    },
+    {
+      "id": "resources_js_app_scrolltobottom",
+      "label": "scrollToBottom()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "scrolltobottom()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L540"
+    },
+    {
+      "id": "resources_js_app_startrecording",
+      "label": "startRecording()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "startrecording()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L763"
+    },
+    {
+      "id": "resources_js_app_stoprecording",
+      "label": "stopRecording()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "stoprecording()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L795"
+    },
+    {
+      "id": "resources_js_app_togglerecording",
+      "label": "toggleRecording()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 395,
+      "community_name": "initSpeechRecognition",
+      "file_type": "code",
+      "norm_label": "togglerecording()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L755"
+    },
+    {
+      "id": "resources_js_app_downloadmommarkdown",
+      "label": "downloadMomMarkdown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 397,
+      "community_name": "triggerDownload",
+      "file_type": "code",
+      "norm_label": "downloadmommarkdown()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L957"
+    },
+    {
+      "id": "resources_js_app_downloadtranscript",
+      "label": "downloadTranscript()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 397,
+      "community_name": "triggerDownload",
+      "file_type": "code",
+      "norm_label": "downloadtranscript()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L1002"
+    },
+    {
+      "id": "resources_js_app_triggerdownload",
+      "label": "triggerDownload()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 397,
+      "community_name": "triggerDownload",
+      "file_type": "code",
+      "norm_label": "triggerdownload()",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L1021"
     },
     {
       "id": "agents_skills_continuous_learning_v2_scripts_instinct_cli_cmd_projects",
@@ -43338,7 +43350,7 @@
       "file_type": "code",
       "norm_label": "availablelanguages",
       "source_file": "resources/js/App.vue",
-      "source_location": "L538"
+      "source_location": "L559"
     },
     {
       "id": "resources_js_app_charcount",
@@ -43349,7 +43361,7 @@
       "file_type": "code",
       "norm_label": "charcount",
       "source_file": "resources/js/App.vue",
-      "source_location": "L525"
+      "source_location": "L538"
     },
     {
       "id": "resources_js_app_copysuccess",
@@ -43360,7 +43372,7 @@
       "file_type": "code",
       "norm_label": "copysuccess",
       "source_file": "resources/js/App.vue",
-      "source_location": "L516"
+      "source_location": "L529"
     },
     {
       "id": "resources_js_app_correctiondata",
@@ -43371,7 +43383,7 @@
       "file_type": "code",
       "norm_label": "correctiondata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L831"
+      "source_location": "L872"
     },
     {
       "id": "resources_js_app_currentlangobj",
@@ -43382,7 +43394,7 @@
       "file_type": "code",
       "norm_label": "currentlangobj",
       "source_file": "resources/js/App.vue",
-      "source_location": "L546"
+      "source_location": "L567"
     },
     {
       "id": "resources_js_app_currentlanguage",
@@ -43393,7 +43405,7 @@
       "file_type": "code",
       "norm_label": "currentlanguage",
       "source_file": "resources/js/App.vue",
-      "source_location": "L544"
+      "source_location": "L565"
     },
     {
       "id": "resources_js_app_formattedrecordingtime",
@@ -43404,7 +43416,7 @@
       "file_type": "code",
       "norm_label": "formattedrecordingtime",
       "source_file": "resources/js/App.vue",
-      "source_location": "L560"
+      "source_location": "L583"
     },
     {
       "id": "resources_js_app_geminiapikey",
@@ -43415,7 +43427,7 @@
       "file_type": "code",
       "norm_label": "geminiapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L776"
+      "source_location": "L817"
     },
     {
       "id": "resources_js_app_hasapikey",
@@ -43426,7 +43438,7 @@
       "file_type": "code",
       "norm_label": "hasapikey",
       "source_file": "resources/js/App.vue",
-      "source_location": "L778"
+      "source_location": "L819"
     },
     {
       "id": "resources_js_app_interimspeech",
@@ -43437,7 +43449,7 @@
       "file_type": "code",
       "norm_label": "interimspeech",
       "source_file": "resources/js/App.vue",
-      "source_location": "L531"
+      "source_location": "L552"
     },
     {
       "id": "resources_js_app_isrecording",
@@ -43448,18 +43460,7 @@
       "file_type": "code",
       "norm_label": "isrecording",
       "source_file": "resources/js/App.vue",
-      "source_location": "L530"
-    },
-    {
-      "id": "resources_js_app_js_resources_js_app",
-      "label": "js/app.js",
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "code",
-      "norm_label": "js/app.js",
-      "source_file": "resources/js/app.js",
-      "source_location": "L1"
+      "source_location": "L551"
     },
     {
       "id": "resources_js_app_loadingaction",
@@ -43470,7 +43471,7 @@
       "file_type": "code",
       "norm_label": "loadingaction",
       "source_file": "resources/js/App.vue",
-      "source_location": "L779"
+      "source_location": "L820"
     },
     {
       "id": "resources_js_app_momdata",
@@ -43481,7 +43482,7 @@
       "file_type": "code",
       "norm_label": "momdata",
       "source_file": "resources/js/App.vue",
-      "source_location": "L878"
+      "source_location": "L919"
     },
     {
       "id": "resources_js_app_processedfinalmap",
@@ -43492,7 +43493,7 @@
       "file_type": "code",
       "norm_label": "processedfinalmap",
       "source_file": "resources/js/App.vue",
-      "source_location": "L574"
+      "source_location": "L598"
     },
     {
       "id": "resources_js_app_recordingseconds",
@@ -43503,7 +43504,7 @@
       "file_type": "code",
       "norm_label": "recordingseconds",
       "source_file": "resources/js/App.vue",
-      "source_location": "L532"
+      "source_location": "L553"
     },
     {
       "id": "resources_js_app_selectedgeminimodel",
@@ -43514,7 +43515,7 @@
       "file_type": "code",
       "norm_label": "selectedgeminimodel",
       "source_file": "resources/js/App.vue",
-      "source_location": "L777"
+      "source_location": "L818"
     },
     {
       "id": "resources_js_app_showaiconfigmodal",
@@ -43525,7 +43526,7 @@
       "file_type": "code",
       "norm_label": "showaiconfigmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L775"
+      "source_location": "L816"
     },
     {
       "id": "resources_js_app_showcorrectionmodal",
@@ -43536,7 +43537,7 @@
       "file_type": "code",
       "norm_label": "showcorrectionmodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L830"
+      "source_location": "L871"
     },
     {
       "id": "resources_js_app_showdownloadmenu",
@@ -43547,7 +43548,7 @@
       "file_type": "code",
       "norm_label": "showdownloadmenu",
       "source_file": "resources/js/App.vue",
-      "source_location": "L517"
+      "source_location": "L530"
     },
     {
       "id": "resources_js_app_showlangmenu",
@@ -43558,7 +43559,7 @@
       "file_type": "code",
       "norm_label": "showlangmenu",
       "source_file": "resources/js/App.vue",
-      "source_location": "L536"
+      "source_location": "L557"
     },
     {
       "id": "resources_js_app_showmommodal",
@@ -43569,7 +43570,18 @@
       "file_type": "code",
       "norm_label": "showmommodal",
       "source_file": "resources/js/App.vue",
-      "source_location": "L877"
+      "source_location": "L918"
+    },
+    {
+      "id": "resources_js_app_textarearef",
+      "label": "textareaRef",
+      "_origin": "ast",
+      "community": 388,
+      "community_name": "App.vue",
+      "file_type": "code",
+      "norm_label": "textarearef",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L527"
     },
     {
       "id": "resources_js_app_transcripttext",
@@ -43580,7 +43592,7 @@
       "file_type": "code",
       "norm_label": "transcripttext",
       "source_file": "resources/js/App.vue",
-      "source_location": "L514"
+      "source_location": "L526"
     },
     {
       "id": "resources_js_app_vue_resources_js_app",
@@ -43602,18 +43614,7 @@
       "file_type": "code",
       "norm_label": "wordcount",
       "source_file": "resources/js/App.vue",
-      "source_location": "L519"
-    },
-    {
-      "id": "ref_vue",
-      "label": "vue",
-      "_origin": "ast",
-      "community": 388,
-      "community_name": "App.vue",
-      "file_type": "concept",
-      "norm_label": "vue",
-      "source_file": "package.json",
-      "source_location": "L27"
+      "source_location": "L532"
     },
     {
       "id": "agents_rules_python_testing",
@@ -44286,6 +44287,28 @@
       "norm_label": "status.js",
       "source_file": "netlify/functions/status.js",
       "source_location": "L1"
+    },
+    {
+      "id": "resources_js_app_js_resources_js_app",
+      "label": "js/app.js",
+      "_origin": "ast",
+      "community": 396,
+      "community_name": "vue",
+      "file_type": "code",
+      "norm_label": "js/app.js",
+      "source_file": "resources/js/app.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "ref_vue",
+      "label": "vue",
+      "_origin": "ast",
+      "community": 396,
+      "community_name": "vue",
+      "file_type": "concept",
+      "norm_label": "vue",
+      "source_file": "package.json",
+      "source_location": "L27"
     },
     {
       "id": "artisan",
@@ -58196,18 +58219,6 @@
       "type": "external"
     },
     {
-      "id": "resources_css_app",
-      "label": "resources_css_app",
-      "_origin": "semantic",
-      "community": 388,
-      "community_name": "App.vue",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "resources_css_app",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_path",
       "label": "ref_path",
       "_origin": "semantic",
@@ -58216,6 +58227,18 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_path",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "resources_css_app",
+      "label": "resources_css_app",
+      "_origin": "semantic",
+      "community": 396,
+      "community_name": "vue",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "resources_css_app",
       "source_file": "",
       "type": "external"
     },
@@ -62958,7 +62981,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L594",
+      "source_location": "L618",
       "weight": 1.0
     },
     {
@@ -62970,7 +62993,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L921",
+      "source_location": "L962",
       "weight": 1.0
     },
     {
@@ -62982,7 +63005,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L973",
+      "source_location": "L1014",
       "weight": 1.0
     },
     {
@@ -62994,7 +63017,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L667",
+      "source_location": "L695",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_initspeechrecognition",
+      "target": "resources_js_app_scrolltobottom",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "resources/js/App.vue",
+      "source_location": "L708",
       "weight": 1.0
     },
     {
@@ -63006,7 +63041,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L693",
+      "source_location": "L719",
       "weight": 1.0
     },
     {
@@ -63018,7 +63053,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L734",
+      "source_location": "L772",
       "weight": 1.0
     },
     {
@@ -63030,7 +63065,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L719",
+      "source_location": "L757",
       "weight": 1.0
     },
     {
@@ -63042,7 +63077,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "resources/js/App.vue",
-      "source_location": "L721",
+      "source_location": "L759",
       "weight": 1.0
     },
     {
@@ -66330,7 +66365,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "resources/js/App.vue",
-      "source_location": "L509",
+      "source_location": "L521",
       "weight": 1.0
     },
     {
@@ -110583,475 +110618,13 @@
     },
     {
       "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_transcripttext",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L514",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_copysuccess",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L516",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_showdownloadmenu",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L517",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_wordcount",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L519",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_charcount",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L525",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_isrecording",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L530",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_interimspeech",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L531",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_recordingseconds",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L532",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_showlangmenu",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L536",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_availablelanguages",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L538",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_currentlanguage",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L544",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_currentlangobj",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L546",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_setlanguage",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L550",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_formattedrecordingtime",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L560",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_processedfinalmap",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L574",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_collapseexcessiverepetitions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L579",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_appendtranscriptcleanly",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L589",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_initspeechrecognition",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L622",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_togglerecording",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L717",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_startrecording",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L725",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_stoprecording",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L754",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_showaiconfigmodal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L775",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_geminiapikey",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L776",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_selectedgeminimodel",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L777",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_hasapikey",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L778",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_loadingaction",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L779",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_saveapikey",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L793",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_removeapikey",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L799",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_loadpreset",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L808",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_formatmarkdowninline",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L819",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_showcorrectionmodal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L830",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_correctiondata",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L831",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_runcorrection",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L838",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_applycorrection",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L867",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_showmommodal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L877",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_momdata",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L878",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_runmeetingnotes",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L887",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_downloadmommarkdown",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L916",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_toggledownloadmenu",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L927",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_cleartranscript",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L931",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_copytext",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L935",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
-      "target": "resources_js_app_copytranscript",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "resources/js/App.vue",
-      "source_location": "L944",
-      "weight": 1.0
-    },
-    {
-      "source": "resources_js_app_vue_resources_js_app",
       "target": "resources_js_app_downloadtranscript",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L961",
+      "source_location": "L1002",
       "weight": 1.0
     },
     {
@@ -111062,7 +110635,491 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/App.vue",
-      "source_location": "L980",
+      "source_location": "L1021",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_transcripttext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L526",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_textarearef",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L527",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_copysuccess",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L529",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_showdownloadmenu",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L530",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_wordcount",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L532",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_charcount",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L538",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_scrolltobottom",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L540",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_isrecording",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_interimspeech",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L552",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_recordingseconds",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L553",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_showlangmenu",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L557",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_availablelanguages",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L559",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_currentlanguage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L565",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_currentlangobj",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L567",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_setlanguage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L571",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_formattedrecordingtime",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L583",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_processedfinalmap",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L598",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_collapseexcessiverepetitions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L603",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_appendtranscriptcleanly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L613",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_initspeechrecognition",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L652",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_togglerecording",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L755",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_startrecording",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L763",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_stoprecording",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L795",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_showaiconfigmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L816",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_geminiapikey",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L817",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_selectedgeminimodel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L818",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_hasapikey",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L819",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_loadingaction",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L820",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_saveapikey",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L834",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_removeapikey",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L840",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_loadpreset",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L849",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_formatmarkdowninline",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L860",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_showcorrectionmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L871",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_correctiondata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L872",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_runcorrection",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L879",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_applycorrection",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L908",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_showmommodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L918",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_momdata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L919",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_runmeetingnotes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L928",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_downloadmommarkdown",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L957",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_toggledownloadmenu",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L968",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_cleartranscript",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L972",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_copytext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L976",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_app_vue_resources_js_app",
+      "target": "resources_js_app_copytranscript",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/App.vue",
+      "source_location": "L985",
       "weight": 1.0
     },
     {
@@ -117192,5 +117249,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3e8e9d6a265fe64b1db59e069810e55b954ea653"
+  "built_at_commit": "3065173b65fb86f118a2ababaa59a76e710391e5"
 }
