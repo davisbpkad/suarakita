@@ -1,17 +1,17 @@
-# Graph Report - web-saya  (2026-10-04)
+# Graph Report - web-saya  (2026-10-05)
 
 ## Corpus Check
-- 418 files · ~285,324 words
+- 418 files · ~285,588 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .jsonl 2, .css 2, .example 1)
 
 ## Summary
-- 4790 nodes · 5274 edges · 396 communities (363 shown, 33 thin omitted)
+- 4793 nodes · 5277 edges · 397 communities (364 shown, 33 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 164 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `540170c2`
+- Built from commit: `3e8e9d6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -403,6 +403,7 @@
 - App.vue
 - Python Testing
 - package.json
+- Strategic Compact Skill
 - 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 - app.php
 
@@ -433,7 +434,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (396 total, 33 thin omitted)
+## Communities (397 total, 33 thin omitted)
 
 ### Community 0 - "instinct-cli.py"
 Cohesion: 0.05
@@ -528,8 +529,8 @@ Cohesion: 0.08
 Nodes (23): 1. Enable Observation Hooks, 2. Initialize Directory Structure, 3. Use the Instinct Commands, Backward Compatibility, Commands, Confidence Scoring, Configuration, Continuous Learning v2.1 - Instinct (+15 more)
 
 ### Community 23 - "What You Must Do When Invoked"
-Cohesion: 0.05
-Nodes (37): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+29 more)
+Cohesion: 0.08
+Nodes (23): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+15 more)
 
 ### Community 24 - "ObservationEvent"
 Cohesion: 0.17
@@ -1873,7 +1874,7 @@ Nodes (3): Confidence Rule, Steps, Usage
 
 ### Community 388 - "App.vue"
 Cohesion: 0.05
-Nodes (31): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLanguage (+23 more)
+Nodes (33): vue, appendTranscriptCleanly(), availableLanguages, charCount, collapseExcessiveRepetitions(), copySuccess, correctionData, currentLangObj (+25 more)
 
 ### Community 389 - "Python Testing"
 Cohesion: 0.33
@@ -1883,18 +1884,24 @@ Nodes (5): Coverage, Framework, Python Testing, Reference, Test Organization
 Cohesion: 0.10
 Nodes (18): author, description, keywords, license, main, name, scripts, build (+10 more)
 
+### Community 391 - "Strategic Compact Skill"
+Cohesion: 0.13
+Nodes (14): Best Practices, Compaction Decision Guide, Configuration, Context Composition Awareness, Context Optimization Tools, Duplicate Instruction Detection, Hook Setup, Related (+6 more)
+
 ### Community 392 - "🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas"
 Cohesion: 0.22
 Nodes (8): 1. Prasyarat, 2. Langkah Instalasi & Menjalankan, 🚀 Cara Menjalankan di Localhost, 🌐 Deployment di Netlify, ✨ Fitur Utama, 📄 Lisensi, 📁 Struktur Direktori, 🎙️ SuaraKita — Voice-to-Text & Notulen Rapat Cerdas
 
 ## Knowledge Gaps
-- **3084 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3079 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3458 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **3086 isolated node(s):** `resolved`, `contextDirPath`, `projects`, `resolved`, `projects` (+3081 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3461 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `Testing Requirements` connect `Testing Requirements` to `common-testing.md`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `grade()` (e.g. with `ComplianceSpec` and `ObservationEvent`) actually correct?**
   _`grade()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 9 inferred relationships involving `_load_instincts_from_dir()` (e.g. with `test_load_annotates_metadata()` and `test_load_defaults_scope_from_label()`) actually correct?**
@@ -1902,10 +1909,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `ObservationEvent` (e.g. with `classify_events()` and `_check_temporal_order()`) actually correct?**
   _`ObservationEvent` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `resolved`, `contextDirPath`, `projects` to the rest of the system?**
-  _3084 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3086 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `instinct-cli.py` be split into smaller, more focused modules?**
   _Cohesion score 0.05081967213114754 - nodes in this community are weakly interconnected._
 - **Should `test_parse_instinct.py` be split into smaller, more focused modules?**
   _Cohesion score 0.06108597285067873 - nodes in this community are weakly interconnected._
-- **Should `Git Workflow Patterns` be split into smaller, more focused modules?**
-  _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._

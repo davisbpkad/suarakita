@@ -11,6 +11,67 @@
 
       <!-- Right Actions -->
       <div class="flex items-center gap-2">
+        <!-- PENGATURAN BAHASA (Hover / Click Dropdown, bersebelahan dengan Pengaturan AI) -->
+        <div
+          class="relative group"
+          @mouseenter="showLangMenu = true"
+          @mouseleave="showLangMenu = false"
+        >
+          <button
+            @click="showLangMenu = !showLangMenu"
+            class="h-11 px-3.5 rounded-full border border-[var(--color-line)] bg-white text-[var(--color-ink)] hover:bg-[var(--color-cream)] hover:border-[var(--color-ink)] transition-all flex items-center gap-1.5 text-xs sm:text-sm font-bold cursor-pointer"
+            aria-label="Pilih Bahasa STT"
+          >
+            <span class="text-base">{{ currentLangObj.flag }}</span>
+            <span class="font-bold">{{ currentLangObj.shortCode }}</span>
+            <svg
+              class="w-3.5 h-3.5 text-[var(--color-muted)] transition-transform duration-200 group-hover:rotate-180"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+
+          <!-- Hover Tooltip -->
+          <div
+            v-if="!showLangMenu"
+            class="theme-tooltip"
+            role="tooltip"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-yolk)] shrink-0"></span>
+            <span>Bahasa: {{ currentLangObj.name }}</span>
+          </div>
+
+          <!-- Dropdown Menu on Hover / Click -->
+          <div
+            class="absolute right-0 top-full pt-2 z-40 transition-all duration-200"
+            :class="showLangMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0'"
+          >
+            <div class="w-48 bg-white border border-[var(--color-line)] rounded-2xl py-2 shadow-xl flex flex-col gap-0.5">
+              <div class="px-3.5 py-1 text-[11px] font-bold text-[var(--color-muted)] uppercase tracking-wider">
+                Bahasa Suara (STT)
+              </div>
+              <button
+                v-for="lang in availableLanguages"
+                :key="lang.code"
+                @click="setLanguage(lang.code)"
+                class="w-full text-left px-3.5 py-2 text-sm font-medium hover:bg-[var(--color-cream)] flex items-center justify-between transition-colors cursor-pointer"
+                :class="currentLanguage === lang.code ? 'text-[var(--color-ink)] font-bold bg-[var(--color-yolk)]/20' : 'text-[var(--color-muted)]'"
+              >
+                <div class="flex items-center gap-2.5">
+                  <span class="text-base">{{ lang.flag }}</span>
+                  <span>{{ lang.name }}</span>
+                </div>
+                <span v-if="currentLanguage === lang.code" class="text-xs font-bold text-amber-700">✓</span>
+                <span v-else class="text-[11px] font-mono text-[var(--color-muted)]">{{ lang.shortCode }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- AI Config -->
         <div class="relative group">
           <button
@@ -102,162 +163,142 @@
       </div>
     </header>
 
-    <!-- ====== MAIN CONTENT (single-viewport, compact layout) ====== -->
-    <main class="wrap flex-1 flex flex-col gap-6 pb-8 lg:pb-12">
+    <!-- ====== MAIN CONTENT (Minimalist, Compact, Single-Viewport UX) ====== -->
+    <main class="wrap flex-1 flex flex-col gap-4 pb-8 lg:pb-10">
 
-      <!-- HERO SECTION: Voice Recorder (compact, centered, yolkwork-style) -->
-      <section class="flex flex-col items-center text-center gap-5 pt-2 lg:pt-4">
-        <!-- Status Pill -->
-        <div
-          class="tag border border-[var(--color-line)] bg-white text-sm"
-          :class="isRecording ? 'border-red-300 bg-red-50' : ''"
-        >
-          <span v-if="isRecording" class="live-dot"></span>
-          <span v-else class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
-          <span class="font-semibold" :class="isRecording ? 'text-red-600' : 'text-[var(--color-muted)]'">
-            {{ isRecording ? 'Sedang mendengarkan...' : 'Siap merekam' }}
-          </span>
-          <span v-if="isRecording" class="font-mono text-[var(--color-muted)] text-xs ml-1">{{ formattedRecordingTime }}</span>
+      <!-- Header Title & Subtitle (Compact) -->
+      <section class="text-center pt-1 sm:pt-3 flex flex-col items-center gap-1.5">
+        <h1 class="display text-2xl sm:text-3xl lg:text-[2.25rem] text-[var(--color-ink)] max-w-2xl mx-auto">
+          <span>Bicara bebas, </span>
+          <span class="bg-[var(--color-yolk)] px-2 py-0.5 rounded-lg box-decoration-clone">jadi teks instan.</span>
+        </h1>
+        <p class="text-[var(--color-muted)] text-xs sm:text-sm max-w-lg leading-relaxed">
+          Rekam suara, koreksi transkrip otomatis, dan buat notulen rapat — semua dalam satu tempat.
+        </p>
+      </section>
+
+      <!-- UNIFIED TRANSCRIPT & VOICE WORKSPACE -->
+      <section class="card p-4 sm:p-6 flex flex-col gap-3.5 shadow-sm border border-[var(--color-line)]">
+        <!-- Top Bar: Status Pill, Presets & Stats -->
+        <div class="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-[var(--color-line)]/60">
+          <!-- Left: Status & Presets -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Recording Status Pill -->
+            <div
+              class="tag text-xs font-semibold py-1 px-3"
+              :class="isRecording ? 'border border-red-300 bg-red-50 text-red-600' : 'bg-[var(--color-cream)] text-[var(--color-muted)]'"
+            >
+              <span v-if="isRecording" class="live-dot mr-1"></span>
+              <span v-else class="w-2 h-2 rounded-full bg-emerald-500 mr-1 shrink-0"></span>
+              <span>{{ isRecording ? 'Sedang merekam...' : 'Siap merekam' }}</span>
+              <span v-if="isRecording" class="font-mono text-xs font-bold text-red-600 ml-1.5">{{ formattedRecordingTime }}</span>
+            </div>
+
+            <!-- Preset Buttons -->
+            <div class="flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+              <span class="hidden sm:inline font-medium text-[11px]">Contoh:</span>
+              <button
+                @click="loadPreset('mom')"
+                class="tag bg-white hover:bg-[var(--color-yolk)] text-[var(--color-ink)] border border-[var(--color-line)] text-xs cursor-pointer transition-colors py-1 px-2.5"
+              >
+                📋 Rapat Tim
+              </button>
+              <button
+                @click="loadPreset('correction')"
+                class="tag bg-white hover:bg-[var(--color-yolk)] text-[var(--color-ink)] border border-[var(--color-line)] text-xs cursor-pointer transition-colors py-1 px-2.5"
+              >
+                🎯 Salah Dengar
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Stats -->
+          <div class="flex items-center gap-1.5 ml-auto">
+            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs py-1 px-2.5">{{ charCount }} karakter</span>
+            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs py-1 px-2.5">{{ wordCount }} kata</span>
+          </div>
         </div>
 
-        <!-- Headline (Rata tengah & menyambung satu baris) -->
-        <h1 class="display text-[clamp(1.35rem,3.6vw,2.75rem)] text-center w-full max-w-4xl mx-auto sm:whitespace-nowrap">
-          <span>Bicara bebas, </span>
-          <span class="bg-[var(--color-yolk)] -mx-1 px-1.5 rounded-lg box-decoration-clone">jadi teks instan.</span>
-        </h1>
-        <p class="text-[var(--color-muted)] text-base lg:text-lg max-w-lg leading-relaxed">
-          Rekam suara, koreksi transkrip, dan buat notulen rapat — semua dalam satu tempat.
-        </p>
+        <!-- Live Interim Speech & Soundwave Banner (Only when recording) -->
+        <div
+          v-if="isRecording"
+          class="flex items-center justify-between gap-3 px-3.5 py-2 bg-red-50/70 border border-red-200/80 rounded-xl"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="live-dot"></span>
+            <p class="text-xs sm:text-sm text-red-900 italic truncate font-medium">
+              {{ interimSpeech ? '"' + interimSpeech + '"' : 'Mendengarkan suara Anda...' }}
+            </p>
+          </div>
+          <!-- Mini Soundwave -->
+          <div class="flex items-end gap-1 h-5 shrink-0 px-1">
+            <span class="w-1 rounded-full bg-red-400 animate-soundwave-1"></span>
+            <span class="w-1 rounded-full bg-red-600 animate-soundwave-2"></span>
+            <span class="w-1 rounded-full bg-red-400 animate-soundwave-3"></span>
+            <span class="w-1 rounded-full bg-red-600 animate-soundwave-4"></span>
+            <span class="w-1 rounded-full bg-red-400 animate-soundwave-5"></span>
+          </div>
+        </div>
 
-        <!-- Record Button + Language Selector (side by side) -->
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
-          <button
-            @click="toggleRecording"
-            class="btn-primary gap-2.5 text-base px-8 py-4"
-            :class="isRecording
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-[var(--color-yolk)] text-[var(--color-ink)]'"
-          >
-            <span class="text-xl">{{ isRecording ? '⏹' : '🎙️' }}</span>
-            <span>{{ isRecording ? 'Stop Rekam' : 'Mulai Rekam' }}</span>
-          </button>
+        <!-- Textarea Workspace -->
+        <div class="relative">
+          <textarea
+            v-model="transcriptText"
+            rows="8"
+            placeholder="Tekan 'Mulai Rekam' untuk bicara atau ketik/tempel transkrip di sini..."
+            class="input-clean resize-y leading-relaxed min-h-[160px] text-base"
+          ></textarea>
+        </div>
 
-          <!-- Language pills -->
-          <div class="flex items-center gap-1 rounded-full border border-[var(--color-line)] bg-white p-1">
+        <!-- Bottom Action Toolbar inside the Card -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--color-line)]/60">
+          <!-- Left: Main Record Button -->
+          <div class="flex items-center gap-2.5">
             <button
-              v-for="lang in availableLanguages"
-              :key="lang.code"
-              @click="currentLanguage = lang.code"
-              class="px-3 py-1.5 text-sm font-semibold rounded-full transition-all duration-200"
-              :class="currentLanguage === lang.code
-                ? 'bg-[var(--color-yolk)] text-[var(--color-ink)]'
-                : 'text-[var(--color-muted)] hover:bg-[var(--color-cream)]'"
+              @click="toggleRecording"
+              class="btn-primary text-sm sm:text-base font-bold px-5 sm:px-6 py-2.5 sm:py-3 transition-all flex items-center gap-2"
+              :class="isRecording
+                ? 'bg-red-500 text-white hover:bg-red-600 ring-4 ring-red-100 shadow-md'
+                : 'bg-[var(--color-yolk)] text-[var(--color-ink)] hover:bg-amber-400'"
             >
-              {{ lang.label }}
+              <span class="text-base sm:text-lg">{{ isRecording ? '⏹' : '🎙️' }}</span>
+              <span>{{ isRecording ? 'Stop Rekam' : 'Mulai Rekam' }}</span>
+              <span v-if="isRecording" class="font-mono text-xs ml-1 bg-white/20 px-2 py-0.5 rounded-full font-bold">
+                {{ formattedRecordingTime }}
+              </span>
+            </button>
+
+            <span v-if="!isRecording" class="hidden md:inline text-xs text-[var(--color-muted)]">
+              Bahasa: <b>{{ currentLangObj.name }}</b>
+            </span>
+          </div>
+
+          <!-- Right: Koreksi Teks & Buat Notulen Buttons -->
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <!-- Koreksi Teks -->
+            <button
+              @click="runCorrection"
+              :disabled="loadingAction === 'correction' || isRecording || !transcriptText.trim()"
+              class="btn-outline btn-small flex items-center gap-1.5 flex-1 sm:flex-initial justify-center"
+              :title="!transcriptText.trim() ? 'Isi transkrip terlebih dahulu' : 'Koreksi kata salah dengar & tanda baca'"
+            >
+              <span class="text-sm">🪄</span>
+              <span v-if="loadingAction === 'correction'">Mengkoreksi...</span>
+              <span v-else>Koreksi Teks</span>
+            </button>
+
+            <!-- Buat Notulen -->
+            <button
+              @click="runMeetingNotes"
+              :disabled="loadingAction === 'mom' || isRecording || !transcriptText.trim()"
+              class="btn-primary btn-small bg-[var(--color-ink)] text-white hover:bg-black hover:text-white flex items-center gap-1.5 flex-1 sm:flex-initial justify-center transition-colors"
+              :title="!transcriptText.trim() ? 'Isi transkrip terlebih dahulu' : 'Ringkas pembicaraan menjadi notulen rapat'"
+            >
+              <span class="text-sm">📋</span>
+              <span v-if="loadingAction === 'mom'">Meringkas...</span>
+              <span v-else>Buat Notulen</span>
             </button>
           </div>
-        </div>
-
-        <!-- Sound wave (only while recording) -->
-        <div v-if="isRecording" class="flex items-end justify-center gap-1.5 h-8 px-6 py-1.5 bg-white border border-[var(--color-line)] rounded-full">
-          <span class="w-1 rounded-full bg-red-400 animate-soundwave-1"></span>
-          <span class="w-1 rounded-full bg-[var(--color-ink)] animate-soundwave-2"></span>
-          <span class="w-1 rounded-full bg-red-400 animate-soundwave-3"></span>
-          <span class="w-1 rounded-full bg-[var(--color-ink)] animate-soundwave-4"></span>
-          <span class="w-1 rounded-full bg-red-400 animate-soundwave-5"></span>
-        </div>
-
-        <!-- Interim speech banner -->
-        <div v-if="isRecording && interimSpeech" class="flex items-center gap-3 px-5 py-3 bg-white border border-[var(--color-line)] rounded-2xl max-w-xl w-full shadow-sm">
-          <span class="live-dot"></span>
-          <p class="text-sm text-[var(--color-muted)] italic truncate">"{{ interimSpeech }}"</p>
-        </div>
-      </section>
-
-      <!-- TRANSCRIPT WORKSPACE (textarea + presets + stats) -->
-      <section class="card p-5 sm:p-7 flex flex-col gap-4">
-        <!-- Header bar -->
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <span class="text-lg">📝</span>
-            <h2 class="text-sm font-bold text-[var(--color-ink)]">Transkrip</h2>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs">{{ charCount }} karakter</span>
-            <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs">{{ wordCount }} kata</span>
-          </div>
-        </div>
-
-        <!-- Preset buttons -->
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-semibold text-[var(--color-muted)]">Contoh:</span>
-          <button
-            @click="loadPreset('mom')"
-            class="tag bg-[var(--color-cream)] hover:bg-[var(--color-yolk)] text-[var(--color-ink)] text-xs cursor-pointer transition-colors duration-200"
-          >
-            📋 Rapat Tim
-          </button>
-          <button
-            @click="loadPreset('correction')"
-            class="tag bg-[var(--color-cream)] hover:bg-[var(--color-yolk)] text-[var(--color-ink)] text-xs cursor-pointer transition-colors duration-200"
-          >
-            🎯 Salah Dengar
-          </button>
-        </div>
-
-        <!-- Textarea -->
-        <textarea
-          v-model="transcriptText"
-          rows="6"
-          placeholder="Mulai rekam suara atau ketik transkrip di sini..."
-          class="input-clean resize-y leading-relaxed min-h-[120px]"
-        ></textarea>
-      </section>
-
-      <!-- INTELLIGENCE DOCK: 2 Feature Cards (side by side, yolkwork card style) -->
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <!-- CARD 1: Koreksi Transkrip -->
-        <div class="card p-7 flex flex-col justify-between gap-5 group/card hover:border-[var(--color-yolk)]">
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <span class="text-2xl">🪄</span>
-              <span class="tag bg-[var(--color-yolk)] text-[var(--color-ink)] text-xs font-bold">Pembersih Kata</span>
-            </div>
-            <h3 class="text-xl font-bold text-[var(--color-ink)]">Koreksi Transkrip</h3>
-            <p class="text-sm text-[var(--color-muted)] leading-relaxed">
-              Membersihkan kata jeda, kata berulang, memperbaiki salah dengar fonetik, serta merapikan tata bahasa dan tanda baca.
-            </p>
-          </div>
-          <button
-            @click="runCorrection"
-            :disabled="loadingAction === 'correction'"
-            class="btn-primary w-full"
-          >
-            <span v-if="loadingAction === 'correction'">Memproses...</span>
-            <span v-else>Koreksi Teks →</span>
-          </button>
-        </div>
-
-        <!-- CARD 2: Notulen Rapat -->
-        <div class="card p-7 flex flex-col justify-between gap-5 group/card hover:border-[var(--color-yolk)]">
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <span class="text-2xl">📋</span>
-              <span class="tag bg-blue-100 text-blue-700 text-xs font-bold">Ringkasan Eksekutif</span>
-            </div>
-            <h3 class="text-xl font-bold text-[var(--color-ink)]">Notulen Rapat</h3>
-            <p class="text-sm text-[var(--color-muted)] leading-relaxed">
-              Meringkas pembicaraan menjadi notulen lengkap: topik, ringkasan, poin utama, keputusan, dan rencana tindakan.
-            </p>
-          </div>
-          <button
-            @click="runMeetingNotes"
-            :disabled="loadingAction === 'mom'"
-            class="btn-outline w-full"
-          >
-            <span v-if="loadingAction === 'mom'">Meringkas...</span>
-            <span v-else>Buat Notulen →</span>
-          </button>
         </div>
       </section>
 
@@ -492,13 +533,29 @@ const recordingSeconds = ref(0);
 let timerInterval = null;
 let recognition = null;
 
+const showLangMenu = ref(false);
+
 const availableLanguages = [
-  { code: 'id-ID', label: '🇮🇩 ID' },
-  { code: 'en-US', label: '🇺🇸 EN' },
-  { code: 'ja-JP', label: '🇯🇵 JA' },
-  { code: 'ar-SA', label: '🇸🇦 AR' }
+  { code: 'id-ID', flag: '🇮🇩', shortCode: 'ID', name: 'Bahasa Indonesia', label: '🇮🇩 ID' },
+  { code: 'en-US', flag: '🇺🇸', shortCode: 'EN', name: 'English (US)', label: '🇺🇸 EN' },
+  { code: 'ja-JP', flag: '🇯🇵', shortCode: 'JA', name: '日本語', label: '🇯🇵 JA' },
+  { code: 'ar-SA', flag: '🇸🇦', shortCode: 'AR', name: 'العربية', label: '🇸🇦 AR' }
 ];
 const currentLanguage = ref('id-ID');
+
+const currentLangObj = computed(() => {
+  return availableLanguages.find(l => l.code === currentLanguage.value) || availableLanguages[0];
+});
+
+function setLanguage(code) {
+  currentLanguage.value = code;
+  showLangMenu.value = false;
+  if (isRecording.value && recognition) {
+    try {
+      recognition.lang = code;
+    } catch (e) {}
+  }
+}
 
 const formattedRecordingTime = computed(() => {
   const mins = Math.floor(recordingSeconds.value / 60);
