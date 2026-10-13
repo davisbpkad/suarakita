@@ -111,7 +111,8 @@ Langkah deploy mandiri:
 │   ├── css/app.css        # Tailwind CSS & utilitas desain antarmuka
 │   └── js/
 │       ├── app.js         # Bootstrapping Vue 3
-│       ├── App.vue        # Komponen utama antarmuka pengguna
+│       ├── App.vue        # Shell: state + orkestrasi komponen
+│       ├── components/    # Komponen UI (AppHeader, TranscriptWorkspace, 3 modal)
 │       └── lib/           # Logika non-UI (OOP)
 │           ├── api/client.js                 # ApiClient: pemanggil endpoint backend
 │           ├── speech/SpeechRecognizer.js    # SpeechRecognizer: state sesi STT

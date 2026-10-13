@@ -36,10 +36,10 @@
     "semantic_hash": "77f39de931585dcd72cc0971b614b251"
   },
   "resources/js/App.vue": {
-    "mtime": 1791865609.4414954,
-    "seen": 1791865710.271822,
-    "ast_hash": "e6b0cd4cf53499ca27844f06ee647fd9",
-    "semantic_hash": "e6b0cd4cf53499ca27844f06ee647fd9"
+    "mtime": 1791865908.1573951,
+    "seen": 1791865940.684389,
+    "ast_hash": "40a0c08e94340c5fa1a138a08671d20c",
+    "semantic_hash": "40a0c08e94340c5fa1a138a08671d20c"
   },
   "resources/js/app.js": {
     "mtime": 1790835199.8062556,
@@ -118,5 +118,41 @@
     "seen": 1791865710.2718248,
     "ast_hash": "c9dddbc274c3d2f654c07ce53af51a90",
     "semantic_hash": "c9dddbc274c3d2f654c07ce53af51a90"
+  },
+  "resources/js/components/AiConfigModal.vue": {
+    "mtime": 1791865890.6908593,
+    "seen": 1791865940.6843898,
+    "ast_hash": "a0b1d37339306a71e539a4e0ad961ac7",
+    "semantic_hash": "a0b1d37339306a71e539a4e0ad961ac7"
+  },
+  "resources/js/components/AppHeader.vue": {
+    "mtime": 1791865863.7927642,
+    "seen": 1791865940.684391,
+    "ast_hash": "754b92cc7ffdd8030f06a60b21d5876c",
+    "semantic_hash": "754b92cc7ffdd8030f06a60b21d5876c"
+  },
+  "resources/js/components/CorrectionModal.vue": {
+    "mtime": 1791865880.488193,
+    "seen": 1791865940.684391,
+    "ast_hash": "634abdea43fd2db1a15fab985ddda198",
+    "semantic_hash": "634abdea43fd2db1a15fab985ddda198"
+  },
+  "resources/js/components/MeetingNotesModal.vue": {
+    "mtime": 1791865886.6237664,
+    "seen": 1791865940.684392,
+    "ast_hash": "18da4cc3442bedd4a00c14864b7d51c2",
+    "semantic_hash": "18da4cc3442bedd4a00c14864b7d51c2"
+  },
+  "resources/js/components/TranscriptWorkspace.vue": {
+    "mtime": 1791865874.4739745,
+    "seen": 1791865940.684392,
+    "ast_hash": "272f8459b5418ef159b33be25ee712d2",
+    "semantic_hash": "272f8459b5418ef159b33be25ee712d2"
+  },
+  "resources/js/lib/utils/clipboard.js": {
+    "mtime": 1791865852.3514066,
+    "seen": 1791865940.684394,
+    "ast_hash": "8e455921f18b2317008f238d5cf49ec2",
+    "semantic_hash": "8e455921f18b2317008f238d5cf49ec2"
   }
 }
