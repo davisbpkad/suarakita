@@ -26,6 +26,7 @@
 
 const { correctTranscriptWithNLP } = require('./corrector.js');
 const { createClient, modelChainFor } = require('./lib/llmClient.js');
+const { splitSentences } = require('./lib/sentenceSplit.js');
 
 // Label terlarang yang bukan nama orang asli atau divisi valid
 const DISALLOWED_LABELS = new Set([
@@ -52,11 +53,6 @@ const DISALLOWED_LABELS = new Set([
 ]);
 
 // Divisi kerja resmi yang valid
-const VALID_DIVISIONS = [
-  'Developer', 'Desain', 'Pemasaran', 'QA / Pengujian', 
-  'Logistik', 'Konsumsi', 'Keuangan', 'Operasional'
-];
-
 // Pola basa-basi kasual / celetukan non-substansial
 const CASUAL_PATTERNS = [
   /\b(?:nonton|main|pertandingan)\s+bola\b/i,
@@ -135,59 +131,63 @@ function formatMeetingNotesMarkdown(topic, summaryItems, decisions) {
  * Ekstraksi Topik 1 Kalimat Ringkas
  * Mematuhi aturan: DILARANG mengulang kata yang sama (seperti 'progres progres')
  */
-function extractTopicSentence(sentences, fullText) {
-  const casualHits = CASUAL_PATTERNS.filter(p => p.test(fullText)).length;
-  const hasStructuredWork = sentences.some(s => {
-    return /(?:progres|peluncuran|rilis|deploy|evaluasi|anggaran|biaya|fitur|perbaikan|bug|latensi|draf\s+konten|pemasaran|desain|tenggat|deadline)/i.test(s);
-  });
+/** Panjang maksimum kutipan topik (kata). */
+const MAX_TOPIC_WORDS = 20;
 
-  if (casualHits >= 1 && !hasStructuredWork) {
-    return 'Topik pembicaraan tidak spesifik / Obrolan kasual';
-  }
+/** Batas jumlah butir ringkasan, supaya tidak jadi dinding teks. */
+const MAX_SUMMARY_ITEMS = 10;
 
-  // 1. Deteksi agenda eksplisit
-  for (const s of sentences) {
-    const match = s.match(/(?:agenda|topik|fokus|membahas|pertemuan\s+hari\s+ini|meeting\s+hari\s+ini|rapat\s+hari\s+ini)\s+(?:tentang|mengenai|soal|adalah|yaitu)?\s*([^\n]+?)(?=[.?!](?:\s+|$)|$)/i);
-    if (match) {
-      let t = match[1].replace(/^(?:rapat|meeting|diskusi|hari\s+ini|besok|pekan\s+ini)\s+/i, '').trim();
-      t = cleanDuplicateWords(t);
-      if (t.length >= 4) {
-        return cleanDuplicateWords(`Penyelarasan dan peninjauan progres ${t.toLowerCase()}.`);
-      }
-    }
-  }
+/** Penanda butir yang tidak punya label PIC/divisi yang bisa dipercaya. */
+const UNLABELED = '__unlabeled__';
 
-  // 2. Deteksi domain substantif utama
-  const topicsFound = [];
-  if (/(?:api|payment|gateway|server|latensi|deploy|database|developer)/i.test(fullText)) {
-    topicsFound.push('integrasi sistem');
-  }
-  if (/(?:desain|mockup|ui|ux|antarmuka)/i.test(fullText)) {
-    topicsFound.push('kesiapan desain antarmuka');
-  }
-  if (/(?:pemasaran|kampanye|marketing|draf\s+konten|promosi)/i.test(fullText)) {
-    topicsFound.push('kampanye pemasaran');
-  }
+/**
+ * Satu kalimat dianggap keputusan hanya kalau ada kesepakatan eksplisit, ATAU
+ * instruksi kerja yang disertai tenggat waktu.
+ *
+ * Sebelumnya kata "harus" saja sudah cukup. Pada transkrip deskriptif seperti
+ * sosialisasi pengadaan ("perencanaan harus berjalan beriringan..."), itu
+ * membuat SELURUH transkrip berubah jadi satu butir keputusan raksasa.
+ */
+function classifyDecision(sentence) {
+  const hasFinalInstruction = /\b(?:pastikan|wajib|harus|siapkan|jaga|selesaikan|kirimkan|buatkan|eksekusi)\b/i.test(sentence);
+  const hasDeadline = /\b(?:deadline|tenggat|H-\d+|besok|paling\s+lambat|sebelum\s+jam|hari\s+(?:senin|selasa|rabu|kamis|jumat|sabtu|minggu)|minggu\s+depan|pekan\s+depan|bulan\s+depan|akhir\s+bulan|secepatnya)\b/i.test(sentence);
+  // Bentuk berimbuhan ikut didaftarkan: "menyepakati" tidak mengandung "sepakat"
+  // sebagai kata utuh, jadi tanpa ini kesepakatan berimbuhan tidak terdeteksi.
+  const hasConsensus = /\b(?:sepakat|menyepakati|disepakati|kesepakatan|setuju|menyetujui|disetujui|persetujuan|diputuskan|memutuskan|keputusan|menetapkan|ditetapkan|deal|mufakat)\b/i.test(sentence);
+  return { hasFinalInstruction, hasDeadline, hasConsensus, isDecision: hasConsensus || (hasFinalInstruction && hasDeadline) };
+}
 
-  if (topicsFound.length >= 2) {
-    return cleanDuplicateWords(`Koordinasi progres ${topicsFound.join(', ')}, serta peninjauan kendala teknis dan target tenggat waktu.`);
-  }
+/** Buang sapaan kehormatan supaya tidak mengotori topik dan butir ringkasan. */
+function stripHonorifics(text) {
+  return String(text || '')
+    .replace(/\b(?:yang\s+kami\s+hormati|yang\s+terhormat|kami\s+persilakan|kami\s+persilahkan)\b/gi, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
 
-  for (const s of sentences) {
-    if (isDisallowedFromSummary(s)) continue;
+/**
+ * Topik diambil dari kalimat asli transkrip, bukan dirangkai dari template.
+ *
+ * Sebelumnya fungsi ini memakai template hardcode ("Koordinasi progres integrasi
+ * sistem, kesiapan desain antarmuka, kampanye pemasaran...") yang berasal dari
+ * data demo, lalu mencocokkan kata kunci tanpa batas kata — sehingga "tetapi"
+ * dan "melalui" pun dianggap sinyal domain, dan topik palsu itulah yang muncul.
+ */
+function extractTopicSentence(sentences) {
+  const substantive = sentences
+    .map((s) => stripHonorifics(cleanDuplicateWords(s)))
+    .filter((s) => !isDisallowedFromSummary(s) && s.split(/\s+/).length >= 4);
 
-    const patternMatch = s.match(/(?:terkait|soal|tentang|mengenai|rencana|evaluasi|proyek|fitur|perbaikan|pengembangan|sistem|server|rilis|deploy|anggaran|kampanye)\s+([^\n]+?)(?=[.?!](?:\s+|$)|$)/i);
-    if (patternMatch) {
-      let subject = cleanDuplicateWords(patternMatch[0].trim());
-      return cleanDuplicateWords(`Koordinasi progres kerja dan evaluasi kendala ${subject.toLowerCase()}.`);
-    }
-  }
+  if (substantive.length === 0) return 'Topik tidak dapat ditentukan dari transkrip.';
 
-  if (hasStructuredWork) {
-    return 'Koordinasi progres tim dan penegasan instruksi kerja pasca-rapat.';
-  }
+  // Kalau ada kalimat yang menyebut kegiatan/tujuan, itu kandidat terkuat.
+  const TOPIC_HINT = /(?:kegiatan|rapat|pertemuan|agenda|tujuan|sosialisasi|pelatihan|bimbingan|workshop|koordinasi|membahas|bertema|tema)/i;
+  const chosen = substantive.slice(0, 6).find((s) => TOPIC_HINT.test(s)) || substantive[0];
 
-  return 'Topik pembicaraan tidak spesifik / Obrolan kasual';
+  const words = chosen.split(' ');
+  return words.length > MAX_TOPIC_WORDS
+    ? `${words.slice(0, MAX_TOPIC_WORDS).join(' ')}…`
+    : chosen;
 }
 
 /**
@@ -204,14 +204,12 @@ function extractSummaryItems(sentences) {
     // 1. Buang kalimat tanya, pembuka, penutup, atau celetukan
     if (isDisallowedFromSummary(s)) return;
 
-    // 2. Eksklusikan instruksi kerja final atau keputusan dari ringkasan (masuk ke Decisions Made)
-    const isFinalInstruction = /\b(?:pastikan|wajib|harus|siapkan\s+draf|untuk\s+keputusan\s+akhir|disepakati|sepakat|diputuskan)\b/i.test(s) &&
-      /\b(?:besok|H-\d+|deadline|tenggat|paling\s+lambat|sebelum\s+jam|selesai)\b/i.test(s);
-    if (isFinalInstruction) return;
+    // 2. Eksklusikan keputusan dari ringkasan (masuk ke Decisions Made)
+    if (classifyDecision(s).isDecision) return;
 
     // 3. Deteksi Nama Orang Asli
     let label = null;
-    let updateText = s.trim();
+    let updateText = stripHonorifics(s.trim());
 
     // Deteksi nama orang asli (Andi, Rina, Dian, Budi, Davis, Agus, dsb.)
     const nameMatch = s.match(/\b(?:si\s+|dari\s+|bagian\s+)?([A-Z][a-z]+)\b/);
@@ -226,28 +224,33 @@ function extractSummaryItems(sentences) {
       }
     }
 
-    // 4. Jika bukan nama orang asli, petakan ke Divisi Kerja Valid
+    // 4. Jika bukan nama orang asli, petakan ke Divisi Kerja.
+    //    Batas kata (\b) itu WAJIB: tanpa itu "api" cocok di dalam "tetapi" dan
+    //    "ui" cocok di dalam "melalui", sehingga transkrip apa pun salah diberi
+    //    label "Developer". Istilah terlalu umum seperti "sistem" juga dibuang.
     if (!label) {
-      if (/(?:developer|dev|backend|frontend|api|server|database|coding|bug|latensi|deploy|sistem)/i.test(s)) {
+      if (/\b(?:developer|dev|backend|frontend|api|server|database|coding|bug|latensi|deploy)\b/i.test(s)) {
         label = 'Developer';
-      } else if (/(?:desain|designer|ui|ux|mockup|antarmuka|figma|tampilan|aset\s+grafis)/i.test(s)) {
+      } else if (/\b(?:desain|designer|ui|ux|mockup|antarmuka|figma|tampilan)\b/i.test(s)) {
         label = 'Desain';
-      } else if (/(?:pemasaran|marketing|iklan|ads|sosmed|kampanye|campaign|konten|draf\s+konten|promosi)/i.test(s)) {
+      } else if (/\b(?:pemasaran|marketing|iklan|ads|sosmed|kampanye|campaign|promosi)\b/i.test(s)) {
         label = 'Pemasaran';
-      } else if (/(?:qa|testing|tester|uji\s+coba|pengujian|pengetesan)/i.test(s)) {
+      } else if (/\b(?:qa|testing|tester|pengujian|pengetesan)\b/i.test(s)) {
         label = 'QA / Pengujian';
-      } else if (/(?:logistik|gedung|ruangan|booking|sewa|armada|transportasi|tempat)/i.test(s)) {
+      } else if (/\b(?:logistik|gedung|ruangan|booking|sewa|armada|transportasi)\b/i.test(s)) {
         label = 'Logistik';
-      } else if (/(?:konsumsi|makanan|snack|makan\s+siang|katering|minuman)/i.test(s)) {
+      } else if (/\b(?:konsumsi|makanan|snack|katering|minuman)\b/i.test(s)) {
         label = 'Konsumsi';
-      } else if (/(?:keuangan|finance|anggaran|biaya|budget|nominal|invoice|pembayaran)/i.test(s)) {
+      } else if (/\b(?:keuangan|finance|anggaran|biaya|budget|nominal|invoice|pembayaran)\b/i.test(s)) {
         label = 'Keuangan';
-      } else if (/(?:operasional|jadwal|shift|piket|koordinasi)/i.test(s)) {
+      } else if (/\b(?:operasional|jadwal|shift|piket|koordinasi)\b/i.test(s)) {
         label = 'Operasional';
       }
     }
 
-    if (!label) return;
+    // Tanpa label pun tetap jadi butir. Sebelumnya kalimat tanpa label dibuang,
+    // yang membuat transkrip di luar skenario demo kehilangan seluruh isinya.
+    if (!label) label = UNLABELED;
 
     // Bersihkan updateText dari awalan percakapan / verba verbalistis untuk sintesis mandiri non-verbatim
     updateText = updateText.replace(new RegExp(`^(?:dan|lalu|kemudian|untuk|dari)?\\s*(?:si\\s+)?${label}\\s*(?:dari\\s+(?:tim\\s+)?[A-Za-z]+)?\\s*(?:sudah|sedang|akan|melaporkan|menyampaikan|menjelaskan|bilang)?\\s*`, 'i'), '');
@@ -270,12 +273,16 @@ function extractSummaryItems(sentences) {
   // Gabungkan update progres yang terpecah menjadi 1 kesatuan utuh per PIC/Divisi
   const items = [];
   subjectGroups.forEach((updates, label) => {
+    if (label === UNLABELED) {
+      // Tanpa label yang bisa dipercaya: kutip apa adanya sebagai satu butir.
+      updates.forEach((text) => items.push(`* ${text}`));
+      return;
+    }
     // Gabungkan maksimal 2 kalimat pendek
-    const combined = updates.slice(0, 2).join(' ');
-    items.push(`* **[${label}]:** ${combined}`);
+    items.push(`* **[${label}]:** ${updates.slice(0, 2).join(' ')}`);
   });
 
-  return items;
+  return items.slice(0, MAX_SUMMARY_ITEMS);
 }
 
 /**
@@ -289,17 +296,14 @@ function extractSummaryItems(sentences) {
  * ATAU
  * `* **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].`
  */
-function extractDecisions(sentences, rawText) {
+function extractDecisions(sentences) {
   const decisions = [];
   const processedCategories = new Set();
 
   sentences.forEach(s => {
-    // 1. Deteksi Instruksi Kerja Final, Deadline Waktu, atau Arahan Penegasan
-    const hasFinalInstruction = /\b(?:pastikan|wajib|harus|siapkan|jaga|selesaikan|kirimkan|buatkan|eksekusi)\b/i.test(s);
-    const hasDeadline = /\b(?:deadline|tenggat|H-\d+|besok\s+(?:pagi|siang|sore|malam)|paling\s+lambat|sebelum\s+jam|hari\s+(?:senin|selasa|rabu|kamis|jumat|sabtu|minggu))\b/i.test(s);
-    const hasConsensus = /\b(?:sepakat|setuju|diputuskan|memutuskan|menetapkan|disepakati|ditetapkan|deal|fix|mufakat)\b/i.test(s);
+    const { hasFinalInstruction, hasDeadline, hasConsensus, isDecision } = classifyDecision(s);
 
-    if (hasFinalInstruction || hasDeadline || hasConsensus) {
+    if (isDecision) {
       // Tentukan Kategori Keputusan / PIC
       let category = null;
 
@@ -397,20 +401,18 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
   const cleanedResult = correctTranscriptWithNLP(rawTranscriptText);
   const text = cleanedResult.correctedText || rawTranscriptText.trim();
 
-  // Pisahkan kalimat
-  const rawSentences = text
-    .split(/(?<=[.?!])\s+|\n+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 4);
+  // Pisahkan kalimat. splitSentences memecah juga transkrip tanpa tanda baca,
+  // yang sebelumnya membuat seluruh transkrip jadi satu butir ringkasan.
+  const rawSentences = splitSentences(text).filter((s) => s.split(/\s+/).length >= 4);
 
   // 2. Ekstraksi Topik 1 Kalimat Ringkas (tanpa duplikasi kata)
-  const topic = extractTopicSentence(rawSentences, text);
+  const topic = extractTopicSentence(rawSentences);
 
   // 3. Ekstraksi Ringkasan Hasil Rapat (tergabung utuh per PIC/Divisi, non-verbatim)
   const summaryItems = extractSummaryItems(rawSentences);
 
   // 4. Ekstraksi Keputusan yang Diambil (Format keputusan terstruktur)
-  const decisions = extractDecisions(rawSentences, text);
+  const decisions = extractDecisions(rawSentences);
 
   // 5. Format Markdown Output
   const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
