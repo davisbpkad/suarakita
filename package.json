@@ -8,7 +8,7 @@
     "build": "vite build",
     "start": "node server.js",
     "server": "node server.js",
-    "test": "node tests/transcript.test.mjs && node tests/level.test.mjs && node tests/tagged.test.mjs"
+    "test": "node tests/transcript.test.mjs && node tests/level.test.mjs && node tests/tagged.test.mjs && node tests/markdownInline.test.mjs"
   },
   "keywords": [
     "tts",

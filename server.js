@@ -6,8 +6,11 @@ const { generateMeetingNotesWithNLP, generateMeetingNotesWithAI, generateMeeting
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+/** Batas panjang teks masuk, selaras dengan fungsi Netlify. */
+const MAX_TEXT_LENGTH = 50000;
+
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Server-Sent Events -------------------------------------------------
@@ -58,6 +61,10 @@ app.post('/api/correct-transcript', async (req, res) => {
     return res.status(400).json({ error: 'Teks transkrip tidak boleh kosong.' });
   }
 
+  if (text.length > MAX_TEXT_LENGTH) {
+    return res.status(413).json({ error: `Teks terlalu panjang (maks ${MAX_TEXT_LENGTH} karakter).` });
+  }
+
   if (stream) {
     return streamResponse(
       res,
@@ -80,6 +87,10 @@ app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res)
   const { text, apiKey, model, provider, stream } = req.body || {};
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'Teks transkrip rapat tidak boleh kosong.' });
+  }
+
+  if (text.length > MAX_TEXT_LENGTH) {
+    return res.status(413).json({ error: `Teks terlalu panjang (maks ${MAX_TEXT_LENGTH} karakter).` });
   }
 
   if (stream) {

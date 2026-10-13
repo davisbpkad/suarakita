@@ -114,6 +114,7 @@ Langkah deploy mandiri:
 ├── netlify.toml           # Konfigurasi deployment & serverless Netlify
 ├── netlify/
 │   └── functions/         # Serverless functions (status, correct-transcript, meeting-notes)
+│       └── _cors.js       # CORS terbatas origin sendiri (file berawalan _ tidak jadi fungsi)
 ├── public/                # Direktori publik & hasil build aset statis
 │   ├── build/assets/      # Bundle app.css & app.js hasil kompilasi
 │   └── index.html         # Entry point halaman web
@@ -130,6 +131,7 @@ Langkah deploy mandiri:
 │           ├── speech/SpeechRecognizer.js    # SpeechRecognizer: state sesi STT
 │           ├── speech/languages.js           # Daftar bahasa STT
 │           ├── text/transcript.mjs           # Penggabungan & pembersihan transkrip
+│           ├── text/markdownInline.mjs       # Render badge/bold notulen (anti-XSS)
 │           ├── utils/clipboard.js            # Helper salin ke clipboard
 │           └── utils/download.js             # Helper unduh file
 ├── server.js              # Express server untuk eksekusi di lingkungan localhost

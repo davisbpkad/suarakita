@@ -2,14 +2,13 @@
  * Netlify Serverless Function: Koreksi Transkrip Cerdas
  */
 const { correctTranscriptWithAI } = require('../../corrector.js');
+const { buildCorsHeaders } = require('./_cors.js');
 
-exports.handler = async (event, context) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-  };
+/** Batas panjang teks masuk, supaya satu request tidak memicu kerja tak terbatas. */
+const MAX_TEXT_LENGTH = 50000;
+
+exports.handler = async (event) => {
+  const headers = buildCorsHeaders(event, 'POST, OPTIONS');
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers };
@@ -34,8 +33,17 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const result = await correctTranscriptWithAI(text, effectiveApiKey, model, provider);
+    if (text.length > MAX_TEXT_LENGTH) {
+      return {
+        statusCode: 413,
+        headers,
+        body: JSON.stringify({ error: `Teks terlalu panjang (maks ${MAX_TEXT_LENGTH} karakter).` })
+      };
+    }
+
+    // Key hanya dari pemanggil. Tanpa key, correctTranscriptWithAI otomatis
+    // memakai mesin NLP lokal (gratis, offline) — perilaku yang diinginkan.
+    const result = await correctTranscriptWithAI(text, apiKey, model, provider);
 
     return {
       statusCode: 200,

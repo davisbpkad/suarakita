@@ -73,6 +73,7 @@
 <script setup>
 import { computed } from 'vue';
 import { copyToClipboard } from '../lib/utils/clipboard.js';
+import { formatMarkdownInline } from '../lib/text/markdownInline.mjs';
 
 const props = defineProps({
   data: { type: Object, required: true },
@@ -85,15 +86,6 @@ const methodLabel = computed(() => {
   const model = props.data.modelUsed;
   return '✨ ' + (model ? model.replace('gemini-', 'Gemini ').toUpperCase() : 'Gemini AI');
 });
-
-// Render badge [PIC/Domain] dan **bold** yang dipakai skema notulen.
-function formatMarkdownInline(str) {
-  if (!str) return '';
-  let clean = String(str).replace(/^\s*[\*\-]\s+/, '');
-  clean = clean.replace(/\[(.*?)\]/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-[var(--color-yolk)]/30 font-bold text-[var(--color-ink)] text-xs mr-1.5">[$1]</span>');
-  clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[var(--color-ink)]">$1</strong>');
-  return clean;
-}
 
 async function copyNotes() {
   if (await copyToClipboard(props.data.rawMarkdown)) {

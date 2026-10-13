@@ -1,13 +1,10 @@
 /**
  * Netlify Serverless Function: Status & Health Check
  */
-exports.handler = async (event, context) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS'
-  };
+const { buildCorsHeaders } = require('./_cors.js');
+
+exports.handler = async (event) => {
+  const headers = buildCorsHeaders(event, 'GET, OPTIONS');
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers };

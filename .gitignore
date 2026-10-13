@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-vendor/
 
 # Environment configuration
 .env
@@ -25,5 +24,10 @@ yarn-error.log*
 
 # Cache & Build artifacts
 .vite/
-graphify-out/cache/
-graphify-out/2026-*/
+
+# Alat agent lokal (artefak installer, memuat path absolut mesin -> tidak portabel)
+.agents/
+
+# Keluaran graphify: hanya laporan yang dibagikan, sisanya dibangun ulang lokal
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
