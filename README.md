@@ -13,6 +13,8 @@ Aplikasi web modern untuk merekam suara secara real-time, mengubah audio menjadi
    - Pilihan bahasa dikte lisan: Bahasa Indonesia (`id-ID`), Bahasa Inggris (`en-US`), Bahasa Jepang (`ja-JP`), dan Bahasa Arab (`ar-SA`).
    - Tampilan *interim transcript streamer* langsung saat berbicara.
    - Lembar kerja transkrip yang bersih (dimulai dari teks kosong) dengan penghitung karakter dan kata otomatis.
+   - **Paragraf Otomatis tiap 400 Kata**: transkrip dipecah menjadi blok agar mudah dipilah saat memeriksa salah input.
+   - **Meter Level Mikrofon**: indikator level sinyal secara langsung, plus peringatan bila suara terlalu pelan untuk dikenali.
    - Tombol pengujian cepat (*presets*): **Rapat Tim** dan **Salah Dengar**.
    - Ekspor transkrip ke format teks biasa (`.txt`) dan Markdown (`.md`).
 
@@ -22,14 +24,14 @@ Aplikasi web modern untuk merekam suara secara real-time, mengubah audio menjadi
    - **Pembersihan Interupsi & Uji Audio**: Menghapus kalimat uji mic (*"tes satu dua"*, *"cek mic"*, *"suara saya masuk gak?"*, *"sorry kepotong"*).
    - **Pembersihan Kata Jeda Lisan (*Filler Words*)**: Membersihkan jeda lisan (*eh*, *anu*, *um*, *hmm*) dan pengulangan/gagap bicara.
    - **Normalisasi Singkatan Non-Baku**: Mengubah singkatan lisan (*yg*, *dgn*, *utk*, *sdh*, *blm*, *sy*, dll.) menjadi kata baku.
+   - **Pembersihan Kata di Luar Konteks** *(butuh Gemini AI)*: Membuang atau memperbaiki kata yang jelas tidak nyambung dengan topik percakapan — sisa salah dengar, noise, atau potongan suara lain. Aturan *ragu = pertahankan* mencegah kata sah ikut terhapus.
    - **Kapitalisasi Istilah Teknis**: Memastikan akronim standar tertulis rapi (*QA*, *UI/UX*, *REST API*, *SOP*, *KPI*, *CEO*, dll.).
 
 3. **📋 Notulen Rapat Terstruktur (Minutes of Meeting / MoM)**:
    - **📌 Topik / Konteks Pembicaraan**: Ekstraksi topik sentral rapat secara akurat.
    - **📝 Ringkasan Hasil Rapat**: Ringkasan eksekutif padat dalam 2–3 kalimat.
-   - **💡 Poin-Poin Utama (Key Takeaways)**: Poin-poin krusial yang dibahas beserta data dan konteksnya.
    - **⚖️ Keputusan yang Diambil (Decisions Made)**: Poin keputusan murni yang disepakati bersama, secara otomatis memfilter perdebatan, argumen, dan dialog panjang.
-   - **🎯 Rencana Tindakan Lanjut (Action Items)**: Rincian tugas yang dilengkapi dengan Penanggung Jawab (**PIC**) dan Tenggat Waktu (**Deadline**).
+   - Setiap butir ringkasan dan keputusan dilengkapi penanggung jawab (**PIC**) dan tenggat waktu bila disebutkan dalam rapat.
    - Ekspor notulen rapat langsung ke format Markdown (`.md`).
 
 4. **⚡ Mesin Ganda: NLP Lokal Super Cepat & Gemini AI**:

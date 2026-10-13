@@ -273,17 +273,23 @@ ATURAN KETAT KOREKSI:
      * "ruang setting" -> "ruang meeting"
      * "biaya hadir" -> "bisa hadir"
      * Istilah lain seperti deploy, merge, pull request, backend, frontend, pipeline, staging, dll.
-2. RESTRUKTURISASI ALUR KALIMAT & TANDA BACA:
+2. PEMBERSIHAN KATA DI LUAR KONTEKS:
+   - Baca topik percakapan secara keseluruhan, lalu buang atau perbaiki kata/frasa yang jelas tidak nyambung dengan topik itu
+     (sisa salah dengar, noise, potongan suara lain, kata acak yang tidak punya kaitan dengan kalimat sekitarnya).
+   - Contoh: kata "kucing" yang muncul mendadak di tengah rapat teknis adalah sisa salah dengar — perbaiki sesuai konteks kalimat, atau hapus bila memang tidak bermakna.
+   - JANGAN menghapus kata yang sulit dipahami tapi masih relevan dengan topik. Ragu = pertahankan.
+3. RESTRUKTURISASI ALUR KALIMAT & TANDA BACA:
    - Sambungkan kata-kata atau klausa yang terpotong menjadi kalimat yang utuh, mengalir, dan nyaman dibaca.
    - Bubuhkan tanda baca koma, titik, tanda tanya di posisi jeda yang alami.
    - Berikan huruf kapital di awal kalimat, nama orang, dan akronim (SOP, KPI, QA, UI/UX, API, CEO, Q1-Q4).
-3. PEMBERSIHAN GANGGUAN LISAN:
+4. PEMBERSIHAN GANGGUAN LISAN:
    - Bersihkan interupsi pembicara (tes audio, cek mic, selaan "tunggu bentar", "sorry kepotong", dll).
    - Hapus kata-kata berulang/gagap lisan dan filler words (eh, anu, um, hmmm, you know).
-4. NORMALISASI KATA LISAN & SINGKATAN:
+5. NORMALISASI KATA LISAN & SINGKATAN:
    - Ubah kata singkatan tidak baku (yg, dgn, utk, sdh, blm, sy, tdk, gmn, knp, dll.) menjadi kata baku bahasa Indonesia.
-5. INTEGRITAS FAKTA 100%:
+6. INTEGRITAS FAKTA 100%:
    - Pertahankan seluruh substansi, data, angka, nama orang, dan fakta asli pembicaraan tanpa distorsi.
+   - DILARANG menambah fakta, nama, angka, atau topik yang tidak ada di transkrip.
 
 Format output WAJIB berupa JSON murni dengan skema:
 {

@@ -87,7 +87,7 @@ import MeetingNotesModal from './components/MeetingNotesModal.vue';
 import AiConfigModal from './components/AiConfigModal.vue';
 import { SpeechRecognizer } from './lib/speech/SpeechRecognizer.js';
 import { MicMonitor } from './lib/audio/MicMonitor.js';
-import { appendTranscriptCleanly } from './lib/text/transcript.mjs';
+import { appendTranscriptCleanly, paragraphize } from './lib/text/transcript.mjs';
 import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
 import { ApiClient } from './lib/api/client.js';
 import { triggerDownload, fileTimestamp } from './lib/utils/download.js';
@@ -291,7 +291,8 @@ async function runCorrection() {
 
 function applyCorrection() {
   if (correctionData.value.correctedText) {
-    transcriptText.value = correctionData.value.correctedText;
+    // Paragraf 400 kata dipertahankan supaya hasil koreksi tetap mudah dipilah.
+    transcriptText.value = paragraphize(correctionData.value.correctedText);
   }
   showCorrectionModal.value = false;
 }
