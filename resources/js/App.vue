@@ -29,6 +29,8 @@
         v-model="transcriptText"
         :is-recording="isRecording"
         :interim-speech="interimSpeech"
+        :mic-level="micLevel"
+        :mic-quiet="micQuiet"
         :current-lang="currentLangObj"
         :loading-action="loadingAction"
         :formatted-recording-time="formattedRecordingTime"
@@ -84,6 +86,7 @@ import CorrectionModal from './components/CorrectionModal.vue';
 import MeetingNotesModal from './components/MeetingNotesModal.vue';
 import AiConfigModal from './components/AiConfigModal.vue';
 import { SpeechRecognizer } from './lib/speech/SpeechRecognizer.js';
+import { MicMonitor } from './lib/audio/MicMonitor.js';
 import { appendTranscriptCleanly } from './lib/text/transcript.mjs';
 import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
 import { ApiClient } from './lib/api/client.js';
@@ -110,6 +113,8 @@ const charCount = computed(() => transcriptText.value.length);
 const isRecording = ref(false);
 const interimSpeech = ref('');
 const recordingSeconds = ref(0);
+const micLevel = ref(0);
+const micQuiet = ref(false);
 let timerInterval = null;
 
 const availableLanguages = LANGUAGES;
@@ -143,6 +148,13 @@ const recognizer = new SpeechRecognizer({
   },
 });
 
+// Pengukur level mic. Ini yang memberi tahu pengguna kalau suaranya terlalu pelan;
+// engine STT sendiri tidak punya tuas sensitivitas.
+const micMonitor = new MicMonitor({
+  onLevel: (level) => { micLevel.value = level; },
+  onQuietChange: (quiet) => { micQuiet.value = quiet; },
+});
+
 function setLanguage(code) {
   currentLanguage.value = code;
   if (isRecording.value) recognizer.setLanguage(code);
@@ -162,10 +174,9 @@ async function startRecording() {
     return;
   }
 
-  // Izin diminta lebih dulu supaya kegagalan mic muncul sebagai pesan jelas,
-  // bukan sesi STT yang diam-diam tidak menghasilkan apa pun.
+  // Panggilan ini yang meminta izin mic dan menyalakan meter level.
   try {
-    await recognizer.prepareMicrophone();
+    await micMonitor.start();
   } catch (err) {
     alert('Tidak bisa mengakses mikrofon: ' + err.message);
     return;
@@ -189,11 +200,14 @@ async function startRecording() {
 function stopRecording() {
   isRecording.value = false;
   interimSpeech.value = '';
+  micLevel.value = 0;
+  micQuiet.value = false;
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
   }
   recognizer.stop();
+  micMonitor.stop();
 }
 
 // -------------------------------------------------------------
@@ -214,6 +228,7 @@ onMounted(() => {
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
   recognizer.stop();
+  micMonitor.stop();
 });
 
 function saveApiKey() {

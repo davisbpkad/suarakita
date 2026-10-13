@@ -1,9 +1,9 @@
 {
   "package.json": {
-    "mtime": 1791865621.3990293,
-    "seen": 1791865710.271821,
-    "ast_hash": "0ad26a12fc5afa0438bf5ef6594ebc18",
-    "semantic_hash": "0ad26a12fc5afa0438bf5ef6594ebc18"
+    "mtime": 1791866276.2940295,
+    "seen": 1791866334.3327749,
+    "ast_hash": "120f01248b441adcae5a381d6add0f26",
+    "semantic_hash": "120f01248b441adcae5a381d6add0f26"
   },
   "public/app.js": {
     "mtime": 1790834130.159759,
@@ -36,10 +36,10 @@
     "semantic_hash": "77f39de931585dcd72cc0971b614b251"
   },
   "resources/js/App.vue": {
-    "mtime": 1791865908.1573951,
-    "seen": 1791865940.684389,
-    "ast_hash": "40a0c08e94340c5fa1a138a08671d20c",
-    "semantic_hash": "40a0c08e94340c5fa1a138a08671d20c"
+    "mtime": 1791866263.048535,
+    "seen": 1791866334.3327758,
+    "ast_hash": "512dd2136f2f827080cdbfa7ed7f5e90",
+    "semantic_hash": "512dd2136f2f827080cdbfa7ed7f5e90"
   },
   "resources/js/app.js": {
     "mtime": 1790835199.8062556,
@@ -66,10 +66,10 @@
     "semantic_hash": "40ddc6a3c6683a9de31203dc5ccf1789"
   },
   "README.md": {
-    "mtime": 1791865634.4055948,
-    "seen": 1791865710.271826,
-    "ast_hash": "87315287676e2c9a0e190ccedaac1f34",
-    "semantic_hash": "87315287676e2c9a0e190ccedaac1f34"
+    "mtime": 1791866286.6798837,
+    "seen": 1791866334.3327858,
+    "ast_hash": "e3c715b0a329725411ab8b0c9f9a98c8",
+    "semantic_hash": "e3c715b0a329725411ab8b0c9f9a98c8"
   },
   "vite.config.mjs": {
     "mtime": 1791010003.0288367,
@@ -90,10 +90,10 @@
     "semantic_hash": "f2a4eb7982a49df2b892863564166c70"
   },
   "resources/js/lib/speech/SpeechRecognizer.js": {
-    "mtime": 1791865607.599104,
-    "seen": 1791865710.2718232,
-    "ast_hash": "a6757a2059e837acbdbbb0cf0db9a9c2",
-    "semantic_hash": "a6757a2059e837acbdbbb0cf0db9a9c2"
+    "mtime": 1791866246.0812507,
+    "seen": 1791866334.332782,
+    "ast_hash": "d925ff326629499d291fa0181f34cfb3",
+    "semantic_hash": "d925ff326629499d291fa0181f34cfb3"
   },
   "resources/js/lib/speech/languages.js": {
     "mtime": 1791865535.0570974,
@@ -144,15 +144,33 @@
     "semantic_hash": "18da4cc3442bedd4a00c14864b7d51c2"
   },
   "resources/js/components/TranscriptWorkspace.vue": {
-    "mtime": 1791865874.4739745,
-    "seen": 1791865940.684392,
-    "ast_hash": "272f8459b5418ef159b33be25ee712d2",
-    "semantic_hash": "272f8459b5418ef159b33be25ee712d2"
+    "mtime": 1791866270.0945597,
+    "seen": 1791866334.332779,
+    "ast_hash": "81802194410b55a34f10ad1d54143c80",
+    "semantic_hash": "81802194410b55a34f10ad1d54143c80"
   },
   "resources/js/lib/utils/clipboard.js": {
     "mtime": 1791865852.3514066,
     "seen": 1791865940.684394,
     "ast_hash": "8e455921f18b2317008f238d5cf49ec2",
     "semantic_hash": "8e455921f18b2317008f238d5cf49ec2"
+  },
+  "resources/js/lib/audio/MicMonitor.js": {
+    "mtime": 1791866243.4002674,
+    "seen": 1791866334.332781,
+    "ast_hash": "8b6da1a2e8472fbce5fa95d32103279f",
+    "semantic_hash": "8b6da1a2e8472fbce5fa95d32103279f"
+  },
+  "resources/js/lib/audio/level.mjs": {
+    "mtime": 1791866238.8279932,
+    "seen": 1791866334.332782,
+    "ast_hash": "6b6375ca9ce60a822b4597554f206fbd",
+    "semantic_hash": "6b6375ca9ce60a822b4597554f206fbd"
+  },
+  "tests/level.test.mjs": {
+    "mtime": 1791866273.7700934,
+    "seen": 1791866334.332785,
+    "ast_hash": "feb2326d103d3f0f5749fc4e25b423a1",
+    "semantic_hash": "feb2326d103d3f0f5749fc4e25b423a1"
   }
 }

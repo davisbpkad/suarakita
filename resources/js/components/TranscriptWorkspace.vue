@@ -60,6 +60,23 @@
               Mendengarkan suara secara real-time... Silakan bicara dengan santai atau jelas.
             </span>
           </p>
+
+          <!-- Level mic: pengguna bisa lihat sendiri kalau suaranya terlalu pelan -->
+          <div class="mt-1.5 flex items-center gap-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider shrink-0" :class="micQuiet ? 'text-red-600' : 'text-emerald-600'">
+              Level mic
+            </span>
+            <div class="h-1.5 w-full max-w-[180px] bg-red-100 rounded-full overflow-hidden">
+              <div
+                class="h-full rounded-full transition-[width] duration-75"
+                :class="micQuiet ? 'bg-red-500' : 'bg-emerald-500'"
+                :style="{ width: Math.min(100, Math.round(micLevel * 400)) + '%' }"
+              ></div>
+            </div>
+          </div>
+          <p v-if="micQuiet" class="text-[11px] font-semibold text-red-600 mt-1 leading-snug">
+            Suara terlalu pelan. Naikkan volume input mikrofon di pengaturan sistem, atau dekatkan mic.
+          </p>
         </div>
       </div>
       <!-- Mini Soundwave -->
@@ -144,6 +161,8 @@ const props = defineProps({
   modelValue: { type: String, default: '' },
   isRecording: { type: Boolean, default: false },
   interimSpeech: { type: String, default: '' },
+  micLevel: { type: Number, default: 0 },
+  micQuiet: { type: Boolean, default: false },
   currentLang: { type: Object, required: true },
   loadingAction: { type: String, default: null },
   formattedRecordingTime: { type: String, default: '00:00' },

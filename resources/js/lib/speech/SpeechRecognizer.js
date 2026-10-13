@@ -37,21 +37,6 @@ export class SpeechRecognizer {
     return Boolean(Ctor());
   }
 
-  /**
-   * Minta izin mikrofon dengan pembersih suara sebelum STT mulai.
-   *
-   * ponytail: best-effort. Chrome membuat stream sendiri untuk SpeechRecognition,
-   * jadi constraint ini hanya dijamin memberi izin lebih awal + pesan error jelas,
-   * bukan menjamin kualitas audio mesin STT. Ukur dulu kalau mau naikkan klaimnya.
-   */
-  async prepareMicrophone() {
-    if (!navigator.mediaDevices?.getUserMedia) return;
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-    });
-    stream.getTracks().forEach((track) => track.stop());
-  }
-
   setLanguage(code) {
     this.language = code;
     if (this.active && this.recognition) {

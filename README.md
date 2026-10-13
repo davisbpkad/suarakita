@@ -115,9 +115,12 @@ Langkah deploy mandiri:
 │       ├── components/    # Komponen UI (AppHeader, TranscriptWorkspace, 3 modal)
 │       └── lib/           # Logika non-UI (OOP)
 │           ├── api/client.js                 # ApiClient: pemanggil endpoint backend
+│           ├── audio/MicMonitor.js           # MicMonitor: level mic + deteksi suara pelan
+│           ├── audio/level.mjs               # Matematika RMS level audio
 │           ├── speech/SpeechRecognizer.js    # SpeechRecognizer: state sesi STT
 │           ├── speech/languages.js           # Daftar bahasa STT
 │           ├── text/transcript.mjs           # Penggabungan & pembersihan transkrip
+│           ├── utils/clipboard.js            # Helper salin ke clipboard
 │           └── utils/download.js             # Helper unduh file
 ├── server.js              # Express server untuk eksekusi di lingkungan localhost
 ├── tests/                 # Self-check tanpa dependensi (node tests/transcript.test.mjs)
