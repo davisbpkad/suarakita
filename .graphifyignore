@@ -1,0 +1,2 @@
+# Exclude the preinstalled agent framework: not part of the SuaraKita app.
+.agents/

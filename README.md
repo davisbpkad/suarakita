@@ -97,24 +97,30 @@ Langkah deploy mandiri:
 ## 📁 Struktur Direktori
 
 ```text
-├── app/                  # Controller & Service (arsitektur Laravel)
-│   ├── Http/Controllers/
-│   └── Services/         # TranscriptCorrectionService & MeetingNotesService
-├── corrector.js          # Engine pembersihan & koreksi fonetik kontekstual
-├── meetingNotes.js       # Engine penyusunan notulen rapat terstruktur
-├── netlify.toml          # Konfigurasi deployment & serverless Netlify
+├── lib/
+│   └── geminiClient.js    # GeminiClient: satu-satunya jalur HTTP ke Gemini API
+├── corrector.js           # Engine pembersihan & koreksi fonetik kontekstual
+├── meetingNotes.js        # Engine penyusunan notulen rapat terstruktur
+├── netlify.toml           # Konfigurasi deployment & serverless Netlify
 ├── netlify/
-│   └── functions/        # Serverless functions (status, correct-transcript, meeting-notes)
-├── public/               # Direktori publik & hasil build aset statis
-│   ├── build/assets/     # Bundle app.css & app.js hasil kompilasi
-│   └── index.html        # Entry point halaman web
+│   └── functions/         # Serverless functions (status, correct-transcript, meeting-notes)
+├── public/                # Direktori publik & hasil build aset statis
+│   ├── build/assets/      # Bundle app.css & app.js hasil kompilasi
+│   └── index.html         # Entry point halaman web
 ├── resources/
-│   ├── css/app.css       # Tailwind CSS & utilitas desain antarmuka
+│   ├── css/app.css        # Tailwind CSS & utilitas desain antarmuka
 │   └── js/
-│       ├── app.js        # Bootstrapping Vue 3
-│       └── App.vue       # Komponen utama antarmuka pengguna
-├── server.js             # Express server untuk eksekusi di lingkungan localhost
-└── vite.config.mjs       # Konfigurasi bundler Vite
+│       ├── app.js         # Bootstrapping Vue 3
+│       ├── App.vue        # Komponen utama antarmuka pengguna
+│       └── lib/           # Logika non-UI (OOP)
+│           ├── api/client.js                 # ApiClient: pemanggil endpoint backend
+│           ├── speech/SpeechRecognizer.js    # SpeechRecognizer: state sesi STT
+│           ├── speech/languages.js           # Daftar bahasa STT
+│           ├── text/transcript.mjs           # Penggabungan & pembersihan transkrip
+│           └── utils/download.js             # Helper unduh file
+├── server.js              # Express server untuk eksekusi di lingkungan localhost
+├── tests/                 # Self-check tanpa dependensi (node tests/transcript.test.mjs)
+└── vite.config.mjs        # Konfigurasi bundler Vite
 ```
 
 ---

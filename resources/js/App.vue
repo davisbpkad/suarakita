@@ -519,6 +519,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { SpeechRecognizer } from './lib/speech/SpeechRecognizer.js';
+import { appendTranscriptCleanly } from './lib/text/transcript.mjs';
+import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
+import { ApiClient } from './lib/api/client.js';
+import { triggerDownload, fileTimestamp } from './lib/utils/download.js';
 
 // -------------------------------------------------------------
 // STATE: TRANSCRIPT WORKSPACE
@@ -552,32 +557,18 @@ const isRecording = ref(false);
 const interimSpeech = ref('');
 const recordingSeconds = ref(0);
 let timerInterval = null;
-let recognition = null;
 
 const showLangMenu = ref(false);
 
-const availableLanguages = [
-  { code: 'id-ID', flag: '🇮🇩', shortCode: 'ID', name: 'Bahasa Indonesia', label: '🇮🇩 ID' },
-  { code: 'en-US', flag: '🇺🇸', shortCode: 'EN', name: 'English (US)', label: '🇺🇸 EN' },
-  { code: 'ja-JP', flag: '🇯🇵', shortCode: 'JA', name: '日本語', label: '🇯🇵 JA' },
-  { code: 'ar-SA', flag: '🇸🇦', shortCode: 'AR', name: 'العربية', label: '🇸🇦 AR' }
-];
-const currentLanguage = ref('id-ID');
+const availableLanguages = LANGUAGES;
+const currentLanguage = ref(DEFAULT_LANGUAGE);
 
-const currentLangObj = computed(() => {
-  return availableLanguages.find(l => l.code === currentLanguage.value) || availableLanguages[0];
-});
+const currentLangObj = computed(() => findLanguage(currentLanguage.value));
 
 function setLanguage(code) {
   currentLanguage.value = code;
   showLangMenu.value = false;
-  if (isRecording.value && recognition) {
-    try {
-      recognition.lang = code;
-      // Abort sesi saat ini agar engine STT langsung restart dengan acoustic model bahasa baru
-      recognition.abort();
-    } catch (e) {}
-  }
+  if (isRecording.value) recognizer.setLanguage(code);
 }
 
 const formattedRecordingTime = computed(() => {
@@ -587,170 +578,25 @@ const formattedRecordingTime = computed(() => {
   return `${pad(mins)}:${pad(secs)}`;
 });
 
-// Deteksi peramban mobile (Android / Samsung Internet / Chrome Mobile)
-const isMobileDevice = typeof navigator !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-// Pelacak status kalimat final terakhir untuk mencegah ghost replay pada Android
-let lastFinalPhrase = '';
-let lastFinalTimestamp = 0;
-let sessionStartTime = 0;
-let restartTimer = null;
-const processedFinalMap = new Map();
-
-/**
- * Pangkas pengulangan kata yang tidak wajar akibat echo/stutter mic (misal: "halo halo halo halo..." -> "halo halo")
- */
-function collapseExcessiveRepetitions(text) {
-  if (!text) return '';
-  // Kata yang berulang 3 kali atau lebih berturut-turut dipangkas menjadi maksimal 2 kali
-  return text.replace(/\b([a-zA-ZÀ-ÿ0-9]{2,})(?:\s+\1){2,}\b/gi, '$1 $1');
-}
-
-/**
- * Menggabungkan teks transkrip baru secara mulus tanpa menduplikasi kata yang tumpang tindih di batas sambungan.
- * Sangat penting untuk peramban Android (Chrome / Samsung Internet) yang sering mengirim buffer suara berulang.
- */
-function appendTranscriptCleanly(currentText, newAddition) {
-  let trimmedAddition = (newAddition || '').trim();
-  if (!trimmedAddition) return currentText || '';
-
-  // Bersihkan pengulangan internal berlebih jika ada
-  trimmedAddition = collapseExcessiveRepetitions(trimmedAddition);
-
-  if (!currentText || !currentText.trim()) return trimmedAddition;
-
-  const curTrimmed = currentText.trim();
-  const curWords = curTrimmed.split(/\s+/);
-  const newWords = trimmedAddition.split(/\s+/);
-
-  // Periksa overlap kata maksimal di ujung teks sebelumnya dengan awal teks baru (maksimal 6 kata)
-  let maxOverlap = 0;
-  const maxCheck = Math.min(curWords.length, newWords.length, 6);
-  for (let len = maxCheck; len >= 1; len--) {
-    const endSlice = curWords.slice(-len).join(' ').toLowerCase();
-    const startSlice = newWords.slice(0, len).join(' ').toLowerCase();
-    if (endSlice === startSlice) {
-      maxOverlap = len;
-      break;
-    }
-  }
-
-  const remainingWords = newWords.slice(maxOverlap);
-  if (remainingWords.length === 0) {
-    // Jika seluruh kata newAddition cocok dengan ujung teks sebelumnya:
-    // HANYA abaikan jika ini overlap multi-kata (>= 2 kata) ATAU terjadi dalam jeda audio sangat singkat (< 400ms)
-    if (maxOverlap >= 2 || (Date.now() - lastFinalTimestamp < 400)) {
-      return curTrimmed;
-    }
-    // Jika hanya 1 kata setelah jeda normal, pembicara memang sengaja mengulang kata tsb ("tes... tes", "halo... halo")
-    return curTrimmed + ' ' + trimmedAddition;
-  }
-
-  return curTrimmed + ' ' + remainingWords.join(' ');
-}
-
-function initSpeechRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    console.warn('SpeechRecognition API not available in this browser.');
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-
-  // KRUSIAL UNTUK ANDROID / SAMSUNG GALAXY:
-  // Pada Android / mobile, continuous HARUS false karena engine SpeechRecognizer bawaan OS
-  // hanya mendukung satu frasa per sesi. Jika continuous = true di Android, Chromium akan
-  // memicu bug resultIndex = 0 dan duplikasi kata 5-7x lipat.
-  // Pada desktop (PC/Mac), continuous = true berjalan sangat lancar dan efisien tanpa jeda restart.
-  recognition.continuous = !isMobileDevice;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
-  recognition.lang = currentLanguage.value;
-
-  recognition.onresult = (event) => {
-    let interim = '';
-    let finalChunk = '';
-    const now = Date.now();
-
-    // Mulai iterasi dari event.resultIndex untuk efisiensi maksimal tanpa memproses ulang teks final lama
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const res = event.results[i];
-      const rawText = res[0] ? res[0].transcript.trim() : '';
-      if (!rawText) continue;
-
-      if (res.isFinal) {
-        // Cek anti-ghost replay:
-        // Hanya aktif di mobile jika event final ini tiba sangat cepat (< 400ms) setelah sesi di-restart
-        // dan kata/frasanya persis sama dengan akhir sesi sebelumnya (sisa buffer audio Samsung/Android).
-        const isGhostReplay = isMobileDevice &&
-          (now - sessionStartTime < 400) &&
-          lastFinalPhrase &&
-          (rawText.toLowerCase() === lastFinalPhrase.toLowerCase());
-
-        if (isGhostReplay) {
-          continue; // Abaikan buffer replay Android
-        }
-
-        finalChunk = appendTranscriptCleanly(finalChunk, rawText);
-        lastFinalPhrase = rawText;
-        lastFinalTimestamp = now;
-      } else {
-        // Akumulasi teks sementara (interim)
-        interim += (interim ? ' ' : '') + rawText;
-      }
-    }
-
-    interimSpeech.value = interim;
-
-    if (finalChunk) {
-      transcriptText.value = appendTranscriptCleanly(transcriptText.value, finalChunk);
-      scrollToBottom();
-    }
-  };
-
-  recognition.onerror = (event) => {
-    console.warn('Speech recognition error:', event.error);
-    if (event.error === 'no-speech' || event.error === 'aborted') {
-      return;
-    }
-    if (event.error === 'not-allowed') {
+// Engine STT: seluruh state sesi hidup di SpeechRecognizer. Komponen hanya
+// menerima callback, jadi mengganti engine nanti tidak menyentuh template.
+const recognizer = new SpeechRecognizer({
+  language: DEFAULT_LANGUAGE,
+  onInterim: (text) => {
+    interimSpeech.value = text;
+  },
+  onFinal: (chunk, gapMs) => {
+    transcriptText.value = appendTranscriptCleanly(transcriptText.value, chunk, gapMs);
+    scrollToBottom();
+  },
+  onError: (error) => {
+    console.warn('Speech recognition error:', error);
+    if (error === 'not-allowed') {
       alert('Izin akses mikrofon tidak diizinkan. Silakan aktifkan izin mikrofon pada browser Anda.');
       stopRecording();
     }
-  };
-
-  recognition.onend = () => {
-    processedFinalMap.clear();
-
-    if (isRecording.value) {
-      clearTimeout(restartTimer);
-      // Restart cepat (15ms di mobile, 10ms di desktop) agar mic tetap 'panas' dan tidak memotong kata pertama
-      restartTimer = setTimeout(() => {
-        if (isRecording.value && recognition) {
-          try {
-            sessionStartTime = Date.now();
-            recognition.lang = currentLanguage.value;
-            recognition.start();
-          } catch (e) {
-            // Jika audio subsystem masih menyelesaikan unbind, coba lagi dalam 40ms
-            setTimeout(() => {
-              if (isRecording.value && recognition) {
-                try {
-                  sessionStartTime = Date.now();
-                  recognition.lang = currentLanguage.value;
-                  recognition.start();
-                } catch (err) {
-                  console.warn('SpeechRecognition restart retry error:', err);
-                }
-              }
-            }, 40);
-          }
-        }
-      }, isMobileDevice ? 15 : 10);
-    }
-  };
-}
+  },
+});
 
 function toggleRecording() {
   if (isRecording.value) {
@@ -760,25 +606,23 @@ function toggleRecording() {
   }
 }
 
-function startRecording() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
+async function startRecording() {
+  if (!SpeechRecognizer.supported) {
     alert('Browser Anda belum mendukung Web Speech Recognition API. Silakan gunakan Google Chrome, Edge, atau browser Chromium modern.');
     return;
   }
 
+  // Izin diminta lebih dulu supaya kegagalan mic muncul sebagai pesan jelas,
+  // bukan sesi STT yang diam-diam tidak menghasilkan apa pun.
   try {
-    clearTimeout(restartTimer);
-    if (!recognition) initSpeechRecognition();
-    processedFinalMap.clear();
-    lastFinalPhrase = '';
-    lastFinalTimestamp = 0;
-    sessionStartTime = Date.now();
-    recognition.continuous = !isMobileDevice;
-    recognition.maxAlternatives = 1;
-    recognition.interimResults = true;
-    recognition.lang = currentLanguage.value;
-    recognition.start();
+    await recognizer.prepareMicrophone();
+  } catch (err) {
+    alert('Tidak bisa mengakses mikrofon: ' + err.message);
+    return;
+  }
+
+  try {
+    await recognizer.start();
     isRecording.value = true;
     recordingSeconds.value = 0;
     interimSpeech.value = '';
@@ -795,19 +639,11 @@ function startRecording() {
 function stopRecording() {
   isRecording.value = false;
   interimSpeech.value = '';
-  clearTimeout(restartTimer);
-  processedFinalMap.clear();
-  lastFinalPhrase = '';
-  lastFinalTimestamp = 0;
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
   }
-  if (recognition) {
-    try {
-      recognition.stop();
-    } catch (e) {}
-  }
+  recognizer.stop();
 }
 
 // -------------------------------------------------------------
@@ -818,6 +654,7 @@ const geminiApiKey = ref('');
 const selectedGeminiModel = ref('gemini-2.5-flash');
 const hasApiKey = computed(() => Boolean(geminiApiKey.value && geminiApiKey.value.trim()));
 const loadingAction = ref(null);
+const api = new ApiClient();
 
 onMounted(() => {
   geminiApiKey.value = localStorage.getItem('gemini_api_key') || '';
@@ -826,9 +663,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
-  if (recognition) {
-    try { recognition.stop(); } catch (e) {}
-  }
+  recognizer.stop();
 });
 
 function saveApiKey() {
@@ -885,18 +720,11 @@ async function runCorrection() {
 
   loadingAction.value = 'correction';
   try {
-    const res = await fetch('/api/correct-transcript', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text,
-        apiKey: geminiApiKey.value,
-        model: selectedGeminiModel.value
-      })
-    });
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    const data = await res.json();
-    correctionData.value = data;
+    correctionData.value = await api.correctTranscript(
+      text,
+      geminiApiKey.value,
+      selectedGeminiModel.value
+    );
     showCorrectionModal.value = true;
   } catch (err) {
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
@@ -934,18 +762,11 @@ async function runMeetingNotes() {
 
   loadingAction.value = 'mom';
   try {
-    const res = await fetch('/api/meeting-notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text,
-        apiKey: geminiApiKey.value,
-        model: selectedGeminiModel.value
-      })
-    });
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    const data = await res.json();
-    momData.value = data;
+    momData.value = await api.generateMeetingNotes(
+      text,
+      geminiApiKey.value,
+      selectedGeminiModel.value
+    );
     showMomModal.value = true;
   } catch (err) {
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
@@ -1007,8 +828,7 @@ function downloadTranscript(type) {
     return;
   }
   const now = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  const timestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
+  const timestamp = fileTimestamp(now);
 
   if (type === 'txt') {
     triggerDownload(text, `transkrip_${timestamp}.txt`, 'text/plain;charset=utf-8');
@@ -1016,17 +836,5 @@ function downloadTranscript(type) {
     const md = `# Transkrip Suara\n\n- **Tanggal:** ${now.toLocaleString('id-ID')}\n- **Jumlah Kata:** ${wordCount.value}\n\n---\n\n${text}\n`;
     triggerDownload(md, `transkrip_${timestamp}.md`, 'text/markdown;charset=utf-8');
   }
-}
-
-function triggerDownload(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 </script>

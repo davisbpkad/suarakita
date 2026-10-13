@@ -23,7 +23,7 @@
  * Filosofi: Ringan, stateless (tanpa bug regex stateful), sub-milidetik, tanpa dependensi berat (Ponytail).
  */
 
-const https = require('https');
+const { GeminiClient, DEFAULT_MODELS } = require('./lib/geminiClient.js');
 
 // Daftar singkatan percakapan lisan Indonesia ke bentuk baku
 const ORAL_CONTRACTIONS = [
@@ -254,7 +254,7 @@ function correctTranscriptWithNLP(rawText) {
 /**
  * Koreksi Transkrip Menggunakan Google Gemini AI (Jika API Key Disediakan)
  */
-async function correctTranscriptWithAI(rawText, apiKey) {
+async function correctTranscriptWithAI(rawText, apiKey, preferredModel) {
   if (!apiKey || !apiKey.trim()) {
     return correctTranscriptWithNLP(rawText);
   }
@@ -298,85 +298,23 @@ Draf Transkrip Mentah:
 ${rawText}
 """`;
 
-  const payload = JSON.stringify({
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
-    ],
-    generationConfig: {
-      temperature: 0.1,
-      responseMimeType: 'application/json'
-    }
-  });
+  const hit = await new GeminiClient(apiKey, { timeout: 12000 }).generateWithFallback(
+    [preferredModel, ...DEFAULT_MODELS],
+    prompt,
+    (result) => Boolean(result && result.correctedText)
+  );
 
-  const candidateModels = [
-    preferredModel || 'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-1.5-flash'
-  ].filter((v, i, a) => a.indexOf(v) === i);
-
-  for (const model of candidateModels) {
-    try {
-      const result = await callGeminiCorrectorSingleModel(model, apiKey, payload);
-      if (result && result.correctedText) {
-        return {
-          originalText: rawText,
-          correctedText: result.correctedText,
-          changes: result.changes || [`Pembersihan dan koreksi cerdas via Gemini AI (${model})`],
-          modelUsed: model,
-          method: 'gemini_ai'
-        };
-      }
-    } catch (e) {
-      // lanjut ke model berikutnya
-    }
+  if (hit) {
+    return {
+      originalText: rawText,
+      correctedText: hit.result.correctedText,
+      changes: hit.result.changes || [`Pembersihan dan koreksi cerdas via Gemini AI (${hit.model})`],
+      modelUsed: hit.model,
+      method: 'gemini_ai'
+    };
   }
 
   return correctTranscriptWithNLP(rawText);
-}
-
-function callGeminiCorrectorSingleModel(modelName, apiKey, payload) {
-  return new Promise((resolve, reject) => {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
-
-    const req = https.request(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-      },
-      timeout: 12000
-    }, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        try {
-          if (res.statusCode !== 200) {
-            return reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-          }
-          const parsed = JSON.parse(data);
-          const rawJson = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!rawJson) return reject(new Error('Empty content'));
-          const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-          const result = JSON.parse(cleanJson);
-          resolve(result);
-        } catch (e) {
-          reject(e);
-        }
-      });
-    });
-
-    req.on('error', reject);
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Timeout'));
-    });
-
-    req.write(payload);
-    req.end();
-  });
 }
 
 module.exports = {

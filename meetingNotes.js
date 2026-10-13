@@ -24,8 +24,8 @@
  * 6. Hasilkan HANYA output format resmi tanpa teks pengantar atau penutup dari AI.
  */
 
-const https = require('https');
 const { correctTranscriptWithNLP } = require('./corrector.js');
+const { GeminiClient, DEFAULT_MODELS } = require('./lib/geminiClient.js');
 
 // Label terlarang yang bukan nama orang asli atau divisi valid
 const DISALLOWED_LABELS = new Set([
@@ -486,98 +486,33 @@ Transkrip Mentah:
 ${rawTranscriptText}
 """`;
 
-  const payload = JSON.stringify({
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
-    ],
-    generationConfig: {
-      temperature: 0.1,
-      responseMimeType: 'application/json'
-    }
-  });
+  const hit = await new GeminiClient(apiKey).generateWithFallback(
+    [preferredModel, ...DEFAULT_MODELS],
+    prompt,
+    (res) => Boolean(res && res.topic)
+  );
 
-  // Daftar model yang akan dicoba berjenjang (dimulai dari model yang dipilih)
-  const candidateModels = [
-    preferredModel || 'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-1.5-flash'
-  ].filter((v, i, a) => a.indexOf(v) === i); // unique
+  if (hit) {
+    const topic = cleanDuplicateWords(hit.result.topic.trim());
+    let summaryItems = Array.isArray(hit.result.summaryItems) ? hit.result.summaryItems.filter(Boolean) : [];
+    let decisions = Array.isArray(hit.result.decisions) ? hit.result.decisions.filter(Boolean) : [];
 
-  for (const model of candidateModels) {
-    try {
-      const res = await callGeminiSingleModel(model, apiKey, payload);
-      if (res && res.topic) {
-        const topic = cleanDuplicateWords(res.topic.trim());
-        let summaryItems = Array.isArray(res.summaryItems) ? res.summaryItems.filter(Boolean) : [];
-        let decisions = Array.isArray(res.decisions) ? res.decisions.filter(Boolean) : [];
+    if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+    if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
 
-        if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-        if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
-
-        const rawMarkdown = formatMeetingNotesMarkdown(topic, summaryItems, decisions);
-
-        return {
-          topic,
-          summary: summaryItems.join('\n'),
-          summaryItems,
-          decisions,
-          rawMarkdown,
-          modelUsed: model,
-          method: 'gemini_ai'
-        };
-      }
-    } catch (err) {
-      // lanjut ke kandidat model berikutnya
-    }
+    return {
+      topic,
+      summary: summaryItems.join('\n'),
+      summaryItems,
+      decisions,
+      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
+      modelUsed: hit.model,
+      method: 'gemini_ai'
+    };
   }
 
   // Fallback jika seluruh model AI gagal/kuota habis
   return generateMeetingNotesWithNLP(rawTranscriptText);
-}
-
-function callGeminiSingleModel(modelName, apiKey, payload) {
-  return new Promise((resolve, reject) => {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
-
-    const req = https.request(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-      },
-      timeout: 15000
-    }, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        try {
-          if (res.statusCode !== 200) {
-            return reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-          }
-          const parsed = JSON.parse(data);
-          const rawJson = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!rawJson) return reject(new Error('Empty content'));
-          const cleanJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-          const notes = JSON.parse(cleanJson);
-          resolve(notes);
-        } catch (e) {
-          reject(e);
-        }
-      });
-    });
-
-    req.on('error', reject);
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Timeout'));
-    });
-
-    req.write(payload);
-    req.end();
-  });
 }
 
 module.exports = {
