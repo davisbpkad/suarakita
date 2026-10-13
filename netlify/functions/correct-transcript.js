@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body || '{}');
-    const { text, apiKey, model } = data;
+    const { text, apiKey, model, provider } = data;
     if (!text || !text.trim()) {
       return {
         statusCode: 400,
@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
     }
 
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const result = await correctTranscriptWithAI(text, effectiveApiKey, model);
+    const result = await correctTranscriptWithAI(text, effectiveApiKey, model, provider);
 
     return {
       statusCode: 200,

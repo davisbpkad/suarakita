@@ -69,6 +69,7 @@
 
     <AiConfigModal
       v-if="showAiConfigModal"
+      v-model:provider="selectedProvider"
       v-model:api-key="geminiApiKey"
       v-model:model="selectedGeminiModel"
       @close="showAiConfigModal = false"
@@ -90,7 +91,11 @@ import { MicMonitor } from './lib/audio/MicMonitor.js';
 import { appendTranscriptCleanly, paragraphize } from './lib/text/transcript.mjs';
 import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
 import { ApiClient } from './lib/api/client.js';
+import { parseTagged, toBulletList } from '../../lib/taggedOutput.mjs';
 import { triggerDownload, fileTimestamp } from './lib/utils/download.js';
+import PROVIDERS from '../../lib/providers.json';
+
+const DEFAULT_PROVIDER = 'gemini';
 
 // -------------------------------------------------------------
 // STATE: TRANSCRIPT WORKSPACE
@@ -215,14 +220,21 @@ function stopRecording() {
 // -------------------------------------------------------------
 const showAiConfigModal = ref(false);
 const geminiApiKey = ref('');
-const selectedGeminiModel = ref('gemini-2.5-flash');
+const selectedProvider = ref(DEFAULT_PROVIDER);
+const selectedGeminiModel = ref(PROVIDERS[DEFAULT_PROVIDER].models[0].id);
 const hasApiKey = computed(() => Boolean(geminiApiKey.value && geminiApiKey.value.trim()));
 const loadingAction = ref(null);
 const api = new ApiClient();
 
 onMounted(() => {
   geminiApiKey.value = localStorage.getItem('gemini_api_key') || '';
-  selectedGeminiModel.value = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
+  selectedProvider.value = localStorage.getItem('llm_provider') || DEFAULT_PROVIDER;
+  const storedModel = localStorage.getItem('gemini_model');
+  const provider = PROVIDERS[selectedProvider.value] || PROVIDERS[DEFAULT_PROVIDER];
+  // Buang model tersimpan yang tidak dikenal provider aktif (mis. sisa provider lama).
+  selectedGeminiModel.value = provider.models.some((m) => m.id === storedModel)
+    ? storedModel
+    : provider.models[0].id;
 });
 
 onUnmounted(() => {
@@ -234,6 +246,7 @@ onUnmounted(() => {
 function saveApiKey() {
   localStorage.setItem('gemini_api_key', geminiApiKey.value.trim());
   localStorage.setItem('gemini_model', selectedGeminiModel.value);
+  localStorage.setItem('llm_provider', selectedProvider.value);
   showAiConfigModal.value = false;
 }
 
@@ -274,15 +287,26 @@ async function runCorrection() {
     return;
   }
 
+  // Modal dibuka lebih dulu supaya teks koreksi bisa muncul bertahap saat streaming.
+  correctionData.value = { originalText: text, correctedText: '', changes: [], method: 'nlp_builtin' };
+  showCorrectionModal.value = true;
   loadingAction.value = 'correction';
+
   try {
-    correctionData.value = await api.correctTranscript(
+    correctionData.value = await api.correctTranscriptStream(
       text,
       geminiApiKey.value,
-      selectedGeminiModel.value
+      selectedGeminiModel.value,
+      selectedProvider.value,
+      (raw) => {
+        const fields = parseTagged(raw);
+        if (fields.TEXT) {
+          correctionData.value = { ...correctionData.value, correctedText: fields.TEXT };
+        }
+      }
     );
-    showCorrectionModal.value = true;
   } catch (err) {
+    showCorrectionModal.value = false;
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
   } finally {
     loadingAction.value = null;
@@ -317,15 +341,28 @@ async function runMeetingNotes() {
     return;
   }
 
+  // Modal dibuka lebih dulu supaya notulen bisa muncul bertahap saat streaming.
+  momData.value = { topic: '', summary: '', summaryItems: [], decisions: [], rawMarkdown: '', method: 'nlp_builtin' };
+  showMomModal.value = true;
   loadingAction.value = 'mom';
+
   try {
-    momData.value = await api.generateMeetingNotes(
+    momData.value = await api.generateMeetingNotesStream(
       text,
       geminiApiKey.value,
-      selectedGeminiModel.value
+      selectedGeminiModel.value,
+      selectedProvider.value,
+      (raw) => {
+        const fields = parseTagged(raw);
+        const patch = {};
+        if (fields.TOPIC) patch.topic = fields.TOPIC;
+        if (fields.SUMMARY) patch.summaryItems = toBulletList(fields.SUMMARY).map((s) => `* ${s}`);
+        if (fields.DECISIONS) patch.decisions = toBulletList(fields.DECISIONS).map((s) => `* ${s}`);
+        momData.value = { ...momData.value, ...patch };
+      }
     );
-    showMomModal.value = true;
   } catch (err) {
+    showMomModal.value = false;
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
   } finally {
     loadingAction.value = null;

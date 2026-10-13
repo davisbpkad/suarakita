@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { correctTranscriptWithNLP, correctTranscriptWithAI } = require('./corrector.js');
-const { generateMeetingNotesWithNLP, generateMeetingNotesWithAI } = require('./meetingNotes.js');
+const { correctTranscriptWithNLP, correctTranscriptWithAI, correctTranscriptStream } = require('./corrector.js');
+const { generateMeetingNotesWithNLP, generateMeetingNotesWithAI, generateMeetingNotesStream } = require('./meetingNotes.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +9,38 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// --- Server-Sent Events -------------------------------------------------
+function startSse(res) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  });
+}
+
+function sseSend(res, payload) {
+  res.write(`data: ${JSON.stringify(payload)}\n\n`);
+}
+
+/**
+ * Jalankan `run(onDelta)` sambil mengalirkan potongan ke klien, lalu kirim hasil akhir.
+ * Semua error diterjemahkan jadi event, bukan response 500, karena header SSE
+ * sudah terkirim saat error bisa terjadi.
+ */
+async function streamResponse(res, run, errorMessage) {
+  startSse(res);
+  try {
+    const result = await run((delta) => sseSend(res, { delta }));
+    sseSend(res, { result });
+  } catch (err) {
+    console.error(errorMessage, err);
+    sseSend(res, { error: errorMessage });
+  }
+  sseSend(res, { done: true });
+  res.end();
+}
 
 // Health check / API status
 app.get('/api/status', (req, res) => {
@@ -21,15 +53,22 @@ app.get('/api/status', (req, res) => {
 
 // Endpoint Koreksi Transkrip (Transcript Correction)
 app.post('/api/correct-transcript', async (req, res) => {
-  try {
-    const { text, apiKey, model } = req.body;
-    if (!text || !text.trim()) {
-      return res.status(400).json({ error: 'Teks transkrip tidak boleh kosong.' });
-    }
+  const { text, apiKey, model, provider, stream } = req.body || {};
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Teks transkrip tidak boleh kosong.' });
+  }
 
+  if (stream) {
+    return streamResponse(
+      res,
+      (onDelta) => correctTranscriptStream(text, { apiKey, model, provider }, onDelta),
+      'Gagal melakukan koreksi transkrip.'
+    );
+  }
+
+  try {
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const result = await correctTranscriptWithAI(text, effectiveApiKey, model);
-    res.json(result);
+    res.json(await correctTranscriptWithAI(text, effectiveApiKey, model, provider));
   } catch (err) {
     console.error('Error correcting transcript:', err);
     res.status(500).json({ error: 'Gagal melakukan koreksi transkrip.' });
@@ -38,19 +77,24 @@ app.post('/api/correct-transcript', async (req, res) => {
 
 // Endpoint Notulen Rapat (Minutes of Meeting / MoM)
 app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res) => {
+  const { text, apiKey, model, provider, stream } = req.body || {};
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Teks transkrip rapat tidak boleh kosong.' });
+  }
+
+  if (stream) {
+    return streamResponse(
+      res,
+      (onDelta) => generateMeetingNotesStream(text, { apiKey, model, provider }, onDelta),
+      'Gagal membuat notulen rapat.'
+    );
+  }
+
   try {
-    const { text, apiKey, model } = req.body;
-    if (!text || !text.trim()) {
-      return res.status(400).json({ error: 'Teks transkrip rapat tidak boleh kosong.' });
-    }
-
     // Bersihkan transkrip terlebih dahulu sebelum diekstraksi notulennya
-    const cleanObj = correctTranscriptWithNLP(text);
-    const cleanedText = cleanObj.correctedText || text;
-
+    const cleanedText = correctTranscriptWithNLP(text).correctedText || text;
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const notesResult = await generateMeetingNotesWithAI(cleanedText, effectiveApiKey, model);
-    res.json(notesResult);
+    res.json(await generateMeetingNotesWithAI(cleanedText, effectiveApiKey, model, provider));
   } catch (err) {
     console.error('Error generating meeting notes:', err);
     res.status(500).json({ error: 'Gagal membuat notulen rapat.' });

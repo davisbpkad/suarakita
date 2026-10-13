@@ -23,7 +23,7 @@
  * Filosofi: Ringan, stateless (tanpa bug regex stateful), sub-milidetik, tanpa dependensi berat (Ponytail).
  */
 
-const { GeminiClient, DEFAULT_MODELS } = require('./lib/geminiClient.js');
+const { createClient, modelChainFor } = require('./lib/llmClient.js');
 
 // Daftar singkatan percakapan lisan Indonesia ke bentuk baku
 const ORAL_CONTRACTIONS = [
@@ -252,14 +252,10 @@ function correctTranscriptWithNLP(rawText) {
 }
 
 /**
- * Koreksi Transkrip Menggunakan Google Gemini AI (Jika API Key Disediakan)
+ * Prompt koreksi transkrip. Dipakai jalur biasa maupun jalur streaming.
  */
-async function correctTranscriptWithAI(rawText, apiKey, preferredModel) {
-  if (!apiKey || !apiKey.trim()) {
-    return correctTranscriptWithNLP(rawText);
-  }
-
-  const prompt = `Anda adalah editor transkrip percakapan profesional tingkat tinggi khusus industri teknologi, operasional, dan bisnis di Indonesia.
+function buildCorrectionPrompt(rawText) {
+  return `Anda adalah editor transkrip percakapan profesional tingkat tinggi khusus industri teknologi, operasional, dan bisnis di Indonesia.
 Tugas Anda adalah mentransformasikan draf transkrip mentah berikut menjadi teks transkrip percakapan yang BERSIH, KOHEREN, MENGALIR NATURAL, BERTATA BAHASA BAIK, SERTA MEMILIKI TANDA BACA DAN KAPITALISASI YANG TEPAT.
 
 ATURAN KETAT KOREKSI:
@@ -291,39 +287,108 @@ ATURAN KETAT KOREKSI:
    - Pertahankan seluruh substansi, data, angka, nama orang, dan fakta asli pembicaraan tanpa distorsi.
    - DILARANG menambah fakta, nama, angka, atau topik yang tidak ada di transkrip.
 
-Format output WAJIB berupa JSON murni dengan skema:
-{
-  "correctedText": "Teks transkrip yang telah dikoreksi bersih, mengalir natural, dan rapi",
-  "changes": ["Daftar ringkas perbaikan penting yang dilakukan"]
-}
+Format output WAJIB berupa teks bertanda berikut, TANPA pembungkus markdown:
 
-HANYA berikan JSON valid tanpa markdown formatting (jangan gunakan \`\`\`json).
+<<<TEXT>>>
+Teks transkrip yang telah dikoreksi bersih, mengalir natural, dan rapi
+<<<CHANGES>>>
+- perbaikan penting pertama
+- perbaikan penting kedua
+
+Aturan format: setiap tag berdiri di barisnya sendiri. Jangan menulis apa pun sebelum <<<TEXT>>>.
 
 Draf Transkrip Mentah:
 """
 ${rawText}
 """`;
+}
 
-  const hit = await new GeminiClient(apiKey, { timeout: 12000 }).generateWithFallback(
-    [preferredModel, ...DEFAULT_MODELS],
+/**
+ * Koreksi transkrip memakai LLM (Gemini / Groq / Cerebras / OpenRouter).
+ * Tanpa API key, langsung jatuh ke mesin NLP lokal.
+ */
+async function correctTranscriptWithAI(rawText, apiKey, preferredModel, provider) {
+  if (!apiKey || !apiKey.trim()) return correctTranscriptWithNLP(rawText);
+
+  const prompt = buildCorrectionPrompt(rawText);
+  const { parseTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const client = createClient({ provider, apiKey, timeout: 20000 });
+  if (!client) return correctTranscriptWithNLP(rawText);
+
+  const hit = await client.generateWithFallback(
+    modelChainFor(provider, preferredModel),
     prompt,
-    (result) => Boolean(result && result.correctedText)
+    (text) => text.includes('<<<TEXT>>>')
   );
+  if (!hit) return correctTranscriptWithNLP(rawText);
 
-  if (hit) {
-    return {
-      originalText: rawText,
-      correctedText: hit.result.correctedText,
-      changes: hit.result.changes || [`Pembersihan dan koreksi cerdas via Gemini AI (${hit.model})`],
-      modelUsed: hit.model,
-      method: 'gemini_ai'
-    };
+  const fields = parseTagged(hit.result);
+  if (!fields.TEXT) return correctTranscriptWithNLP(rawText);
+
+  const changes = toBulletList(fields.CHANGES);
+  return {
+    originalText: rawText,
+    correctedText: fields.TEXT,
+    changes: changes.length ? changes : [`Pembersihan dan koreksi cerdas via ${hit.model}`],
+    modelUsed: hit.model,
+    method: 'gemini_ai'
+  };
+}
+
+/**
+ * Sama seperti correctTranscriptWithAI, tapi mengirim potongan mentah bertanda
+ * ke `onDelta` begitu tiba, supaya UI bisa menampilkan hasil sambil berjalan.
+ *
+ * ponytail: kalau model pertama sudah mengirim sebagian teks lalu gagal, kita
+ * tidak mencoba model lain (hasil akan terduplikasi). Struktur akhir diambil
+ * dari hasil lengkap yang sudah terkumpul.
+ */
+async function correctTranscriptStream(rawText, { apiKey, model, provider }, onDelta) {
+  const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const client = createClient({ provider, apiKey, timeout: 30000 });
+
+  if (!client) {
+    const nlp = correctTranscriptWithNLP(rawText);
+    onDelta(toTagged({ TEXT: nlp.correctedText, CHANGES: nlp.changes }));
+    return nlp;
   }
 
-  return correctTranscriptWithNLP(rawText);
+  let sent = false;
+  const emit = (delta) => {
+    sent = true;
+    onDelta(delta);
+  };
+
+  try {
+    const hit = await client.streamWithFallback(
+      modelChainFor(provider, model),
+      buildCorrectionPrompt(rawText),
+      emit
+    );
+    if (hit) {
+      const fields = parseTagged(hit.text);
+      if (fields.TEXT) {
+        const changes = toBulletList(fields.CHANGES);
+        return {
+          originalText: rawText,
+          correctedText: fields.TEXT,
+          changes: changes.length ? changes : [`Pembersihan dan koreksi cerdas via ${hit.model}`],
+          modelUsed: hit.model,
+          method: 'gemini_ai'
+        };
+      }
+    }
+  } catch (e) {
+    // sudah ada potongan terkirim ke UI; lanjut ke hasil NLP tanpa mengirim ulang
+  }
+
+  const nlp = correctTranscriptWithNLP(rawText);
+  if (!sent) onDelta(toTagged({ TEXT: nlp.correctedText, CHANGES: nlp.changes }));
+  return nlp;
 }
 
 module.exports = {
   correctTranscriptWithNLP,
-  correctTranscriptWithAI
+  correctTranscriptWithAI,
+  correctTranscriptStream
 };

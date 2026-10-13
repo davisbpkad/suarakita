@@ -34,9 +34,11 @@ Aplikasi web modern untuk merekam suara secara real-time, mengubah audio menjadi
    - Setiap butir ringkasan dan keputusan dilengkapi penanggung jawab (**PIC**) dan tenggat waktu bila disebutkan dalam rapat.
    - Ekspor notulen rapat langsung ke format Markdown (`.md`).
 
-4. **⚡ Mesin Ganda: NLP Lokal Super Cepat & Gemini AI**:
-   - **Mesin NLP Lokal Bawaan**: Berjalan sub-milidetik ($< 2\text{ ms}$), 100% offline, gratis tanpa batas, dan menjaga privasi penuh.
-   - **Gemini AI Terintegrasi (Opsional)**: Dukungan kunci API Gemini untuk analisis semantik LLM lanjutan jika dibutuhkan oleh pengguna.
+4. **⚡ Mesin Ganda: NLP Lokal Super Cepat & LLM Opsional**:
+   - **Mesin NLP Lokal Bawaan**: Berjalan sub-milidetik ($< 2\text{ ms}$), 100% offline, gratis tanpa batas, dan menjaga privasi penuh. Dipakai otomatis saat API key kosong atau seluruh model gagal.
+   - **Provider LLM Pilihan (Opsional)**: **Google Gemini**, **Groq**, **Cerebras**, dan **OpenRouter**. Ganti provider dan model dari menu Pengaturan AI, tanpa mengubah kode.
+   - **Streaming (SSE)**: hasil koreksi dan notulen muncul bertahap selagi diproses — tidak lagi menunggu jawaban lengkap.
+   - **Fallback berjenjang**: model dicoba berurutan sesuai daftar provider; bila semuanya gagal, aplikasi beralih ke NLP Lokal. Tidak pernah berhenti dengan layar kosong.
 
 5. **🎨 Desain Modern, Hangat & Ringkas**:
    - Palet warna lembut dan elegan: warna dasar krem hangat (`#FBF7EF`), teks tinta gelap (`#1A1712`), dan aksen kuning telur (`#FFC832`).
@@ -100,7 +102,13 @@ Langkah deploy mandiri:
 
 ```text
 ├── lib/
-│   └── geminiClient.js    # GeminiClient: satu-satunya jalur HTTP ke Gemini API
+│   ├── providers.json         # Katalog provider & model (dipakai server + frontend)
+│   ├── providers.js           # Helper katalog provider (Node)
+│   ├── llmClient.js           # Factory: provider -> client
+│   ├── geminiClient.js        # Client Gemini (generateContent + streaming)
+│   ├── openAiCompatibleClient.js  # Client Groq / Cerebras / OpenRouter
+│   ├── httpSse.js             # Pembaca balasan SSE untuk Node
+│   └── taggedOutput.mjs       # Parser keluaran bertanda (dipakai server + browser)
 ├── corrector.js           # Engine pembersihan & koreksi fonetik kontekstual
 ├── meetingNotes.js        # Engine penyusunan notulen rapat terstruktur
 ├── netlify.toml           # Konfigurasi deployment & serverless Netlify

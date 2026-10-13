@@ -25,7 +25,7 @@
  */
 
 const { correctTranscriptWithNLP } = require('./corrector.js');
-const { GeminiClient, DEFAULT_MODELS } = require('./lib/geminiClient.js');
+const { createClient, modelChainFor } = require('./lib/llmClient.js');
 
 // Label terlarang yang bukan nama orang asli atau divisi valid
 const DISALLOWED_LABELS = new Set([
@@ -426,14 +426,10 @@ function generateMeetingNotesWithNLP(rawTranscriptText) {
 }
 
 /**
- * Pembuatan Notulen Rapat Menggunakan AI Gemini (Dukungan Model Terbaru & Fallback Otomatis)
+ * Prompt notulen rapat. Dipakai jalur biasa maupun jalur streaming.
  */
-async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredModel = 'gemini-2.5-flash') {
-  if (!apiKey || !apiKey.trim()) {
-    return generateMeetingNotesWithNLP(rawTranscriptText);
-  }
-
-  const prompt = `# ROLE & GOAL Perbaikan Fitur Notulen
+function buildMeetingNotesPrompt(rawTranscriptText) {
+  return `# ROLE & GOAL Perbaikan Fitur Notulen
 Sistem Anda adalah Fitur Notulen Rapat Otomatis (Automated Meeting Minutes Feature) berbasis kecerdasan buatan. Tugas utama fitur ini adalah mengolah komponen teks mentah hasil Voice-to-Text (STT), melakukan pembersihan data, serta mentransformasikannya menjadi dokumen Notulen Rapat (Minutes of Meeting) eksekutif yang ringkas, berstruktur tinggi, akurat, dan siap pakai oleh organisasi.
 
 <instruction>
@@ -466,57 +462,129 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 * **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
 * **[Kategori Keputusan / PIC]:** Diputuskan bahwa [Tindakan/Tugas Konkrit] akan dijalankan pada [Waktu/Deadline jika ada].
 
-# FORMAT OUTPUT JSON:
-Hasilkan HANYA JSON murni yang valid tanpa Markdown code block (\`\`\`json) dengan skema:
-{
-  "topic": "1 kalimat ringkas mengenai tujuan utama rapat tanpa kata berulang",
-  "summaryItems": [
-    "* **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]"
-  ],
-  "decisions": [
-    "* **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada]."
-  ]
-}
+# FORMAT OUTPUT:
+Hasilkan HANYA teks bertanda berikut, tanpa pembungkus markdown:
 
-Jika rapat benar-benar tanpa keputusan, isi decisions dengan:
-["* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan."]
+<<<TOPIC>>>
+1 kalimat ringkas mengenai tujuan utama rapat tanpa kata berulang
+<<<SUMMARY>>>
+- **[Nama PIC / Bidang]:** [Kalimat sintesis mandiri non-verbatim max 2 kalimat mengenai progres substantif dan angka metrik]
+- **[Nama PIC / Bidang]:** ...
+<<<DECISIONS>>>
+- **[Kategori Keputusan / PIC]:** Ditargetkan untuk [Tindakan/Tugas Konkrit] yang wajib diselesaikan oleh [Nama PIC/Divisi] dengan tenggat waktu [Waktu/Deadline jika ada].
+
+Aturan format: setiap tag berdiri di barisnya sendiri. Jangan menulis apa pun sebelum <<<TOPIC>>>.
+
+Jika rapat benar-benar tanpa keputusan, isi bagian DECISIONS dengan:
+- Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.
 
 Transkrip Mentah:
 """
 ${rawTranscriptText}
 """`;
+}
 
-  const hit = await new GeminiClient(apiKey).generateWithFallback(
-    [preferredModel, ...DEFAULT_MODELS],
+/**
+ * Notulen rapat memakai LLM (Gemini / Groq / Cerebras / OpenRouter).
+ * Tanpa API key, langsung jatuh ke mesin NLP lokal.
+ */
+async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredModel, provider) {
+  if (!apiKey || !apiKey.trim()) return generateMeetingNotesWithNLP(rawTranscriptText);
+
+  const prompt = buildMeetingNotesPrompt(rawTranscriptText);
+  const { parseTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const client = createClient({ provider, apiKey, timeout: 30000 });
+  if (!client) return generateMeetingNotesWithNLP(rawTranscriptText);
+
+  const hit = await client.generateWithFallback(
+    modelChainFor(provider, preferredModel),
     prompt,
-    (res) => Boolean(res && res.topic)
+    (text) => text.includes('<<<TOPIC>>>')
   );
+  if (!hit) return generateMeetingNotesWithNLP(rawTranscriptText);
 
-  if (hit) {
-    const topic = cleanDuplicateWords(hit.result.topic.trim());
-    let summaryItems = Array.isArray(hit.result.summaryItems) ? hit.result.summaryItems.filter(Boolean) : [];
-    let decisions = Array.isArray(hit.result.decisions) ? hit.result.decisions.filter(Boolean) : [];
+  const fields = parseTagged(hit.result);
+  if (!fields.TOPIC) return generateMeetingNotesWithNLP(rawTranscriptText);
 
-    if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
-    if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
+  const topic = cleanDuplicateWords(fields.TOPIC);
+  let summaryItems = toBulletList(fields.SUMMARY).map((s) => `* ${s}`);
+  let decisions = toBulletList(fields.DECISIONS).map((s) => `* ${s}`);
 
-    return {
-      topic,
-      summary: summaryItems.join('\n'),
-      summaryItems,
-      decisions,
-      rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
-      modelUsed: hit.model,
-      method: 'gemini_ai'
-    };
+  if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+  if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
+
+  return {
+    topic,
+    summary: summaryItems.join('\n'),
+    summaryItems,
+    decisions,
+    rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
+    modelUsed: hit.model,
+    method: 'gemini_ai'
+  };
+}
+
+/**
+ * Versi streaming: potongan mentah bertanda dikirim ke `onDelta` begitu tiba.
+ */
+async function generateMeetingNotesStream(rawTranscriptText, { apiKey, model, provider }, onDelta) {
+  const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const client = createClient({ provider, apiKey, timeout: 30000 });
+
+  const nlpResult = () => {
+    const nlp = generateMeetingNotesWithNLP(rawTranscriptText);
+    return nlp;
+  };
+
+  if (!client) {
+    const nlp = nlpResult();
+    onDelta(toTagged({ TOPIC: nlp.topic, SUMMARY: nlp.summaryItems, DECISIONS: nlp.decisions }));
+    return nlp;
   }
 
-  // Fallback jika seluruh model AI gagal/kuota habis
-  return generateMeetingNotesWithNLP(rawTranscriptText);
+  let sent = false;
+  const emit = (delta) => {
+    sent = true;
+    onDelta(delta);
+  };
+
+  try {
+    const hit = await client.streamWithFallback(
+      modelChainFor(provider, model),
+      buildMeetingNotesPrompt(rawTranscriptText),
+      emit
+    );
+    if (hit) {
+      const fields = parseTagged(hit.text);
+      if (fields.TOPIC) {
+        const topic = cleanDuplicateWords(fields.TOPIC);
+        let summaryItems = toBulletList(fields.SUMMARY).map((s) => `* ${s}`);
+        let decisions = toBulletList(fields.DECISIONS).map((s) => `* ${s}`);
+        if (summaryItems.length === 0) summaryItems = ['* Tidak ada poin utama yang relevan untuk dirangkum.'];
+        if (decisions.length === 0) decisions = ['* Tidak ada keputusan yang diambil / Pembahasan ditangguhkan.'];
+        return {
+          topic,
+          summary: summaryItems.join('\n'),
+          summaryItems,
+          decisions,
+          rawMarkdown: formatMeetingNotesMarkdown(topic, summaryItems, decisions),
+          modelUsed: hit.model,
+          method: 'gemini_ai'
+        };
+      }
+    }
+  } catch (e) {
+    // sudah ada potongan terkirim; lanjut ke hasil NLP tanpa mengirim ulang
+  }
+
+  const nlp = nlpResult();
+  if (!sent) onDelta(toTagged({ TOPIC: nlp.topic, SUMMARY: nlp.summaryItems, DECISIONS: nlp.decisions }));
+  return nlp;
 }
 
 module.exports = {
   generateMeetingNotesWithNLP,
   generateMeetingNotesWithAI,
+  generateMeetingNotesStream,
   formatMeetingNotesMarkdown
 };
