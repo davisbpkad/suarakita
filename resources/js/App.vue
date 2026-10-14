@@ -48,7 +48,7 @@
     <footer class="wrap py-6 flex items-center justify-between text-sm text-[var(--color-muted)]">
       <a href="/" class="group inline-flex items-center gap-2">
         <img
-          src="/favicon.png"
+          :src="'/favicon.png'"
           alt="suarakita logo"
           class="w-[16px] h-[16px] rounded-full group-hover:scale-110 transition-transform"
         />

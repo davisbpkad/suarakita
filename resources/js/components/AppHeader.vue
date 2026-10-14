@@ -3,7 +3,7 @@
     <!-- Brand -->
     <a href="/" class="group inline-flex items-center gap-2.5">
       <img
-        src="/favicon.png"
+        :src="'/favicon.png'"
         alt="suarakita logo"
         class="w-[24px] h-[24px] rounded-full group-hover:scale-110 transition-transform duration-300"
       />
