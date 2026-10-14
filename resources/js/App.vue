@@ -47,7 +47,11 @@
     <!-- ====== FOOTER ====== -->
     <footer class="wrap py-6 flex items-center justify-between text-sm text-[var(--color-muted)]">
       <a href="/" class="group inline-flex items-center gap-2">
-        <span class="w-[14px] h-[14px] rounded-full bg-[var(--color-yolk)] group-hover:scale-110 transition-transform"></span>
+        <img
+          src="/favicon.png"
+          alt="suarakita logo"
+          class="w-[16px] h-[16px] rounded-full group-hover:scale-110 transition-transform"
+        />
         <span class="font-bold text-base tracking-tight text-[var(--color-ink)]">suarakita</span>
       </a>
       <p>© {{ new Date().getFullYear() }} suarakita</p>

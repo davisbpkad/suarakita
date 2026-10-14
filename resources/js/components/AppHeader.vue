@@ -2,7 +2,11 @@
   <header class="wrap sticky top-0 z-30 flex items-center justify-between py-4 lg:py-5 bg-[var(--color-bg)]/95 backdrop-blur-sm">
     <!-- Brand -->
     <a href="/" class="group inline-flex items-center gap-2.5">
-      <span class="w-[22px] h-[22px] rounded-full bg-[var(--color-yolk)] group-hover:scale-110 transition-transform duration-300"></span>
+      <img
+        src="/favicon.png"
+        alt="suarakita logo"
+        class="w-[24px] h-[24px] rounded-full group-hover:scale-110 transition-transform duration-300"
+      />
       <span class="font-extrabold text-xl tracking-[-0.04em] text-[var(--color-ink)]">suarakita</span>
     </a>
 
