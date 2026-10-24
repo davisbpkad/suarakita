@@ -18,7 +18,7 @@ function buildCorsHeaders(event, methods) {
 
   const headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key',
     'Access-Control-Allow-Methods': methods,
     Vary: 'Origin',
   };
@@ -35,4 +35,4 @@ function buildCorsHeaders(event, methods) {
   return headers;
 }
 
-module.exports = { buildCorsHeaders };
+module.exports = { buildCorsHeaders, headerValue };

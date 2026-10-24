@@ -2,7 +2,7 @@
  * Netlify Serverless Function: Koreksi Transkrip Cerdas
  */
 const { correctTranscriptWithAI } = require('../../corrector.js');
-const { buildCorsHeaders } = require('./_cors.js');
+const { buildCorsHeaders, headerValue } = require('./_cors.js');
 
 /** Batas panjang teks masuk, supaya satu request tidak memicu kerja tak terbatas. */
 const MAX_TEXT_LENGTH = 50000;
@@ -24,7 +24,8 @@ exports.handler = async (event) => {
 
   try {
     const data = JSON.parse(event.body || '{}');
-    const { text, apiKey, model, provider } = data;
+    const { text, model, provider } = data;
+    const apiKey = headerValue(event.headers, 'X-Api-Key');
     if (!text || !text.trim()) {
       return {
         statusCode: 400,

@@ -7,10 +7,12 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  async _post(path, body) {
+  async _post(path, body, apiKey) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (apiKey) headers['X-Api-Key'] = apiKey;
     const res = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
@@ -24,10 +26,12 @@ export class ApiClient {
    * Kalau server tidak mendukung SSE (mis. Netlify Functions v1), balasan JSON
    * biasa diterima apa adanya sehingga fitur tetap jalan tanpa streaming.
    */
-  async _stream(path, body, onRaw) {
+  async _stream(path, body, apiKey, onRaw) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (apiKey) headers['X-Api-Key'] = apiKey;
     const res = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -83,18 +87,18 @@ export class ApiClient {
   }
 
   async correctTranscript(text, apiKey, model, provider) {
-    return this._post('/api/correct-transcript', { text, apiKey, model, provider });
+    return this._post('/api/correct-transcript', { text, model, provider }, apiKey);
   }
 
   async generateMeetingNotes(text, apiKey, model, provider) {
-    return this._post('/api/meeting-notes', { text, apiKey, model, provider });
+    return this._post('/api/meeting-notes', { text, model, provider }, apiKey);
   }
 
   async correctTranscriptStream(text, apiKey, model, provider, onRaw) {
-    return this._stream('/api/correct-transcript', { text, apiKey, model, provider, stream: true }, onRaw);
+    return this._stream('/api/correct-transcript', { text, model, provider, stream: true }, apiKey, onRaw);
   }
 
   async generateMeetingNotesStream(text, apiKey, model, provider, onRaw) {
-    return this._stream('/api/meeting-notes', { text, apiKey, model, provider, stream: true }, onRaw);
+    return this._stream('/api/meeting-notes', { text, model, provider, stream: true }, apiKey, onRaw);
   }
 }

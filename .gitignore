@@ -24,6 +24,7 @@ yarn-error.log*
 
 # Cache & Build artifacts
 .vite/
+public/build/
 
 # Alat agent lokal (artefak installer, memuat path absolut mesin -> tidak portabel)
 .agents/
