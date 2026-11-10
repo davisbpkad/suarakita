@@ -18,6 +18,7 @@ function buildCorsHeaders(event, methods) {
 
   const headers = {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-store',
     'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key',
     'Access-Control-Allow-Methods': methods,
     Vary: 'Origin',

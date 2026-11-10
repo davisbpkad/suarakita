@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { retryDeadline, countdown, countAttempts } from '../resources/js/lib/quotaClock.mjs';
+const now = 1700000000000;
+assert.equal(retryDeadline('12', now), now + 12000);
+assert.equal(retryDeadline(new Date(now + 60000).toUTCString(), now), now + 60000);
+for (const value of ['', '-2', 'oops', null]) assert.equal(retryDeadline(value, now), null);
+assert.equal(countdown(now + 61000, now), '01:01');
+assert.equal(countdown(now - 1000, now), '00:00');
+assert.equal(countdown(null, now), null);
+const counts = countAttempts({ gemini: 0, groq: 0 }, [{ provider: 'gemini', outcome: 'rate_limited' }, { provider: 'groq', outcome: 'success' }]);
+assert.deepEqual(counts, { gemini: 1, groq: 1 });
+assert.deepEqual(countAttempts(counts, []), counts);
+console.log('Countdown/penghitung: 11 assertion lulus');

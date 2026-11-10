@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { readQuota } = require('../lib/providerQuota.js');
+assert.deepEqual(readQuota({}), {});
+assert.deepEqual(readQuota({ 'x-ratelimit-remaining-requests': '940', 'x-ratelimit-remaining-tokens': '1200', 'x-ratelimit-reset-requests': '2h3m', authorization: 'secret' }), { remainingRequests: 940, remainingTokens: 1200, resetRequests: '2h3m' });
+for (const value of ['-1', 'NaN', '', 'Infinity', '1.5', [], 'secret']) assert.deepEqual(readQuota({ 'x-ratelimit-remaining-requests': value }), {});
+assert.deepEqual(readQuota({ 'retry-after': '12' }), { retryAfter: '12' });
+assert.deepEqual(readQuota({ 'x-ratelimit-reset-tokens': 'x'.repeat(129) }), {});
+console.log('Kuota: 11 pemeriksaan parser header lulus');

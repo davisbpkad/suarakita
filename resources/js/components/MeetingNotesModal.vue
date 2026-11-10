@@ -22,6 +22,8 @@
 
       <!-- Structured Sections -->
       <div class="flex flex-col gap-4">
+        <p v-if="fallbackLabel(data)" class="text-xs text-[var(--color-muted)]" role="status">{{ fallbackLabel(data) }}</p>
+        <QuotaStatus :data="data" />
         <!-- Topik -->
         <div class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
           <div class="section-label text-xs mb-2">📌 Topik / Konteks Pembicaraan</div>
@@ -74,6 +76,8 @@
 import { computed } from 'vue';
 import { copyToClipboard } from '../lib/utils/clipboard.js';
 import { formatMarkdownInline } from '../lib/text/markdownInline.mjs';
+import { engineLabel, fallbackLabel } from '../lib/engineLabel.mjs';
+import QuotaStatus from './QuotaStatus.vue';
 
 const props = defineProps({
   data: { type: Object, required: true },
@@ -81,11 +85,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'download']);
 
-const methodLabel = computed(() => {
-  if (props.data.method !== 'gemini_ai') return '⚡ NLP Lokal';
-  const model = props.data.modelUsed;
-  return '✨ ' + (model ? model.replace('gemini-', 'Gemini ').toUpperCase() : 'Gemini AI');
-});
+const methodLabel = computed(() => engineLabel(props.data));
 
 async function copyNotes() {
   if (await copyToClipboard(props.data.rawMarkdown)) {

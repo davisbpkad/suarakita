@@ -3,9 +3,9 @@
  */
 const { correctTranscriptWithAI } = require('../../corrector.js');
 const { buildCorsHeaders, headerValue } = require('./_cors.js');
+const { validateRequest } = require('../../lib/requestValidation.js');
+const { runAiAction } = require('../../lib/aiActions.js');
 
-/** Batas panjang teks masuk, supaya satu request tidak memicu kerja tak terbatas. */
-const MAX_TEXT_LENGTH = 50000;
 
 exports.handler = async (event) => {
   const headers = buildCorsHeaders(event, 'POST, OPTIONS');
@@ -23,28 +23,16 @@ exports.handler = async (event) => {
   }
 
   try {
-    const data = JSON.parse(event.body || '{}');
+    let data;
+    try { data = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'JSON tidak valid.' }) }; }
+    const invalid = validateRequest(data);
+    if (invalid) return { statusCode: invalid.status, headers, body: JSON.stringify({ error: invalid.error }) };
     const { text, model, provider } = data;
     const apiKey = headerValue(event.headers, 'X-Api-Key');
-    if (!text || !text.trim()) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Teks transkrip tidak boleh kosong.' })
-      };
-    }
-
-    if (text.length > MAX_TEXT_LENGTH) {
-      return {
-        statusCode: 413,
-        headers,
-        body: JSON.stringify({ error: `Teks terlalu panjang (maks ${MAX_TEXT_LENGTH} karakter).` })
-      };
-    }
 
     // Key hanya dari pemanggil. Tanpa key, correctTranscriptWithAI otomatis
     // memakai mesin NLP lokal (gratis, offline) — perilaku yang diinginkan.
-    const result = await correctTranscriptWithAI(text, apiKey, model, provider);
+    const result = data.ai !== undefined ? await runAiAction('correction', text, data.ai) : await correctTranscriptWithAI(text, apiKey, model, provider);
 
     return {
       statusCode: 200,
@@ -52,7 +40,7 @@ exports.handler = async (event) => {
       body: JSON.stringify(result)
     };
   } catch (err) {
-    console.error('Error in Netlify Function correct-transcript:', err);
+    console.error('Netlify correct-transcript gagal.');
     return {
       statusCode: 500,
       headers,

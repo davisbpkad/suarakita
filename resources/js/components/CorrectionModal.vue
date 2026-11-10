@@ -21,6 +21,8 @@
       </div>
 
       <!-- Side-by-Side Comparison -->
+      <p v-if="fallbackLabel(data)" class="text-xs text-[var(--color-muted)]" role="status">{{ fallbackLabel(data) }}</p>
+      <QuotaStatus :data="data" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
@@ -67,6 +69,8 @@
 <script setup>
 import { computed } from 'vue';
 import { copyToClipboard } from '../lib/utils/clipboard.js';
+import { engineLabel, fallbackLabel } from '../lib/engineLabel.mjs';
+import QuotaStatus from './QuotaStatus.vue';
 
 const props = defineProps({
   data: { type: Object, required: true },
@@ -74,11 +78,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'apply']);
 
-const methodLabel = computed(() => {
-  if (props.data.method !== 'gemini_ai') return '⚡ NLP Lokal';
-  const model = props.data.modelUsed;
-  return '✨ ' + (model ? model.replace('gemini-', 'Gemini ').toUpperCase() : 'Gemini AI');
-});
+const methodLabel = computed(() => engineLabel(props.data));
 
 async function copyResult() {
   if (await copyToClipboard(props.data.correctedText)) {

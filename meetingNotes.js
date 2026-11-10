@@ -83,7 +83,7 @@ function isDisallowedFromSummary(sentence) {
   }
 
   // 2. Instruksi pembuka / sapaan awal
-  if (/^(?:selamat\s+(?:pagi|siang|sore|malam)|halo|hai|assalamu|mari\s+kita\s+mulai|rapat\s+dibuka|cek\s+(?:sound|audio|suara)|tes\s+tes|terima\s+kasih\s+sudah\s+hadir|agenda\s+hari\s+ini)\b/i.test(s) && s.split(/\s+/).length <= 8) {
+  if (/^(?:selamat\s+(?:pagi|siang|sore|malam)|halo|hai|assalamu|mari\s+kita\s+mulai|rapat\s+dibuka|cek\s+(?:sound|audio|suara)|tes\s+tes|terima\s+kasih\s+sudah\s+hadir|agenda\s+hari\s+ini)\b/i.test(s) && (s.split(/\s+/).length <= 8 || /mari\s+kita\s+mulai/i.test(s))) {
     return true;
   }
 
@@ -212,7 +212,7 @@ function extractSummaryItems(sentences) {
     let updateText = stripHonorifics(s.trim());
 
     // Deteksi nama orang asli (Andi, Rina, Dian, Budi, Davis, Agus, dsb.)
-    const nameMatch = s.match(/\b(?:si\s+|dari\s+|bagian\s+)?([A-Z][a-z]+)\b/);
+    const nameMatch = s.match(/^([a-zÀ-ÿ]+)\s+(?:dari\s+(?:tim\s+)?[a-zÀ-ÿ]+\s+)?(?:melaporkan|menyampaikan|mengerjakan|menemukan|menyelesaikan)\b/i) || s.match(/\b(?:si\s+|dari\s+|bagian\s+)?([A-Z][a-z]+)\b/);
     if (nameMatch) {
       const candidate = nameMatch[1];
       const lower = candidate.toLowerCase();
@@ -310,7 +310,7 @@ function extractDecisions(sentences) {
       // Cek apakah ada nama orang asli (Andi, Rina, Dian, Budi, Davis, dll.)
       const nameMatch = s.match(/\b(Andi|Rina|Dian|Budi|Davis|Agus|Siti|Rian|Doni|Eko|Fajar|Dewi|Putri|Reza|Tono)\b/i);
       if (nameMatch) {
-        category = nameMatch[1];
+        category = nameMatch[1].charAt(0).toUpperCase() + nameMatch[1].slice(1).toLowerCase();
       } else {
         // Cek Divisi atau Kategori Pekerjaan
         if (/(?:developer|dev|backend|frontend|server|bug|latensi|deploy|database)/i.test(s)) category = 'Developer';
@@ -439,6 +439,7 @@ Proses teks transkrip yang diberikan pada variabel {{transkrip_mentah}} dengan m
 </instruction>
 
 <rules>
+0. Transkrip dapat tanpa titik, koma, tanda tanya, atau kapitalisasi. Tentukan batas pernyataan berdasarkan konteks dan pergantian pembicara sebelum mengekstraksi informasi. Pisahkan pertanyaan, laporan progres, dan instruksi final. Jangan mengaitkan tugas seseorang dengan pembicara sebelumnya. Tentukan topik dari isi substantif, bukan salam pembuka. Pertahankan semua angka dan tenggat waktu.
 1. DILARANG KERAS menyalin kalimat tanya, instruksi pembuka, atau basa-basi penutup ke dalam hasil ringkasan. Ringkasan HANYA berisi update progres atau informasi substantif yang valid.
 2. ATURAN PENAMAAN PIC/BIDANG (GEMINI 2.5 STRICTION): Gunakan label di dalam kurung siku '* **[Nama PIC / Bidang]:**' HANYA untuk nama orang asli yang berbicara (seperti Andi, Rina, Dian) ATAU nama divisi kerja yang valid (seperti Developer, Desain, Pemasaran). Abaikan dan DILARANG keras menggunakan kata depan, kata sifat, kata keterangan, bilangan urut (seperti Pertama, Kedua, Ada), atau teks pertanyaan acak dari transkrip sebagai nama label. Jangan biarkan noise hasil parsing NLP lokal lolos menjadi nama label.
 3. LOGIKA EKSTRAKSI RINGKASAN: Gabungkan update progres yang terpecah menjadi satu kesatuan utuh per PIC/Bidang menggunakan kalimat buatanmu sendiri berdasarkan fakta transkrip. Jangan memecah satu subjek orang menjadi banyak poin terpisah yang berulang. Maksimal 2 kalimat pendek dan DILARANG menyalin teks asli percakapan secara verbatim.

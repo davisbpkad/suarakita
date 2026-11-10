@@ -8,7 +8,11 @@
     "build": "vite build",
     "start": "node server.js",
     "server": "node server.js",
-    "test": "node tests/transcript.test.mjs && node tests/level.test.mjs && node tests/tagged.test.mjs && node tests/markdownInline.test.mjs && node tests/sentenceSplit.test.mjs"
+    "test:ai-actions": "node tests/aiActions.test.mjs",
+    "test:dual-client": "node tests/dualAiClient.test.mjs",
+    "test:engine-label": "node tests/engineLabel.test.mjs",
+    "test:quota": "node tests/providerQuota.test.mjs",
+    "test": "node tests/transcript.test.mjs && node tests/level.test.mjs && node tests/tagged.test.mjs && node tests/markdownInline.test.mjs && node tests/sentenceSplit.test.mjs && node tests/unpunctuated.test.mjs && node tests/keyStorage.test.mjs && node tests/apiValidation.test.mjs && node tests/providerSelection.test.mjs && node tests/providerFallback.test.mjs && node tests/providerTransport.test.mjs"
   },
   "keywords": [
     "tts",

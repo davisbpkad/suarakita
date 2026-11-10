@@ -53,7 +53,6 @@
       class="flex items-center justify-between gap-3 px-3.5 py-2.5 bg-gradient-to-r from-red-50 via-rose-50/60 to-amber-50/40 border border-red-200/90 rounded-xl shadow-xs transition-all"
     >
       <div class="flex items-start gap-2.5 min-w-0 flex-1">
-        <span class="live-dot mt-1 shrink-0"></span>
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-1.5 text-[11px] font-bold text-red-600 uppercase tracking-wider mb-0.5">
             <span>{{ interimSpeech ? 'Sedang Berbicara' : 'Mikrofon Aktif' }}</span>
@@ -116,7 +115,7 @@
           @click="emit('toggle-recording')"
           class="btn-primary text-sm sm:text-base font-bold px-5 sm:px-6 py-2.5 sm:py-3 transition-all flex items-center gap-2"
           :class="isRecording
-            ? 'bg-red-500 text-white hover:bg-red-600 ring-4 ring-red-100 shadow-md'
+            ? 'bg-red-500! text-white! hover:bg-red-600! ring-4 ring-red-100 shadow-md'
             : 'bg-[var(--color-yolk)] text-[var(--color-ink)] hover:bg-amber-400'"
         >
           <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

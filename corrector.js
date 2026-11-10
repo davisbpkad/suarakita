@@ -24,6 +24,7 @@
  */
 
 const { createClient, modelChainFor } = require('./lib/llmClient.js');
+const { restorePunctuation } = require('./lib/sentenceSplit.js');
 
 // Daftar singkatan percakapan lisan Indonesia ke bentuk baku
 const ORAL_CONTRACTIONS = [
@@ -94,8 +95,10 @@ function correctTranscriptWithNLP(rawText) {
     };
   }
 
-  let text = rawText.trim();
+  // Pulihkan batas sebelum deduplikasi supaya "Andi? Andi melaporkan" tidak kehilangan nama.
+  let text = restorePunctuation(rawText);
   const changes = [];
+  if (text !== rawText.trim()) changes.push('Pemulihan batas kalimat, tanda baca, dan kapitalisasi');
 
   // 1. Pembersihan Interupsi Pembicara & Audio Test
   const beforeInterruption = text;
@@ -230,7 +233,7 @@ function correctTranscriptWithNLP(rawText) {
   // 8. Kapitalisasi awal kalimat dan tanda baca alami
   if (text.length > 0) {
     // Kapitalisasi huruf pertama setelah tanda baca terminal (. ? !)
-    text = text.replace(/([.?!])\s*([a-zÀ-ÿ])/g, (m, punct, letter) => `${punct} ${letter.toUpperCase()}`);
+    text = text.replace(/([.?!])\s+([a-zÀ-ÿ])/g, (m, punct, letter) => `${punct} ${letter.toUpperCase()}`);
     text = text.charAt(0).toUpperCase() + text.slice(1);
 
     // Tambahkan tanda baca titik/tanya jika belum diakhiri tanda baca terminal
@@ -275,6 +278,8 @@ ATURAN KETAT KOREKSI:
    - Contoh: kata "kucing" yang muncul mendadak di tengah rapat teknis adalah sisa salah dengar — perbaiki sesuai konteks kalimat, atau hapus bila memang tidak bermakna.
    - JANGAN menghapus kata yang sulit dipahami tapi masih relevan dengan topik. Ragu = pertahankan.
 3. RESTRUKTURISASI ALUR KALIMAT & TANDA BACA:
+   - Transkrip dapat sepenuhnya tanpa tanda baca dan tanpa kapitalisasi. Tentukan batas kalimat dari perubahan pembicara, pertanyaan, laporan progres, dan instruksi; jangan menunggu titik dari input.
+   - Pertahankan nama yang berulang pada akhir pertanyaan dan awal jawaban. Jangan memotong angka desimal, nominal uang, persentase, atau tenggat waktu.
    - Sambungkan kata-kata atau klausa yang terpotong menjadi kalimat yang utuh, mengalir, dan nyaman dibaca.
    - Bubuhkan tanda baca koma, titik, tanda tanya di posisi jeda yang alami.
    - Berikan huruf kapital di awal kalimat, nama orang, dan akronim (SOP, KPI, QA, UI/UX, API, CEO, Q1-Q4).

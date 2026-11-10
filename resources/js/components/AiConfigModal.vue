@@ -16,17 +16,6 @@
       </p>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-[var(--color-ink)]">Provider:</label>
-        <select
-          :value="provider"
-          @change="changeProvider($event.target.value)"
-          class="input-clean text-sm bg-white cursor-pointer"
-        >
-          <option v-for="p in providerList" :key="p.id" :value="p.id">{{ p.label }}</option>
-        </select>
-      </div>
-
-      <div class="flex flex-col gap-1.5">
         <label class="text-xs font-bold text-[var(--color-ink)]">Model:</label>
         <select
           :value="model"
@@ -36,12 +25,12 @@
           <option v-for="m in currentProvider.models" :key="m.id" :value="m.id">{{ m.label }}</option>
         </select>
         <span class="text-xs text-[var(--color-muted)]">
-          Model pertama pada daftar bukan satu-satunya yang dicoba — bila gagal, aplikasi mencoba model lain lalu beralih ke NLP Lokal.
+          Gemini dicoba lebih dahulu, kemudian Groq jika diizinkan, lalu mesin lokal. Maksimal satu percobaan per provider.
         </span>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-[var(--color-ink)]">API Key:</label>
+        <label class="text-xs font-bold text-[var(--color-ink)]">API Key Gemini (utama):</label>
         <input
           :value="apiKey"
           @input="emit('update:apiKey', $event.target.value)"
@@ -50,39 +39,51 @@
           class="input-clean font-mono text-sm"
         />
         <span class="text-xs text-[var(--color-muted)]">
-          Tersimpan di browser Anda (localStorage).
+          Key hanya disimpan dalam memori halaman dan hilang saat refresh. Server meneruskan key dan transkrip ke provider yang dipilih.
           <a :href="currentProvider.keyUrl" target="_blank" rel="noopener" class="underline">Ambil key {{ currentProvider.label }}</a>.
         </span>
       </div>
 
+      <div class="flex flex-col gap-1.5">
+        <label for="groq-key" class="text-xs font-bold text-[var(--color-ink)]">API Key Groq (cadangan):</label>
+        <input id="groq-key" :value="groqKey" @input="emit('update:groqKey', $event.target.value)" type="password" autocomplete="off" placeholder="gsk_..." class="input-clean font-mono text-sm" />
+        <label for="groq-model" class="text-xs font-bold text-[var(--color-ink)]">Model Groq:</label>
+        <select id="groq-model" :value="groqModel" @change="emit('update:groqModel', $event.target.value)" class="input-clean text-sm bg-white">
+          <option v-for="m in PROVIDERS.groq.models" :key="m.id" :value="m.id">{{ m.label }}</option>
+        </select>
+        <label class="flex items-start gap-2 text-xs text-[var(--color-muted)]">
+          <input type="checkbox" :checked="allowGroq" @change="emit('update:allowGroq', $event.target.checked)" />
+          Izinkan transkrip dikirim ke Groq jika Gemini gagal atau tidak diisi.
+        </label>
+        <p class="text-xs text-[var(--color-muted)]">Kedua key hanya untuk sesi halaman ini. Tanpa key aktif, mesin lokal dipakai. Hasil menampilkan snapshot kuota Groq jika header tersedia; sisa kuota Gemini diperiksa di AI Studio.</p>
+        <a :href="PROVIDERS.groq.keyUrl" target="_blank" rel="noopener noreferrer" class="text-xs underline">Ambil key Groq</a>
+      </div>
+
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-[var(--color-line)]">
+        <p class="text-xs text-[var(--color-muted)]" role="status">Pemakaian sesi ini: Gemini {{ sessionCounts.gemini }} · Groq {{ sessionCounts.groq }} percobaan terlapor. Reset saat refresh; bukan kuota akun.</p>
         <button @click="emit('remove')" class="btn-outline btn-small text-red-500 border-red-300 hover:bg-red-500 hover:text-white hover:border-red-500">
           Hapus Kunci
         </button>
-        <button @click="emit('save')" class="btn-primary btn-small">Simpan</button>
+        <button @click="emit('save')" class="btn-primary btn-small">Gunakan untuk sesi ini</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import PROVIDERS from '../../../lib/providers.json';
 
 const props = defineProps({
   provider: { type: String, default: 'gemini' },
   apiKey: { type: String, default: '' },
   model: { type: String, default: '' },
+  groqKey: { type: String, default: '' },
+  groqModel: { type: String, default: '' },
+  allowGroq: { type: Boolean, default: false },
+  sessionCounts: { type: Object, default: () => ({ gemini: 0, groq: 0 }) },
 });
 
-const emit = defineEmits(['update:provider', 'update:apiKey', 'update:model', 'close', 'save', 'remove']);
+const emit = defineEmits(['update:provider', 'update:apiKey', 'update:model', 'update:groqKey', 'update:groqModel', 'update:allowGroq', 'close', 'save', 'remove']);
 
-const providerList = Object.values(PROVIDERS);
-const currentProvider = computed(() => PROVIDERS[props.provider] || PROVIDERS.gemini);
-
-function changeProvider(id) {
-  emit('update:provider', id);
-  // Ganti model ke default provider baru supaya tidak menyisakan model asing.
-  emit('update:model', (PROVIDERS[id] || PROVIDERS.gemini).models[0].id);
-}
+const currentProvider = PROVIDERS.gemini;
 </script>

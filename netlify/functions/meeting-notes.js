@@ -1,12 +1,11 @@
 /**
  * Netlify Serverless Function: Notulen Rapat (Minutes of Meeting)
  */
-const { correctTranscriptWithNLP } = require('../../corrector.js');
 const { generateMeetingNotesWithAI } = require('../../meetingNotes.js');
 const { buildCorsHeaders, headerValue } = require('./_cors.js');
+const { validateRequest } = require('../../lib/requestValidation.js');
+const { runAiAction } = require('../../lib/aiActions.js');
 
-/** Batas panjang teks masuk, supaya satu request tidak memicu kerja tak terbatas. */
-const MAX_TEXT_LENGTH = 50000;
 
 exports.handler = async (event) => {
   const headers = buildCorsHeaders(event, 'POST, OPTIONS');
@@ -24,32 +23,16 @@ exports.handler = async (event) => {
   }
 
   try {
-    const data = JSON.parse(event.body || '{}');
+    let data;
+    try { data = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'JSON tidak valid.' }) }; }
+    const invalid = validateRequest(data);
+    if (invalid) return { statusCode: invalid.status, headers, body: JSON.stringify({ error: invalid.error }) };
     const { text, model, provider } = data;
     const apiKey = headerValue(event.headers, 'X-Api-Key');
-    if (!text || !text.trim()) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Teks transkrip rapat tidak boleh kosong.' })
-      };
-    }
-
-    if (text.length > MAX_TEXT_LENGTH) {
-      return {
-        statusCode: 413,
-        headers,
-        body: JSON.stringify({ error: `Teks terlalu panjang (maks ${MAX_TEXT_LENGTH} karakter).` })
-      };
-    }
-
-    // Bersihkan transkrip terlebih dahulu sebelum diekstraksi notulennya
-    const cleanObj = correctTranscriptWithNLP(text);
-    const cleanedText = cleanObj.correctedText || text;
 
     // Key hanya dari pemanggil, TIDAK dari environment server. Tanpa key,
     // generateMeetingNotesWithAI otomatis memakai mesin NLP lokal.
-    const notesResult = await generateMeetingNotesWithAI(cleanedText, apiKey, model, provider);
+    const notesResult = data.ai !== undefined ? await runAiAction('notes', text, data.ai) : await generateMeetingNotesWithAI(text, apiKey, model, provider);
 
     return {
       statusCode: 200,
@@ -57,7 +40,7 @@ exports.handler = async (event) => {
       body: JSON.stringify(notesResult)
     };
   } catch (err) {
-    console.error('Error in Netlify Function meeting-notes:', err);
+    console.error('Netlify meeting-notes gagal.');
     return {
       statusCode: 500,
       headers,

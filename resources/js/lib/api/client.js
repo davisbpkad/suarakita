@@ -90,6 +90,12 @@ export class ApiClient {
     return this._post('/api/correct-transcript', { text, model, provider }, apiKey);
   }
 
+  async runAiAction(action, text, ai) {
+    if (!['correction', 'notes'].includes(action)) throw new Error('Aksi tidak dikenal.');
+    const path = action === 'correction' ? '/api/correct-transcript' : '/api/meeting-notes';
+    return this._stream(path, { text, ai, stream: true }, '', () => {});
+  }
+
   async generateMeetingNotes(text, apiKey, model, provider) {
     return this._post('/api/meeting-notes', { text, model, provider }, apiKey);
   }

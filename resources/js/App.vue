@@ -45,16 +45,15 @@
     </main>
 
     <!-- ====== FOOTER ====== -->
-    <footer class="wrap py-6 flex items-center justify-between text-sm text-[var(--color-muted)]">
+    <footer class="wrap py-6 flex items-center justify-center gap-2 text-sm text-[var(--color-muted)]">
       <a href="/" class="group inline-flex items-center gap-2">
         <img
           :src="'/favicon.png'"
           alt="suarakita logo"
           class="w-[16px] h-[16px] rounded-full group-hover:scale-110 transition-transform"
         />
-        <span class="font-bold text-base tracking-tight text-[var(--color-ink)]">suarakita</span>
       </a>
-      <p>© {{ new Date().getFullYear() }} suarakita</p>
+      <p>© 2026 suarakita</p>
     </footer>
 
     <CorrectionModal
@@ -76,6 +75,10 @@
       v-model:provider="selectedProvider"
       v-model:api-key="geminiApiKey"
       v-model:model="selectedGeminiModel"
+      v-model:groq-key="groqApiKey"
+      v-model:groq-model="selectedGroqModel"
+      v-model:allow-groq="allowGroq"
+      :session-counts="sessionCounts"
       @close="showAiConfigModal = false"
       @save="saveApiKey"
       @remove="removeApiKey"
@@ -95,9 +98,10 @@ import { MicMonitor } from './lib/audio/MicMonitor.js';
 import { appendTranscriptCleanly, paragraphize } from './lib/text/transcript.mjs';
 import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
 import { ApiClient } from './lib/api/client.js';
-import { parseTagged, toBulletList } from '../../lib/taggedOutput.mjs';
 import { triggerDownload, fileTimestamp } from './lib/utils/download.js';
 import PROVIDERS from '../../lib/providers.json';
+import { removeLegacyKey } from './lib/keyStorage.mjs';
+import { countAttempts } from './lib/quotaClock.mjs';
 
 const DEFAULT_PROVIDER = 'gemini';
 
@@ -224,21 +228,39 @@ function stopRecording() {
 // -------------------------------------------------------------
 const showAiConfigModal = ref(false);
 const geminiApiKey = ref('');
+const groqApiKey = ref('');
+const allowGroq = ref(false);
+const sessionCounts = ref({ gemini: 0, groq: 0 });
+const selectedGroqModel = ref(PROVIDERS.groq.models[0].id);
 const selectedProvider = ref(DEFAULT_PROVIDER);
 const selectedGeminiModel = ref(PROVIDERS[DEFAULT_PROVIDER].models[0].id);
-const hasApiKey = computed(() => Boolean(geminiApiKey.value && geminiApiKey.value.trim()));
+const hasApiKey = computed(() => Boolean(geminiApiKey.value.trim() || (allowGroq.value && groqApiKey.value.trim())));
 const loadingAction = ref(null);
 const api = new ApiClient();
 
+function aiOptions() {
+  return {
+    geminiKey: geminiApiKey.value,
+    geminiModel: selectedGeminiModel.value,
+    groqKey: allowGroq.value ? groqApiKey.value : '',
+    groqModel: selectedGroqModel.value,
+    allowGroq: allowGroq.value,
+  };
+}
+
 onMounted(() => {
-  geminiApiKey.value = localStorage.getItem('gemini_api_key') || '';
-  selectedProvider.value = localStorage.getItem('llm_provider') || DEFAULT_PROVIDER;
+  try {
+  removeLegacyKey(localStorage);
+  selectedProvider.value = DEFAULT_PROVIDER;
   const storedModel = localStorage.getItem('gemini_model');
   const provider = PROVIDERS[selectedProvider.value] || PROVIDERS[DEFAULT_PROVIDER];
   // Buang model tersimpan yang tidak dikenal provider aktif (mis. sisa provider lama).
   selectedGeminiModel.value = provider.models.some((m) => m.id === storedModel)
     ? storedModel
     : provider.models[0].id;
+  } catch {
+    // Browser storage is optional; keys are never persisted.
+  }
 });
 
 onUnmounted(() => {
@@ -248,15 +270,23 @@ onUnmounted(() => {
 });
 
 function saveApiKey() {
-  localStorage.setItem('gemini_api_key', geminiApiKey.value.trim());
+  geminiApiKey.value = geminiApiKey.value.trim();
+  groqApiKey.value = groqApiKey.value.trim();
+  try {
   localStorage.setItem('gemini_model', selectedGeminiModel.value);
   localStorage.setItem('llm_provider', selectedProvider.value);
+  removeLegacyKey(localStorage);
+  } catch {
+    // Settings remain usable when browser storage is disabled.
+  }
   showAiConfigModal.value = false;
 }
 
 function removeApiKey() {
   geminiApiKey.value = '';
-  localStorage.removeItem('gemini_api_key');
+  groqApiKey.value = '';
+  allowGroq.value = false;
+  try { removeLegacyKey(localStorage); } catch { /* Storage may be unavailable. */ }
   showAiConfigModal.value = false;
 }
 
@@ -285,6 +315,7 @@ const correctionData = ref({
 });
 
 async function runCorrection() {
+  if (loadingAction.value) return;
   const text = transcriptText.value.trim();
   if (!text) {
     alert('Silakan masukkan atau rekam transkrip terlebih dahulu.');
@@ -297,18 +328,8 @@ async function runCorrection() {
   loadingAction.value = 'correction';
 
   try {
-    correctionData.value = await api.correctTranscriptStream(
-      text,
-      geminiApiKey.value,
-      selectedGeminiModel.value,
-      selectedProvider.value,
-      (raw) => {
-        const fields = parseTagged(raw);
-        if (fields.TEXT) {
-          correctionData.value = { ...correctionData.value, correctedText: fields.TEXT };
-        }
-      }
-    );
+    correctionData.value = await api.runAiAction('correction', text, aiOptions());
+    sessionCounts.value = countAttempts(sessionCounts.value, correctionData.value.attempts);
   } catch (err) {
     showCorrectionModal.value = false;
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
@@ -339,6 +360,7 @@ const momData = ref({
 });
 
 async function runMeetingNotes() {
+  if (loadingAction.value) return;
   const text = transcriptText.value.trim();
   if (!text) {
     alert('Silakan masukkan atau rekam transkrip terlebih dahulu.');
@@ -351,20 +373,8 @@ async function runMeetingNotes() {
   loadingAction.value = 'mom';
 
   try {
-    momData.value = await api.generateMeetingNotesStream(
-      text,
-      geminiApiKey.value,
-      selectedGeminiModel.value,
-      selectedProvider.value,
-      (raw) => {
-        const fields = parseTagged(raw);
-        const patch = {};
-        if (fields.TOPIC) patch.topic = fields.TOPIC;
-        if (fields.SUMMARY) patch.summaryItems = toBulletList(fields.SUMMARY).map((s) => `* ${s}`);
-        if (fields.DECISIONS) patch.decisions = toBulletList(fields.DECISIONS).map((s) => `* ${s}`);
-        momData.value = { ...momData.value, ...patch };
-      }
-    );
+    momData.value = await api.runAiAction('notes', text, aiOptions());
+    sessionCounts.value = countAttempts(sessionCounts.value, momData.value.attempts);
   } catch (err) {
     showMomModal.value = false;
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
