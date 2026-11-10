@@ -651,3 +651,29 @@ Bukti aktual:
 - `npm run build`: lulus 28 modul. `git diff --check`: exit 0.
 
 Status akhir sementara: **BELUM SIAP RILIS PUBLIK**. Belum selesai/belum terbukti: model aktif dari dokumentasi resmi, AI/header asli (key tidak tersedia), seluruh matriks termasuk contoh panjang dan audio fisik, E2E pembatalan/CSP/limit, aksesibilitas lengkap, kuota global Netlify, streaming token, dan review coverage. Server 3088 belum restart untuk guard terbaru. Tidak ada klaim seluruh plan selesai atau coverage 80%. Tidak ada commit otomatis karena working tree berisi perubahan pengguna.
+
+## 28. Akses publik dengan password bersama
+
+Keputusan pemilik: aplikasi dibuka untuk pengguna lain memakai **satu password bersama**. Tanpa `APP_PASSWORD`, endpoint AI menutup diri (503), bukan terbuka.
+
+Perubahan:
+- `lib/auth.js`: token sesi HMAC-SHA256 berisi waktu kedaluwarsa (12 jam), dibandingkan dengan `crypto.timingSafeEqual`; password bersama minimal 12 karakter dan dibandingkan lewat hash SHA-256 bertiming konstan.
+- `server.js`: `POST /api/login` (limiter 10/menit, 2 aktif) mengeset cookie `sk_sess` HttpOnly + SameSite=Strict + path `/`. Guard `PROTECTED_PATHS` menolak `401` **sebelum** body diparse untuk `/correct-transcript`, `/meeting-notes`, `/generate-meeting-notes`. `/api/status` melaporkan `authRequired`.
+- `.env` mendapat `APP_PASSWORD` dan `SESSION_SECRET` acak; `.env.example` mendokumentasikan keduanya tanpa nilai. `.env` tetap di `.gitignore` dan tidak terlacak git.
+- UI: `LoginModal.vue`. `401` pada aksi AI memunculkan modal, lalu aksi diulang otomatis setelah masuk (`pendingRetry`). `AiConfigModal.vue` yang tak terpakai dihapus; `App.vue` tidak lagi menyimpan key/model di browser.
+
+Bukti aktual:
+- `tests/auth.test.mjs`: token kedaluwarsa, tamper MAC, secret salah, format salah, password lemah/berlebih ditolak.
+- `tests/expressValidation.test.mjs`: **37 pemeriksaan** pada proses terisolasi 3089 — tanpa sesi `401`, password salah `401`, login `200` dengan cookie HttpOnly/SameSite=Strict, validasi input tetap `400`, streaming SSE membawa `result.engine` dan event `done`.
+- `tests/securityBoundary.test.mjs`: `.env`/`.git` `404`, `/api/transcribe` `410`, origin asing `403` sebelum parse, 125 request tanpa sesi berakhir `429`.
+- `tests/slowConnection.test.mjs`: 8 upload bersesi yang ditahan tetap dibatasi, health `200`, slot pulih.
+- Server nyata 3088 setelah restart: `/api/status` `authRequired: true`, tanpa sesi `401`, login benar `200`, koreksi Groq `200` (`engine: groq`, negasi "belum disetujui" dipertahankan), `X-Powered-By` absen, `/api/transcribe` `410`.
+- Browser Playwright nyata ke 3088: klik "Koreksi Teks" memunculkan modal login, password benar menutup modal dan melanjutkan koreksi otomatis (`belum disetujui` ada di hasil, tanpa pesan error), password tidak tersisa di DOM. Setelah reload sesi cookie masih berlaku; "Buat Notulen" berhasil dengan Groq tanpa prompt login.
+- `npm test`: **28 berkas** lulus. `npm run build`: 27 modul. `git diff --check` bersih.
+
+Sisa celah sebelum rilis publik:
+- Limiter masih per-proses, bukan kuota global; banyak instance atau restart mengatur ulang jendela.
+- Cookie belum `secure` karena belum ada HTTPS di depan server.
+- Belum ada tombol keluar, audit sesi, atau rotasi password dari UI.
+- Distribusi password bersama di luar jalur aman (chat/email) menjadi risiko pemilik.
+- Belum diuji beban bersamaan multi-pengguna nyata.
