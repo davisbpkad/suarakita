@@ -22,13 +22,20 @@
             @click="emit('preset', 'mom')"
             class="tag bg-white hover:bg-[var(--color-yolk)] text-[var(--color-ink)] border border-[var(--color-line)] text-xs cursor-pointer transition-colors py-1 px-2.5"
           >
-            📋 Rapat Tim
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+            Rapat Tim
           </button>
           <button
             @click="emit('preset', 'correction')"
             class="tag bg-white hover:bg-[var(--color-yolk)] text-[var(--color-ink)] border border-[var(--color-line)] text-xs cursor-pointer transition-colors py-1 px-2.5"
           >
-            🎯 Salah Dengar
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 8.5a6.5 6.5 0 0 1 13 0c0 3-2 4-4 5.5s-1 3-2.5 4.5A4 4 0 0 1 6 16m4-7.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2 3M3 3l18 18" />
+            </svg>
+            Salah Dengar
           </button>
         </div>
       </div>
@@ -112,7 +119,13 @@
             ? 'bg-red-500 text-white hover:bg-red-600 ring-4 ring-red-100 shadow-md'
             : 'bg-[var(--color-yolk)] text-[var(--color-ink)] hover:bg-amber-400'"
         >
-          <span class="text-base sm:text-lg">{{ isRecording ? '⏹' : '🎙️' }}</span>
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect v-if="isRecording" x="6" y="6" width="12" height="12" rx="2" />
+            <g v-else>
+              <rect x="9" y="2" width="6" height="12" rx="3" />
+              <path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8" />
+            </g>
+          </svg>
           <span>{{ isRecording ? 'Stop Rekam' : 'Mulai Rekam' }}</span>
           <span v-if="isRecording" class="font-mono text-xs ml-1 bg-white/20 px-2 py-0.5 rounded-full font-bold">
             {{ formattedRecordingTime }}
@@ -133,7 +146,9 @@
           class="btn-outline btn-small flex items-center gap-1.5 flex-1 sm:flex-initial justify-center"
           :title="!modelValue.trim() ? 'Isi transkrip terlebih dahulu' : 'Koreksi kata salah dengar & tanda baca'"
         >
-          <span class="text-sm">🪄</span>
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m15 5 4 4M4 20l4-1L20 7a2.83 2.83 0 0 0-4-4L4 15l-1 6Z" />
+          </svg>
           <span v-if="loadingAction === 'correction'">Mengkoreksi...</span>
           <span v-else>Koreksi Teks</span>
         </button>
@@ -145,7 +160,10 @@
           class="btn-primary btn-small bg-[var(--color-ink)] text-white hover:bg-black hover:text-white flex items-center gap-1.5 flex-1 sm:flex-initial justify-center transition-colors"
           :title="!modelValue.trim() ? 'Isi transkrip terlebih dahulu' : 'Ringkas pembicaraan menjadi notulen rapat'"
         >
-          <span class="text-sm">📋</span>
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="8" y="2" width="8" height="4" rx="1" />
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2m0 7h8m-8 4h8m-8 4h5" />
+          </svg>
           <span v-if="loadingAction === 'mom'">Meringkas...</span>
           <span v-else>Buat Notulen</span>
         </button>
