@@ -677,3 +677,37 @@ Sisa celah sebelum rilis publik:
 - Belum ada tombol keluar, audit sesi, atau rotasi password dari UI.
 - Distribusi password bersama di luar jalur aman (chat/email) menjadi risiko pemilik.
 - Belum diuji beban bersamaan multi-pengguna nyata.
+
+## 29. Akun per pengguna, dashboard admin, dan kuota harian
+
+Keputusan pemilik: ganti password bersama dengan **akun per pengguna** buatan admin, plus **kuota harian per user** dan batas total harian. Tidak memakai layanan auth eksternal; penyimpanan memakai Netlify Blobs.
+
+Perubahan:
+- `lib/accounts.js`: hash password scrypt (salt 16 byte, hash 32 byte), `verifyPassword` timing-safe, status aktif, `quotaPerDay`, `lastLogin`, audit. Kunci `user:<nama>`, `usage:<tanggal>:<nama>`, `usage:<tanggal>:__total`, `audit:*`, `loginfail:<nama>:<bucket>`. Indeks `users:index` dipakai karena `list()` Blobs bisa tertinggal.
+- Kuota: default 30 aksi/hari per user, 300/hari total. Kedua endpoint AI memakai hitungan yang sama. Penghitung bukan operasi atomik, jadi dua permintaan bersamaan bisa sedikit melewati batas.
+- Kunci login: 10 kegagalan per username per jendela 15 menit, disimpan di Blobs sehingga berlaku lintas instance.
+- `lib/auth.js`: `issueSession`/`verifySession` membawa identitas `{u, r, exp}` dan MAC HMAC-SHA256. Sesi user 12 jam, admin 2 jam. Token lama (hanya `exp`) tetap dipakai server Express lokal, tidak berlaku di Netlify.
+- `netlify/functions/_auth.js`: `requireUser`/`requireAdmin` mengembalikan `Response` penolakan atau `null`. `_auth.js` juga menyediakan `jsonResponse`, `corsHeaders`, `allowedOrigin`, `readJson`, dan factory akun untuk pengujian.
+- Fungsi Netlify dipindah ke **API modern** (`export default async (request) => Response`): `login.mjs`, `logout.mjs`, `admin-users.mjs`, `correct-transcript.mjs`, `meeting-notes.mjs`, `status.mjs`. Ini wajib: Blobs konsistensi kuat menolak runtime klasik dengan `BlobsConsistencyError` (`uncachedEdgeURL`).
+- `lib/accounts.js` memakai `getStore({ name, consistency: 'strong' })`.
+- Admin: username `admin`, login memakai password tersimpan di Blobs; `ADMIN_PASSWORD` di environment tetap berlaku sebagai jalur darurat bila password dashboard lupa. Rotasi dari UI menulis hash baru ke Blobs dan mencatat audit. Pemulihan saat lupa: ganti `ADMIN_PASSWORD` di dashboard Netlify lalu redeploy — akar kepercayaan adalah akun Netlify, bukan email.
+- `public/admin.html` + `public/admin.js`: login admin, daftar user + pemakaian hari ini, buat user (password tampil sekali), reset password, nonaktifkan/aktifkan, hapus, rotasi password admin, audit 30 terakhir. Rute `/admin` → `/admin.html` di `netlify.toml`.
+- UI utama: `LoginModal.vue` menerima username + password; `AppHeader.vue` punya tombol "Keluar"; `App.vue` mengirim logout dengan `keepalive` supaya POST tidak dibatalkan saat tab dimuat ulang, lalu langsung menampilkan modal masuk.
+
+Bukti aktual (deploy produksi `https://suarakit.netlify.app`, 11 Nov 2026):
+- `npm test`: **29 berkas** lulus; `npm run build` lulus. `tests/accounts.test.mjs` menguji hash, kuota per user + total, kunci login, sesi beridentitas, nonaktif, hapus, audit. `tests/apiValidation.test.mjs`: **59 pemeriksaan** memakai `Request`/`Response` asli (401 tanpa sesi, 403 user biasa, 413 batas panjang, 429 kuota, create/reset/deactivate/rotate-admin, origin asing). `tests/requestOrigin.test.mjs`: 12 pemeriksaan origin.
+- Tanpa sesi: `401`. Login user `200`, cookie `HttpOnly; Secure; SameSite=Strict`. Role user membuka `/api/admin/users` → `403`.
+- Koreksi dengan sesi user: `200`, `engine: groq`, negasi "belum disetujui" utuh, `quota: {used: 1, limit: 30}`, ~2,3 dtk.
+- Konsistensi kuat terverifikasi: buat user lalu login langsung **berhasil dalam 637 ms**, user langsung muncul di daftar admin, nonaktifkan → login `401`, aktifkan → login `200`, hapus → login `401`, dan daftar langsung tidak memuat user itu. Sebelumnya butuh ~9,8 detik.
+- Rotasi admin bolak-balik: password baru `200`, login dengan password baru `200`, `ADMIN_PASSWORD` lama tetap `200` (jalur darurat), rotasi kembali `200`, login dengan password asli `200`, password sementara menjadi `401`.
+- Browser `/admin`: login admin, baris `admin` + `davis`, ringkasan `Total aksi hari ini: 4 / 300`, audit tampil, buat user muncul ~2,9 dtk, nonaktifkan ~1,8 dtk, aktifkan ~1,8 dtk, hapus berhasil. Tidak ada lagi pesan staleness.
+- Browser aplikasi utama: login memunculkan hasil koreksi, tombol Keluar menghapus cookie (`cookieLeft: false`), modal masuk tampil, reload tetap keluar (`afterReload: false`).
+- User uji sisa (`rahma`, `rahma2`, `ukurtime`, `cobalogin`, `ujicoba`) dihapus lewat API admin; daftar akhir hanya `admin` dan `davis`.
+
+Risiko yang masih ada:
+- Penghitung kuota Blobs tidak atomik; lonjakan bersamaan bisa melewati batas sedikit. Batas total juga per tanggal UTC, bukan zona waktu Indonesia.
+- Sesi tidak dapat dicabut per token; menonaktifkan atau menghapus user tidak membatalkan cookie yang sudah terbit sampai kedaluwarsa (maksimal 12 jam untuk user, 2 jam untuk admin). Endpoint memeriksa ulang user hanya saat login.
+- Tidak ada reset password mandiri lewat email; semua reset lewat admin.
+- Satu kunci `users:index` bisa menjadi titik gesek saat banyak admin menulis bersamaan.
+- Server Express lokal di 3088 masih memakai password bersama `APP_PASSWORD` dan tidak memakai akun per user.
+- `ADMIN_PASSWORD` di environment masih password awal; setelah rotasi dari UI, jalur darurat tetap memakai nilai lama sampai env diganti dan redeploy.

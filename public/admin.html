@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Admin · suarakita</title>
+    <style>
+      :root {
+        --ink: #22201c; --muted: #6b655c; --bg: #faf6ef; --cream: #f3ecdf;
+        --line: #e3d9c8; --yolk: #f2b705;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.6 ui-sans-serif, system-ui, -apple-system, "Plus Jakarta Sans", sans-serif; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); background: #fff; }
+      h1 { font-size: 18px; margin: 0; letter-spacing: -0.02em; }
+      h2 { font-size: 14px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+      main { max-width: 1040px; margin: 0 auto; padding: 20px; display: grid; gap: 20px; }
+      section { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+      label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; }
+      input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff; }
+      button { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+      button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+      button.danger { color: #b3261e; border-color: #e8b4b0; }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+      th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+      code { background: var(--cream); padding: 2px 6px; border-radius: 6px; font-size: 12px; word-break: break-all; }
+      .muted { color: var(--muted); }
+      .notice { border-left: 4px solid var(--yolk); background: var(--cream); padding: 10px 12px; border-radius: 8px; }
+      .error { color: #b3261e; }
+      .hidden { display: none !important; }
+      ul.audit { margin: 0; padding-left: 18px; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>suarakita · admin</h1>
+      <div id="session" class="muted"></div>
+    </header>
+    <main>
+      <section id="login-card">
+        <h2>Masuk admin</h2>
+        <form id="login-form" class="row">
+          <label>Username<input id="login-user" value="admin" autocomplete="username" required /></label>
+          <label>Password<input id="login-pass" type="password" autocomplete="current-password" required /></label>
+          <button class="primary" type="submit">Masuk</button>
+        </form>
+        <p id="login-error" class="error" role="alert"></p>
+      </section>
+
+      <div id="panel" class="hidden">
+        <section>
+          <h2>Buat user</h2>
+          <form id="create-form" class="row">
+            <label>Username<input id="create-user" autocapitalize="none" spellcheck="false" required /></label>
+            <label>Kuota/hari<input id="create-quota" type="number" min="1" max="1000" value="30" style="width:110px" /></label>
+            <button class="primary" type="submit">Buat</button>
+          </form>
+          <p id="create-result" class="notice hidden"></p>
+          <p id="create-error" class="error" role="alert"></p>
+        </section>
+
+        <section>
+          <h2>User &amp; pemakaian hari ini</h2>
+          <div id="usage-summary" class="muted"></div>
+          <table>
+            <thead><tr><th>Username</th><th>Peran</th><th>Status</th><th>Kuota</th><th>Hari ini</th><th>Login terakhir</th><th>Aksi</th></tr></thead>
+            <tbody id="users-body"></tbody>
+          </table>
+          <p id="users-error" class="error" role="alert"></p>
+        </section>
+
+        <section>
+          <h2>Rotasi password admin</h2>
+          <form id="rotate-form" class="row">
+            <label>Password sekarang<input id="rotate-current" type="password" autocomplete="current-password" required /></label>
+            <label>Password baru (min. 20)<input id="rotate-next" type="password" autocomplete="new-password" minlength="20" required /></label>
+            <button class="primary" type="submit">Simpan</button>
+          </form>
+          <p id="rotate-result" class="notice hidden"></p>
+          <p id="rotate-error" class="error" role="alert"></p>
+        </section>
+
+        <section>
+          <h2>Audit terakhir</h2>
+          <ul id="audit" class="audit"></ul>
+        </section>
+
+        <section>
+          <button id="logout" class="danger" type="button">Keluar</button>
+        </section>
+      </div>
+    </main>
+    <script src="/admin.js"></script>
+  </body>
+</html>

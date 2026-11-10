@@ -3,7 +3,9 @@
  * Jalankan: node tests/tagged.test.mjs
  */
 import assert from 'node:assert/strict';
-import { parseTagged, toTagged, toBulletList } from '../lib/taggedOutput.mjs';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { parseTagged, toTagged, toBulletList } = require('../lib/taggedOutput.js');
 
 // Dasar
 const f = parseTagged('<<<TEXT>>>\nHalo dunia\n<<<CHANGES>>>\n- satu\n- dua');

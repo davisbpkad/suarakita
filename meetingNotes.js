@@ -495,7 +495,7 @@ async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredMo
   if (!apiKey || !apiKey.trim()) return generateMeetingNotesWithNLP(rawTranscriptText);
 
   const prompt = buildMeetingNotesPrompt(rawTranscriptText);
-  const { parseTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const { parseTagged, toBulletList } = require('./lib/taggedOutput.js');
   const client = createClient({ provider, apiKey, timeout: 30000 });
   if (!client) return generateMeetingNotesWithNLP(rawTranscriptText);
 
@@ -532,7 +532,7 @@ async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredMo
  */
 async function generateMeetingNotesStream(rawTranscriptText, { apiKey, model, provider, signal }, onDelta) {
   signal?.throwIfAborted();
-  const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const { parseTagged, toTagged, toBulletList } = require('./lib/taggedOutput.js');
   const client = createClient({ provider, apiKey, timeout: 30000, signal });
 
   const nlpResult = () => {

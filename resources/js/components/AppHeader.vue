@@ -145,6 +145,20 @@
           <span>Hapus Transkrip</span>
         </div>
       </div>
+      <!-- Keluar -->
+      <div class="relative group">
+        <button
+          @click="emit('logout')"
+          class="btn-icon hover:text-red-600"
+          aria-label="Keluar"
+        >
+          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+        </button>
+        <div class="theme-tooltip theme-tooltip-right" role="tooltip">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+          <span>Keluar</span>
+        </div>
+      </div>
     </div>
   </header>
 </template>
@@ -160,7 +174,7 @@ const props = defineProps({
   transcript: { type: String, default: '' },
 });
 
-const emit = defineEmits(['select-language', 'clear', 'download']);
+const emit = defineEmits(['select-language', 'clear', 'download', 'logout']);
 
 // Menu buka/tutup murni UI, jadi tinggal di sini.
 const showLangMenu = ref(false);

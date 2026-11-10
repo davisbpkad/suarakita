@@ -8,6 +8,7 @@
       @select-language="setLanguage"
       @clear="clearTranscript"
       @download="downloadTranscript"
+      @logout="logout"
     />
 
     <!-- ====== MAIN CONTENT (Minimalist, Compact, Single-Viewport UX) ====== -->
@@ -235,6 +236,15 @@ function onLoginSuccess() {
   const retry = pendingRetry;
   pendingRetry = null;
   retry?.();
+}
+
+function logout() {
+  actionController?.abort();
+  pendingRetry = null;
+  showLogin.value = true;
+  // keepalive: request tetap selesai walau pengguna langsung menutup/memuat ulang tab.
+  fetch('/api/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', keepalive: true, credentials: 'same-origin' })
+    .catch(() => {});
 }
 
 onUnmounted(() => {

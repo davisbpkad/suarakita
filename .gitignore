@@ -32,3 +32,6 @@ public/build/
 # Keluaran graphify: hanya laporan yang dibagikan, sisanya dibangun ulang lokal
 graphify-out/*
 !graphify-out/GRAPH_REPORT.md
+
+# Local Netlify folder
+.netlify

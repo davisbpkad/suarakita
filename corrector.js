@@ -316,7 +316,7 @@ async function correctTranscriptWithAI(rawText, apiKey, preferredModel, provider
   if (!apiKey || !apiKey.trim()) return correctTranscriptWithNLP(rawText);
 
   const prompt = buildCorrectionPrompt(rawText);
-  const { parseTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const { parseTagged, toBulletList } = require('./lib/taggedOutput.js');
   const client = createClient({ provider, apiKey, timeout: 20000 });
   if (!client) return correctTranscriptWithNLP(rawText);
 
@@ -350,7 +350,7 @@ async function correctTranscriptWithAI(rawText, apiKey, preferredModel, provider
  */
 async function correctTranscriptStream(rawText, { apiKey, model, provider, signal }, onDelta) {
   signal?.throwIfAborted();
-  const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
+  const { parseTagged, toTagged, toBulletList } = require('./lib/taggedOutput.js');
   const client = createClient({ provider, apiKey, timeout: 30000, signal });
 
   if (!client) {
