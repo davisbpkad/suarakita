@@ -145,18 +145,20 @@
           <span>Hapus Transkrip</span>
         </div>
       </div>
-      <!-- Keluar -->
+      <!-- Masuk / Keluar -->
       <div class="relative group">
         <button
-          @click="emit('logout')"
-          class="btn-icon hover:text-red-600"
-          aria-label="Keluar"
+          @click="emit(authenticated ? 'logout' : 'login')"
+          class="btn-icon"
+          :class="authenticated ? 'hover:text-red-600' : 'hover:text-[var(--color-ink)]'"
+          :aria-label="authenticated ? 'Keluar' : 'Masuk'"
         >
-          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+          <svg v-if="authenticated" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+          <svg v-else class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M9 12h12m0 0l-3-3m3 3l-3 3" /></svg>
         </button>
         <div class="theme-tooltip theme-tooltip-right" role="tooltip">
-          <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
-          <span>Keluar</span>
+          <span class="w-1.5 h-1.5 rounded-full shrink-0" :class="authenticated ? 'bg-red-400' : 'bg-[var(--color-yolk)]'"></span>
+          <span>{{ authenticated ? 'Keluar' : 'Masuk' }}</span>
         </div>
       </div>
     </div>
@@ -172,9 +174,10 @@ const props = defineProps({
   currentLanguage: { type: String, required: true },
   currentLang: { type: Object, required: true },
   transcript: { type: String, default: '' },
+  authenticated: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['select-language', 'clear', 'download', 'logout']);
+const emit = defineEmits(['select-language', 'clear', 'download', 'logout', 'login']);
 
 // Menu buka/tutup murni UI, jadi tinggal di sini.
 const showLangMenu = ref(false);

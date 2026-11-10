@@ -5,95 +5,455 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Admin · suarakita</title>
+    <link rel="icon" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --ink: #22201c; --muted: #6b655c; --bg: #faf6ef; --cream: #f3ecdf;
-        --line: #e3d9c8; --yolk: #f2b705;
+        --bg: #FBF7EF;
+        --cream: #F3EDE3;
+        --ink: #1A1712;
+        --muted: #6B6560;
+        --line: #E8E2D9;
+        --yolk: #FFC832;
+        --white: #FFFFFF;
+        --danger: #B3261E;
+        --sidebar: 256px;
       }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.6 ui-sans-serif, system-ui, -apple-system, "Plus Jakarta Sans", sans-serif; }
-      header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); background: #fff; }
-      h1 { font-size: 18px; margin: 0; letter-spacing: -0.02em; }
-      h2 { font-size: 14px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-      main { max-width: 1040px; margin: 0 auto; padding: 20px; display: grid; gap: 20px; }
-      section { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
-      .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
-      label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; }
-      input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff; }
-      button { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-      button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-      button.danger { color: #b3261e; border-color: #e8b4b0; }
-      button:disabled { opacity: 0.5; cursor: not-allowed; }
-      table { width: 100%; border-collapse: collapse; font-size: 13px; }
-      th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-      th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
-      code { background: var(--cream); padding: 2px 6px; border-radius: 6px; font-size: 12px; word-break: break-all; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font: 14px/1.6 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      button, input { font: inherit; color: inherit; }
+      .app { display: flex; min-height: 100dvh; }
+
+      /* ---------- Sidebar ---------- */
+      .sidebar {
+        position: fixed; inset: 0 auto 0 0; z-index: 40;
+        width: var(--sidebar);
+        display: flex; flex-direction: column;
+        background: var(--white);
+        border-right: 1px solid var(--line);
+      }
+      .brand {
+        display: flex; align-items: center; gap: 10px;
+        height: 64px; padding: 0 18px;
+        border-bottom: 1px solid var(--line);
+        text-decoration: none; color: var(--ink);
+      }
+      .brand img { width: 26px; height: 26px; border-radius: 999px; }
+      .brand strong { font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+      .brand span { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+      .nav { flex: 1; overflow-y: auto; padding: 14px 12px; display: grid; gap: 22px; align-content: start; }
+      /* Sebelum masuk: tanpa sidebar dan header, hanya logo + form di tengah. */
+      .app.auth-locked .nav,
+      .app.auth-locked .sidebar,
+      .app.auth-locked .topbar { display: none; }
+      .app.auth-locked .main { margin-left: 0; }
+      .app.auth-locked .workspace { padding: 0; }
+      .nav-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 10px 6px; }
+      .nav-list { display: grid; gap: 3px; }
+      .nav-item {
+        display: flex; align-items: center; gap: 10px; width: 100%;
+        padding: 9px 11px; border-radius: 9px; border: 1px solid transparent;
+        background: none; text-align: left; font-weight: 600; font-size: 13px;
+        color: var(--ink); cursor: pointer;
+      }
+      .nav-item:hover { background: var(--cream); }
+      .nav-item.active { background: var(--cream); border-color: var(--line); font-weight: 800; }
+      .nav-item .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--line); flex: none; }
+      .nav-item.active .dot { background: var(--yolk); }
+      .nav-item svg { width: 16px; height: 16px; flex: none; }
+      .nav-item .count { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--muted); }
+      .sidebar-foot { border-top: 1px solid var(--line); padding: 13px 18px; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+      .sidebar-foot .dot { width: 7px; height: 7px; border-radius: 999px; background: #3E9B6F; flex: none; }
+
+      /* ---------- Main ---------- */
+      .main { flex: 1; min-width: 0; margin-left: var(--sidebar); display: flex; flex-direction: column; }
+      .topbar {
+        position: sticky; top: 0; z-index: 30;
+        height: 64px; padding: 0 24px;
+        display: flex; align-items: center; gap: 12px;
+        background: var(--white); border-bottom: 1px solid var(--line);
+      }
+      .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+      .session { font-size: 12px; color: var(--muted); }
+
+      .workspace { padding: 30px 24px 60px; }
+      .wrap { max-width: 1120px; margin: 0 auto; }
+      .page-head { margin-bottom: 20px; }
+      .page-head h2 { margin: 0 0 4px; font-size: 26px; line-height: 1.2; letter-spacing: -0.035em; }
+      .page-head p { margin: 0; color: var(--muted); font-size: 13px; }
+
+      .card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+      .card + .card { margin-top: 16px; }
+      .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+      .card-head h3 { margin: 0; font-size: 14px; font-weight: 800; }
+      .card-head .hint { font-size: 12px; color: var(--muted); }
+      .notice { border-left: 3px solid var(--yolk); background: var(--cream); padding: 10px 12px; border-radius: 8px; margin: 14px 0 0; font-size: 13px; }
+      .error { color: var(--danger); font-size: 13px; margin: 10px 0 0; }
       .muted { color: var(--muted); }
-      .notice { border-left: 4px solid var(--yolk); background: var(--cream); padding: 10px 12px; border-radius: 8px; }
-      .error { color: #b3261e; }
       .hidden { display: none !important; }
-      ul.audit { margin: 0; padding-left: 18px; font-size: 12px; }
+
+      /* ---------- Form ---------- */
+      .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+      label { display: flex; flex-direction: column; gap: 5px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+      label.wide { flex: 1 1 220px; }
+      input, select {
+        padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px;
+        background: var(--white); font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none;
+      }
+      input:focus, select:focus { outline: 2px solid var(--yolk); outline-offset: 1px; border-color: var(--ink); }
+      .btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 9px 14px; border-radius: 9px; border: 1px solid var(--line);
+        background: var(--white); font-size: 13px; font-weight: 700; cursor: pointer;
+        text-decoration: none; white-space: nowrap;
+      }
+      .btn:hover { background: var(--cream); }
+      .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--white); }
+      .btn.primary:hover { background: #000; }
+      .btn.danger { color: var(--danger); border-color: #EBC9C5; background: var(--white); }
+      .btn.danger:hover { background: #FDF0EF; }
+      .btn.small { padding: 5px 9px; font-size: 12px; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      .btn svg { width: 15px; height: 15px; }
+      .btn.menu-btn { display: none; }
+      .app.auth-locked .btn.menu-btn { display: none !important; }
+
+      /* ---------- Login ---------- */
+      .login-screen { min-height: 100dvh; display: grid; place-items: center; padding: 32px 20px; }
+      .login-wrap { width: 100%; max-width: 400px; display: grid; gap: 20px; }
+      .login-brand { display: flex; align-items: center; justify-content: center; gap: 11px; text-decoration: none; color: var(--ink); }
+      .login-brand img { width: 42px; height: 42px; border-radius: 999px; }
+      .login-brand strong { font-size: 27px; font-weight: 800; letter-spacing: -0.045em; }
+      .login-card { width: 100%; }
+      .login-card .card-head h3 { font-size: 18px; letter-spacing: -0.02em; }
+      .login-card form { display: grid; gap: 14px; margin-top: 4px; }
+      .login-card label { color: var(--ink); }
+      .login-card input { font-size: 14px; }
+
+      /* ---------- Table ---------- */
+      .table-wrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 720px; }
+      th {
+        text-align: left; padding: 0 10px 8px; font-size: 10px; font-weight: 800;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+        border-bottom: 1px solid var(--line); white-space: nowrap;
+      }
+      td { padding: 11px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+      tr:last-child td { border-bottom: 0; }
+      tbody tr:hover { background: var(--cream); }
+      td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+      .who { display: flex; align-items: center; gap: 9px; font-weight: 700; }
+      .avatar {
+        width: 27px; height: 27px; border-radius: 999px; flex: none;
+        display: grid; place-items: center; font-size: 11px; font-weight: 800;
+        background: var(--cream); border: 1px solid var(--line); text-transform: uppercase;
+      }
+      .badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
+        background: var(--cream); border: 1px solid var(--line); white-space: nowrap;
+      }
+      .badge.on { background: #EDF6F0; border-color: #CBE3D5; color: #2F7A54; }
+      .badge.off { background: #FDF0EF; border-color: #EBC9C5; color: var(--danger); }
+      code { background: var(--cream); padding: 3px 7px; border-radius: 6px; font-size: 12px; word-break: break-all; user-select: all; }
+
+      /* Panel password tepat di bawah baris user yang bersangkutan. */
+      tr.row-panel:hover { background: transparent; }
+      tr.row-panel td { padding: 0 10px 12px; }
+      tr.row-panel .toast { width: 100%; }
+      .notice .toast-password { margin-top: 9px; }
+
+      /* ---------- Usage bar ---------- */
+      .meter { height: 8px; border-radius: 999px; background: var(--cream); border: 1px solid var(--line); overflow: hidden; margin-top: 10px; }
+      .meter > span { display: block; height: 100%; background: var(--yolk); width: 0; }
+      .meter-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+      .meter + .meter-label { margin-top: 10px; }
+
+      .audit { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+      .audit li { display: flex; gap: 10px; align-items: baseline; font-size: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--line); }
+      .audit li:last-child { border-bottom: 0; padding-bottom: 0; }
+      .audit time { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+      /* ---------- Toast ---------- */
+      .toasts {
+        position: fixed; right: 20px; bottom: 20px; z-index: 60;
+        display: flex; flex-direction: column; gap: 10px;
+        width: min(360px, calc(100vw - 32px)); pointer-events: none;
+      }
+      .toast {
+        pointer-events: auto;
+        display: flex; gap: 10px; align-items: flex-start;
+        background: var(--white); border: 1px solid var(--line); border-radius: 12px;
+        padding: 12px 13px; box-shadow: 0 12px 32px rgba(26, 23, 18, 0.14);
+        opacity: 0; transform: translateY(10px) scale(0.98);
+        transition: opacity 0.22s ease, transform 0.22s ease;
+      }
+      .toast.show { opacity: 1; transform: none; }
+      .toast-dot { width: 8px; height: 8px; border-radius: 999px; margin-top: 6px; flex: none; background: #3E9B6F; }
+      .toast.warn .toast-dot { background: var(--yolk); }
+      .toast.bad .toast-dot { background: var(--danger); }
+      .toast-body { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; line-height: 1.45; }
+      .toast-password { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+      .toast-password code { flex: 1 1 100%; font-size: 13px; }
+      .toast-close { border: 0; background: none; font-size: 18px; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 2px; }
+      .toast-close:hover { color: var(--ink); }
+      .toast-actions { display: flex; gap: 8px; margin-top: 10px; }
+      .toast-actions .btn { flex: 1; justify-content: center; }
+
+      .overlay { display: none; }
+
+      @media (max-width: 1023px) {
+        .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: 0 10px 40px rgba(26, 23, 18, 0.18); }
+        .app.open .sidebar { transform: translateX(0); }
+        .main { margin-left: 0; }
+        .btn.menu-btn { display: inline-flex; }
+        .overlay.show { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(26, 23, 18, 0.32); }
+        .topbar { padding: 0 16px; }
+        .workspace { padding: 22px 16px 48px; }
+        .session { display: none; }
+        .table-wrap { margin: 0 -20px; }
+      }
+      @media (max-width: 700px) {
+        table { min-width: 0; }
+        thead { display: none; }
+        tbody tr { display: grid; grid-template-columns: 1fr auto; gap: 5px 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+        tbody tr:last-child { border-bottom: 0; }
+        tbody tr:hover { background: transparent; }
+        td { display: flex; align-items: center; gap: 8px; padding: 0; border: 0; }
+        td::before { content: attr(data-label); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); min-width: 74px; }
+        td[data-label="Username"] { grid-column: 1 / -1; }
+        td[data-label="Username"]::before { display: none; }
+        td[data-label="Login terakhir"] { grid-column: 1 / -1; }
+        tr.row-panel { padding: 0; border-bottom: 0; }
+        tr.row-panel td { grid-column: 1 / -1; display: block; padding: 0 0 10px; }
+        tr.row-panel td::before { display: none; }
+        td[data-label="Aksi"] { grid-column: 1 / -1; margin-top: 4px; }
+        td[data-label="Aksi"]::before { display: none; }
+        td[data-label="Aksi"] .actions { width: 100%; }
+        td[data-label="Aksi"] .btn { flex: 1; justify-content: center; }
+      }
+      @media (max-width: 560px) {
+        .toasts { left: 16px; right: 16px; bottom: 16px; width: auto; }
+        .page-head h2 { font-size: 22px; }
+        .row { align-items: stretch; }
+        .row .btn { width: 100%; justify-content: center; }
+        label.wide { flex-basis: 100%; }
+      }
     </style>
   </head>
   <body>
-    <header>
-      <h1>suarakita · admin</h1>
-      <div id="session" class="muted"></div>
-    </header>
-    <main>
-      <section id="login-card">
-        <h2>Masuk admin</h2>
-        <form id="login-form" class="row">
-          <label>Username<input id="login-user" value="admin" autocomplete="username" required /></label>
-          <label>Password<input id="login-pass" type="password" autocomplete="current-password" required /></label>
-          <button class="primary" type="submit">Masuk</button>
-        </form>
-        <p id="login-error" class="error" role="alert"></p>
-      </section>
+    <div class="app auth-locked" id="app">
+      <aside class="sidebar" id="sidebar" aria-label="Navigasi admin">
+        <a class="brand" href="/">
+          <img src="/favicon.png" alt="" />
+          <strong>suarakita</strong>
+        </a>
+        <nav class="nav">
+          <div>
+            <div class="nav-label">Kelola</div>
+            <div class="nav-list">
+              <button class="nav-item active" type="button" data-nav="users">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.5v-1.5a3.75 3.75 0 00-3.75-3.75h-4.5A3.75 3.75 0 003 18v1.5M16.5 6.75a3 3 0 11-6 0 3 3 0 016 0zM9 10.5a3 3 0 100-6 3 3 0 000 6zM21 19.5v-1.5a3.75 3.75 0 00-2.813-3.633M16.5 4.74a3 3 0 010 5.52" /></svg>
+                Pengguna
+                <span class="count" id="nav-count">0</span>
+              </button>
+              <button class="nav-item" type="button" data-nav="create">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                Buat user
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="nav-label">Keamanan</div>
+            <div class="nav-list">
+              <button class="nav-item" type="button" data-nav="security">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                Rotasi password
+              </button>
+              <button class="nav-item" type="button" data-nav="settings">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 3.94a1.5 1.5 0 011.32 0l1.1.53a1.5 1.5 0 001.16.06l1.14-.38a1.5 1.5 0 011.78.71l.55 1.08a1.5 1.5 0 001.02.75l1.16.24a1.5 1.5 0 011.2 1.46v1.24a1.5 1.5 0 00.6 1.2l.9.7a1.5 1.5 0 010 2.38l-.9.7a1.5 1.5 0 00-.6 1.2v1.24a1.5 1.5 0 01-1.2 1.46l-1.16.24a1.5 1.5 0 00-1.02.75l-.55 1.08a1.5 1.5 0 01-1.78.71l-1.14-.38a1.5 1.5 0 00-1.16.06l-1.1.53a1.5 1.5 0 01-1.32 0l-1.1-.53a1.5 1.5 0 00-1.16-.06l-1.14.38a1.5 1.5 0 01-1.78-.71l-.55-1.08a1.5 1.5 0 00-1.02-.75l-1.16-.24a1.5 1.5 0 01-1.2-1.46v-1.24a1.5 1.5 0 00-.6-1.2l-.9-.7a1.5 1.5 0 010-2.38l.9-.7a1.5 1.5 0 00.6-1.2V6.93a1.5 1.5 0 011.2-1.46l1.16-.24a1.5 1.5 0 001.02-.75l.55-1.08a1.5 1.5 0 011.78-.71l1.14.38a1.5 1.5 0 001.16-.06z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                Pengaturan AI
+              </button>
+              <button class="nav-item" type="button" data-nav="audit">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2.25 4.5H6.75A2.25 2.25 0 014.5 18.25V5.75A2.25 2.25 0 016.75 3.5h6.879a2.25 2.25 0 011.59.659l3.122 3.122a2.25 2.25 0 01.659 1.59v9.379a2.25 2.25 0 01-2.25 2.25z" /></svg>
+                Audit
+              </button>
+            </div>
+          </div>
+        </nav>
+        <div class="sidebar-foot"><span class="dot"></span> Akun tersimpan di Netlify Blobs</div>
+      </aside>
 
-      <div id="panel" class="hidden">
-        <section>
-          <h2>Buat user</h2>
-          <form id="create-form" class="row">
-            <label>Username<input id="create-user" autocapitalize="none" spellcheck="false" required /></label>
-            <label>Kuota/hari<input id="create-quota" type="number" min="1" max="1000" value="30" style="width:110px" /></label>
-            <button class="primary" type="submit">Buat</button>
-          </form>
-          <p id="create-result" class="notice hidden"></p>
-          <p id="create-error" class="error" role="alert"></p>
-        </section>
+      <div class="main">
+        <header class="topbar">
+          <button class="btn small menu-btn" type="button" id="menu" aria-label="Buka menu">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+          </button>
+          <div class="topbar-right">
+            <span class="session" id="session"></span>
+            <button class="btn small hidden" type="button" id="logout">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+              Keluar
+            </button>
+          </div>
+        </header>
 
-        <section>
-          <h2>User &amp; pemakaian hari ini</h2>
-          <div id="usage-summary" class="muted"></div>
-          <table>
-            <thead><tr><th>Username</th><th>Peran</th><th>Status</th><th>Kuota</th><th>Hari ini</th><th>Login terakhir</th><th>Aksi</th></tr></thead>
-            <tbody id="users-body"></tbody>
-          </table>
-          <p id="users-error" class="error" role="alert"></p>
-        </section>
+        <main class="workspace">
+          <div class="wrap">
+            <section id="login-card" class="login-screen">
+              <div class="login-wrap">
+              <a class="login-brand" href="/">
+                <img src="/favicon.png" alt="" />
+                <strong>suarakita</strong>
+              </a>
+              <div class="card login-card">
+                <div class="card-head">
+                  <h3>Masuk admin</h3>
+                  <span class="hint">Sesi 2 jam</span>
+                </div>
+                <form id="login-form">
+                  <label>Username
+                    <input id="login-user" value="admin" autocomplete="username" required />
+                  </label>
+                  <label>Password
+                    <input id="login-pass" type="password" autocomplete="current-password" required />
+                  </label>
+                  <button class="btn primary" type="submit">Masuk</button>
+                </form>
+                <p id="login-error" class="error" role="alert"></p>
+                <p class="muted" style="font-size:12px;margin:14px 0 0">Lupa password? Atur ulang <code>ADMIN_PASSWORD</code> di environment Netlify lalu redeploy.</p>
+              </div>
+              </div>
+            </section>
 
-        <section>
-          <h2>Rotasi password admin</h2>
-          <form id="rotate-form" class="row">
-            <label>Password sekarang<input id="rotate-current" type="password" autocomplete="current-password" required /></label>
-            <label>Password baru (min. 20)<input id="rotate-next" type="password" autocomplete="new-password" minlength="20" required /></label>
-            <button class="primary" type="submit">Simpan</button>
-          </form>
-          <p id="rotate-result" class="notice hidden"></p>
-          <p id="rotate-error" class="error" role="alert"></p>
-        </section>
+            <div id="panel" class="hidden">
+              <section class="page" data-page="users">
+                <div class="page-head">
+                  <h2>Pengguna</h2>
+                  <p>Kelola akun, kuota harian, dan akses ke suarakita.</p>
+                </div>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Pemakaian hari ini</h3>
+                    <span class="hint" id="usage-date"></span>
+                  </div>
+                  <div class="meter-label">
+                    <span id="usage-summary">0 / 0 aksi</span>
+                    <span id="usage-percent">0%</span>
+                  </div>
+                  <div class="meter"><span id="usage-bar"></span></div>
+                </div>
+                <div class="card">
+                  <div class="card-head">
+                    <h3 id="provider-title">Sisa kuota server Groq</h3>
+                    <span class="hint">Dipakai bersama semua user</span>
+                  </div>
+                  <div class="meter-label"><span>Sisa request</span><span id="provider-request">-</span></div>
+                  <div class="meter"><span id="provider-request-bar"></span></div>
+                  <div class="meter-label"><span>Sisa token</span><span id="provider-token">-</span></div>
+                  <div class="meter"><span id="provider-token-bar"></span></div>
+                  <p class="muted" style="font-size:12px;margin:10px 0 0" id="provider-note">Belum ada data. Muncul setelah satu aksi AI berhasil.</p>
+                </div>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Daftar akun</h3>
+                    <span class="hint">Status dan kuota tampil seketika</span>
+                  </div>
+                  <div class="table-wrap">
+                    <table>
+                      <thead><tr><th>Username</th><th>Peran</th><th>Status</th><th>Kuota</th><th>Hari ini</th><th>Sisa</th><th>Login terakhir</th><th>Aksi</th></tr></thead>
+                      <tbody id="users-body"></tbody>
+                    </table>
+                  </div>
+                  <p id="users-error" class="error" role="alert"></p>
+                </div>
+              </section>
 
-        <section>
-          <h2>Audit terakhir</h2>
-          <ul id="audit" class="audit"></ul>
-        </section>
+              <section class="page hidden" data-page="create">
+                <div class="page-head">
+                  <h2>Buat user</h2>
+                  <p>Password dibuat acak dan hanya tampil satu kali. Salin lalu kirim ke pengguna.</p>
+                </div>
+                <div class="card">
+                  <form id="create-form" class="row">
+                    <label class="wide">Username
+                      <input id="create-user" autocapitalize="none" spellcheck="false" placeholder="mis. siti" required />
+                    </label>
+                    <label>Kuota/hari
+                      <input id="create-quota" type="number" min="1" max="1000" value="30" style="width:110px" />
+                    </label>
+                    <button class="btn primary" type="submit">Buat user</button>
+                  </form>
+                  <p id="create-result" class="notice hidden"></p>
+                  <p id="create-error" class="error" role="alert"></p>
+                </div>
+              </section>
 
-        <section>
-          <button id="logout" class="danger" type="button">Keluar</button>
-        </section>
+              <section class="page hidden" data-page="security">
+                <div class="page-head">
+                  <h2>Rotasi password admin</h2>
+                  <p>Password baru minimal 20 karakter. Jalur darurat <code>ADMIN_PASSWORD</code> tetap berlaku sampai diganti di environment.</p>
+                </div>
+                <div class="card">
+                  <form id="rotate-form" class="row">
+                    <label class="wide">Password sekarang
+                      <input id="rotate-current" type="password" autocomplete="current-password" required />
+                    </label>
+                    <label class="wide">Password baru (min. 20)
+                      <input id="rotate-next" type="password" autocomplete="new-password" minlength="20" required />
+                    </label>
+                    <button class="btn primary" type="submit">Simpan</button>
+                  </form>
+                  <p id="rotate-result" class="notice hidden"></p>
+                  <p id="rotate-error" class="error" role="alert"></p>
+                </div>
+              </section>
+
+              <section class="page hidden" data-page="settings">
+                <div class="page-head">
+                  <h2>Pengaturan AI</h2>
+                  <p>Model untuk koreksi transkrip dan notulen. Statistik kuota mengikuti model yang aktif.</p>
+                </div>
+                <div class="card">
+                  <form id="settings-form" class="row">
+                    <label>Provider
+                      <select id="settings-provider"></select>
+                    </label>
+                    <label class="wide">Model
+                      <select id="settings-model"></select>
+                    </label>
+                    <button class="btn primary" type="submit">Simpan</button>
+                  </form>
+                  <p id="settings-note" class="muted" style="font-size:12px;margin:10px 0 0"></p>
+                  <p id="settings-error" class="error" role="alert"></p>
+                </div>
+              </section>
+
+              <section class="page hidden" data-page="audit">
+                <div class="page-head">
+                  <h2>Audit</h2>
+                  <p>30 aktivitas terakhir: login, pembuatan akun, reset, dan rotasi.</p>
+                </div>
+                <div class="card">
+                  <ul id="audit" class="audit"></ul>
+                </div>
+              </section>
+            </div>
+          </div>
+        </main>
       </div>
-    </main>
+      <div class="overlay" id="overlay"></div>
+      <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+    </div>
     <script src="/admin.js"></script>
   </body>
 </html>

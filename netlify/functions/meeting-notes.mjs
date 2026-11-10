@@ -25,14 +25,19 @@ export default async (request) => {
 
     const quota = await accounts().consume(sessionOf(request).username);
     if (!quota.allowed) {
+      if (quota.reason === 'unknown' || quota.reason === 'inactive') {
+        return jsonResponse({ error: 'Akun tidak aktif atau sudah dihapus. Masuk lagi.' }, 401, headers);
+      }
       const reason = quota.reason === 'global' ? 'Kuota harian bersama habis.' : 'Kuota harian Anda habis.';
       return jsonResponse({ error: `${reason} Coba lagi besok.` }, 429, { ...headers, 'Retry-After': '3600' });
     }
 
-    const options = process.env.GROQ_API_KEY ? serverAiOptions() : {};
+    const options = serverAiOptions(process.env, await accounts().readAiSettings());
     const result = await runAiAction('notes', data.text, options);
 
-    return jsonResponse({ ...result, quota: { used: quota.used, limit: quota.limit } }, 200, headers);
+    // `quota` milik provider (Groq) dipakai panel Sisa penggunaan; kuota harian aplikasi terpisah.
+    if (result.quota) await accounts().recordProviderQuota(result.quota, result.engine);
+    return jsonResponse({ ...result, usage: { used: quota.used, limit: quota.limit } }, 200, headers);
   } catch (err) {
     console.error('Netlify meeting-notes gagal.', err.message);
     return jsonResponse({ error: 'Gagal membuat notulen rapat.' }, 500, headers);

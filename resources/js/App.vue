@@ -9,6 +9,8 @@
       @clear="clearTranscript"
       @download="downloadTranscript"
       @logout="logout"
+      @login="showLogin = true"
+      :authenticated="authenticated"
     />
 
     <!-- ====== MAIN CONTENT (Minimalist, Compact, Single-Viewport UX) ====== -->
@@ -80,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AppHeader from './components/AppHeader.vue';
 import TranscriptWorkspace from './components/TranscriptWorkspace.vue';
 import CorrectionModal from './components/CorrectionModal.vue';
@@ -220,18 +222,34 @@ const api = new ApiClient();
 let actionController;
 let pendingRetry = null;
 const showLogin = ref(false);
+// Sesi diketahui dari server supaya label header benar sebelum aksi pertama.
+const session = ref(null);
+const authenticated = computed(() => Boolean(session.value));
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/api/status', { credentials: 'same-origin' });
+    const data = await response.json();
+    session.value = data.session || null;
+  } catch {
+    // Status tidak terjangkau: anggap belum masuk.
+  }
+});
+
 function closeCorrection() { actionController?.abort(); showCorrectionModal.value = false; }
 function closeNotes() { actionController?.abort(); showMomModal.value = false; }
 
 /** 401 berarti sesi belum ada/kedaluwarsa; aksi disimpan untuk diulang setelah masuk. */
 function handleAuthError(err, retry) {
   if (err.status !== 401) return false;
+  session.value = null;
   pendingRetry = retry;
   showLogin.value = true;
   return true;
 }
 
 function onLoginSuccess() {
+  session.value = session.value || { username: '' };
   showLogin.value = false;
   const retry = pendingRetry;
   pendingRetry = null;
@@ -241,6 +259,7 @@ function onLoginSuccess() {
 function logout() {
   actionController?.abort();
   pendingRetry = null;
+  session.value = null;
   showLogin.value = true;
   // keepalive: request tetap selesai walau pengguna langsung menutup/memuat ulang tab.
   fetch('/api/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', keepalive: true, credentials: 'same-origin' })

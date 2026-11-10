@@ -64,6 +64,17 @@ assert.equal(await accounts.authenticate('alice', 'password-panjang-123').then(B
 await accounts.removeUser('budi');
 assert.equal(await accounts.getUser('budi'), null);
 
+// Cuplikan kuota provider untuk dashboard admin.
+await accounts.recordProviderQuota({ remainingRequests: 10, limitRequests: 100, resetRequests: '1m2s', observedAt: 12345, evil: 'x' }, 'groq');
+assert.deepEqual(await accounts.providerQuota(), { limitRequests: 100, remainingRequests: 10, resetRequests: '1m2s', observedAt: 12345, provider: 'groq' });
+await accounts.recordProviderQuota({ remainingRequests: 1 });
+assert.deepEqual(await accounts.providerQuota(), { limitRequests: 100, remainingRequests: 10, resetRequests: '1m2s', observedAt: 12345, provider: 'groq' }, 'tanpa observedAt tidak menimpa');
+
+// Pilihan model AI untuk koreksi/notulen.
+assert.equal(await accounts.readAiSettings(), null, 'belum ada pilihan tersimpan');
+assert.deepEqual(await accounts.writeAiSettings({ provider: 'gemini', model: 'gemini-3.5-flash-lite', evil: 1 }), { provider: 'gemini', model: 'gemini-3.5-flash-lite' });
+assert.deepEqual(await accounts.readAiSettings(), { provider: 'gemini', model: 'gemini-3.5-flash-lite' });
+
 // Audit.
 await accounts.audit('admin', 'create-user', 'alice');
 const log = await accounts.auditLog();

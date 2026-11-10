@@ -711,3 +711,177 @@ Risiko yang masih ada:
 - Satu kunci `users:index` bisa menjadi titik gesek saat banyak admin menulis bersamaan.
 - Server Express lokal di 3088 masih memakai password bersama `APP_PASSWORD` dan tidak memakai akun per user.
 - `ADMIN_PASSWORD` di environment masih password awal; setelah rotasi dari UI, jalur darurat tetap memakai nilai lama sampai env diganti dan redeploy.
+
+## 30. Tampilan dashboard admin mengikuti model layout pdftogo
+
+Permintaan pemilik: dashboard `/admin` mengadopsi model layout `https://pdftogo.netlify.app/`, tetap memakai palet hangat suarakita.
+
+Yang diadopsi dari pdftogo (hanya model layout, bukan warna): sidebar kiri tetap 256 px dengan merek di atas, grup navigasi berlabel, item aktif berlatar cream + garis tepi, dan status di kaki sidebar; header atas sticky 64 px dengan breadcrumb kecil + tombol aksi di kanan; area kerja berlatar krem dengan judul halaman besar, subjudul, dan kartu putih bergaris; kontrol membulat 9 px (bukan pill); tabel dengan label kolom huruf kapital kecil.
+
+Perubahan:
+- `public/admin.html` ditulis ulang: sidebar + header + workspace, empat halaman (`Pengguna`, `Buat user`, `Rotasi password`, `Audit`) dengan perpindahan lewat nav, kartu pemakaian dengan meter persentase, tabel akun dengan avatar inisial dan badge status, drawer + overlay di bawah 1024 px, tabel berubah menjadi kartu bertumpuk di bawah 700 px.
+- `public/admin.js`: `showPage`, status nav aktif, drawer mobile, meter pemakaian, badge/avatar, dan `data-label` untuk tampilan kartu. ID form dan alur API tidak berubah, jadi backend tidak tersentuh.
+- Font Plus Jakarta Sans dimuat dari Google Fonts sesuai CSP yang sudah ada; tidak ada skrip inline dan tidak ada dependensi baru.
+
+Bukti aktual (deploy produksi, 11 Nov 2026):
+- Desktop 1440 px: login tampil di tengah, sidebar tidak bisa digeser (hamburger disembunyikan), keempat halaman bertukar judul dan isi dengan benar.
+- Login admin: tabel menampilkan `admin` dan `davis`, meter `5 / 300 aksi` `2%`, badge `aktif`, kuota `30/hari`.
+- Alur penuh lewat UI baru: buat `demo1` (password tampil sekali), baris muncul, nonaktifkan, aktifkan, hapus — semua berhasil tanpa error di `#users-error`.
+- Mobile 390 px: sidebar tersembunyi di `x=-256`, hamburger membuka drawer ke `x=0`, overlay menutup kembali ke `-256`; tabel berubah menjadi kartu label–nilai dan tombol aksi selebar kartu.
+- `node --check public/admin.js` lulus; `npm run build` lulus. Satu-satunya error konsol berasal dari `about:srcdoc` milik Playwright (CSP harness), bukan halaman admin.
+
+## 31. Layar masuk admin bersih dan pengetatan endpoint admin
+
+Dua hal: menu dashboard tidak boleh tampil sebelum masuk, dan endpoint admin ditinjau terhadap penyalahgunaan.
+
+Perubahan:
+- `public/admin.html` + `public/admin.js`: kelas `auth-locked` aktif sejak HTML dimuat. Saat terkunci, `.nav` disembunyikan dan tombol menu mobile dimatikan; judul header menjadi "Masuk". `showPanel` membuka kunci. Tidak ada kedipan menu sebelum JavaScript jalan.
+- `lib/accounts.js`: `authenticate` menjalankan scrypt terhadap hash palsu saat username tidak ada, supaya waktu balasan tidak membocorkan username terdaftar. `consume` menolak user nonaktif (`inactive`) dan user terhapus (`unknown`).
+- `netlify/functions/correct-transcript.mjs` + `meeting-notes.mjs`: `inactive`/`unknown` menghasilkan `401`, bukan `429`, sehingga cookie lama user yang dinonaktifkan atau dihapus langsung mati.
+- `netlify/functions/admin-users.mjs`: `create` menolak username `admin` dan kuota di luar bilangan bulat 1-1000; `rotate-admin` selalu menulis `role: "admin"` dan `active: true` pada record admin.
+- `tests/apiValidation.test.mjs` naik dari 59 ke **64 pemeriksaan**: sesi user nonaktif ditolak, sesi user terhapus ditolak, username admin ditolak, kuota negatif dan kuota 100000 ditolak.
+
+Bukti aktual (produksi):
+- Halaman `/admin` tanpa cookie: `.nav` tidak terlihat, hamburger tidak terlihat, kartu masuk tampil.
+- `GET /api/admin/users`: tanpa cookie `401`, cookie palsu bertanda tangan salah `401`, cookie user biasa `403`, origin asing `403`.
+- `create` username `admin` → `400`; `quotaPerDay: -3` → `400`.
+- User `sec1` dengan sesi hidup: koreksi `200`; setelah dinonaktifkan, koreksi berikutnya `401` dengan pesan "Akun tidak aktif atau sudah dihapus."; setelah dihapus tetap `401`.
+- `rotasi-admin` memaksa role admin walau record lama pernah ditimpa role lain.
+- `npm test` 29 berkas lulus; build lulus. Error konsol tersisa hanya `401` awal saat belum masuk (memang diharapkan) dan pelanggaran CSP dari harness `about:srcdoc` Playwright, bukan dari halaman.
+
+Sisa risiko yang belum ditutup:
+- Sesi admin yang sudah terbit tidak batal saat password admin dirotasi; berlaku sampai kedaluwarsa (maks 2 jam). Pencabutan per token butuh nomor versi sesi.
+- Belum ada token CSRF; perlindungan bergantung pada `SameSite=Strict` dan pemeriksaan Origin. Klien non-browser bisa memalsukan Origin, tetapi tetap butuh cookie sesi.
+- Pembatas login berkunci per username, sehingga penyerang bisa membuat `admin` terkunci 15 menit (gangguan, bukan pembobolan). Belum ada batas per IP.
+- Tidak ada 2FA. `ADMIN_PASSWORD` lama tetap berlaku sebagai jalur darurat sampai diganti di environment.
+
+## 32. Notifikasi bertema untuk reset password, aktivasi, dan penonaktifan
+
+Permintaan pemilik: password hasil rotasi harus tampil di notifikasi bertema aplikasi dan halus, begitu juga saat menonaktifkan dan mengaktifkan user.
+
+Perubahan:
+- `public/admin.html`: komponen toast `#toasts` dengan `.toast` (kartu putih, garis `--line`, radius 12 px, bayangan lembut, font Plus Jakarta Sans), titik status berwarna (`hijau`/`yolk`/`merah`), transisi `opacity` + `translateY` 0.22 s, layout penuh selebar layar di bawah 560 px, dan `prefers-reduced-motion` mematikan animasi.
+- `public/admin.js`: `toast(message, { tone, password, duration })`. Password ditampilkan di `<code>` dengan tombol **Salin** (`navigator.clipboard`); toast password bertahan sampai ditutup (`duration: 0`), status lain hilang sendiri setelah 3,2 s.
+- Toast baru menggantikan toast lama, supaya notifikasi yang menumpuk tidak menutupi tombol tabel. `alert()` untuk password dihapus total; `confirm()` hapus user masih bawaan browser.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Reset password `toast3`: toast memuat `Password baru untuk toast3`, password `rQF--jHporkisOei`, tombol `Salin`. Gaya terukur: font Plus Jakarta Sans, latar `rgb(255,255,255)`, radius `12px`, `box-shadow` aktif, `opacity 1`, `transform none`.
+- Tombol `Salin` menulis password yang benar ke clipboard (`clipboard === code`), label berubah menjadi `Tersalin`.
+- Toast password masih tampil setelah 4,2 s (tidak hilang sendiri) dan hilang setelah tombol × ditekan (`count 0`).
+- Nonaktifkan: `toast warn show`, titik `rgb(255,200,50)`, teks `toast3 dinonaktifkan.`, hilang sendiri. Aktifkan: titik `rgb(62,155,111)`, teks `toast3 aktif kembali.`, hilang sendiri. Hapus: `toast3 dihapus.`, baris hilang dari tabel.
+- Dua reset berurutan menyisakan tepat satu toast (`toastCount 1`), dan tombol baris tetap bisa diklik saat toast tampil.
+- Mobile 390 px: toast `x=16`, lebar `358`, teks dan tombol tetap terbaca; desktop 1440 px tampil di pojok kanan bawah.
+- Label header aplikasi utama: `Masuk` sebelum login, `Keluar` setelah login dan setelah reload, kembali `Masuk` setelah keluar.
+- `node --check public/admin.js` lulus, `npm test` 29 berkas lulus, build dan deploy lulus. Satu-satunya error konsol adalah pelanggaran CSP dari `about:srcdoc` milik Playwright, bukan halaman admin.
+
+## 33. Salin password saat buat user, panel password di baris user, header tanpa label ganda
+
+Perubahan:
+- `public/admin.js`: helper `passwordField()` dipakai dua tempat — hasil buat user (`#create-result`) dan panel reset. Panel reset (`showPasswordRow`) disisipkan sebagai `tr.row-panel` tepat di bawah baris user yang bersangkutan, jadi teks berbunyi "Password baru untuk <username>" dan admin tahu password milik siapa. Panel bertahan sampai ditutup; reset berikutnya menggantikan panel lama. Toast pojok tidak lagi dipakai untuk reset.
+- `passwordField` memakai `navigator.clipboard.writeText`; label berubah `Tersalin` saat berhasil. `code` memakai `user-select: all`, jadi satu klik memilih seluruh password untuk copy-paste manual.
+- Baris user sekarang punya `data-row="${username}"` supaya panel dicari tepat, bukan lewat teks.
+- `public/admin.html`: brand sidebar hanya "suarakita" (label ADMIN dihapus); topbar tidak lagi memuat breadcrumb "Admin" dan judul halaman. Judul tetap ada di header konten tiap halaman.
+- Baris `tr` panel diberi gaya sendiri di desktop dan mobile; pada layar <700 px panel melebar penuh di dalam kartu user.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Topbar hanya berisi `Masuk sebagai admin` dan `Keluar`; `#page-title` tidak ada lagi di DOM (`count 0`); brand hanya `suarakita`.
+- Buat user `ui2`: notice memuat password `z8t7FbIVh___a_jA` + tombol `Salin`; klik Salin → clipboard sama persis dengan password; label `Tersalin`; `user-select: all`.
+- Reset `ui2`: panel muncul sebagai `tr.row-panel` yang merupakan `nextElementSibling` baris `ui2` (`true`), teks `Password baru untuk ui2`, password `OWye7N63D_XIkKdp`; clipboard sama setelah Salin; panel tetap ada setelah 4,2 s; tidak ada toast pojok (`#toasts` kosong).
+- Mobile 390 px: panel tepat di bawah kartu `ui2`, lebar 316 px di dalam kartu, tombol Salin terbaca; tombol baris user lain tetap bisa diklik.
+- `ui2` dihapus lagi lewat API admin (`200`); akun tersisa `admin`, `davis`, `ujicoba`.
+- `node --check public/admin.js` lulus, `npm test` 29 berkas lulus, build + deploy lulus.
+
+## 34. Perbaikan panel "Sisa penggunaan" yang kosong
+
+Penyebab: `correct-transcript.mjs` dan `meeting-notes.mjs` menulis `quota: { used, limit }` (kuota harian aplikasi) tepat setelah `...result`, sehingga menimpa `result.quota` milik Groq (`remainingRequests`, `limitRequests`, `remainingTokens`, `limitTokens`, `resetRequests`, `resetTokens`, `observedAt`). `QuotaStatus.vue` membaca `data.quota` sebagai kuota Groq, jadi persentase dan waktu reset menjadi `null` → tampil "Persentase belum tersedia." dan "Waktu reset belum tersedia.".
+
+Perubahan:
+- Kedua function kini mengembalikan `usage: { used, limit }` untuk kuota harian, dan membiarkan `quota` tetap milik provider.
+- `tests/apiValidation.test.mjs` memeriksa `usage` (bukan `quota`) untuk hitungan kuota harian.
+
+Bukti aktual (produksi, 11 Nov 2026, provider Groq sungguhan):
+- Respons koreksi: `engine: groq`, `quota: { limitRequests: 1000, limitTokens: 8000, remainingRequests: 999, remainingTokens: 7603, resetRequests: "1m26.4s", resetTokens: "2.977s", observedAt: ... }`, `usage: { used: 1, limit: 5 }`.
+- Respons notulen: `remainingRequests: 998`, `remainingTokens: 7334`, `usage: { used: 2, limit: 5 }`.
+- UI modal koreksi: `Sisa penggunaan — Request 99% · Token 94% — Reset request: dalam 04:20. — Reset token: dalam 00:04.`
+- UI modal notulen: `Request 99% · Token 93% — Reset request: dalam 05:46. — Reset token: dalam 00:05.`
+- `npm test` 29 berkas lulus; build + deploy lulus. User uji `quotacheck` dan `uicheck` sudah dihapus.
+
+## 35. Konfirmasi hapus user memakai panel bertema seperti reset
+
+Perubahan:
+- `public/admin.js`: `mountRowPanel(username, tone)` menjadi pembangun panel baris bersama. `showPasswordRow` memakai tone `ok`; `showDeleteRow` memakai tone `bad` (titik merah) dan menampilkan "Hapus user <username>? Tindakan ini tidak bisa dibatalkan." dengan tombol `Batal` dan `Hapus`.
+- Aksi `delete` tidak lagi memakai `confirm()` bawaan browser. Klik `Hapus` di baris membuka panel; `Batal` menutup panel, `Hapus` di panel menjalankan `runAction('delete', username)`.
+- `public/admin.html`: `.toast-actions` (dua tombol sejajar, melebar sama rata), memakai gaya `.btn`/`.btn.danger` yang sudah ada.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Panel `delcheck`: `toast bad show`, titik `rgb(179,38,30)`, teks `Hapus user delcheck? Tindakan ini tidak bisa dibatalkan.`, tombol `Batal` dan `Hapus`, posisi `nextElementSibling` baris user.
+- `Batal` menutup panel, baris tetap ada (`cancelled true`, `rowStillThere 1`).
+- `Hapus` di panel menghapus user: baris dan panel hilang, toast `delcheck dihapus.`
+- `delcheck2` diuji visual: panel merah selebar kartu, dua tombol sejajar; setelah itu dihapus lewat API admin.
+- Tidak ada lagi `confirm(` di `public/admin.js` (`grep -c` = 0).
+- `npm test` 29 berkas lulus, build + deploy lulus.
+
+## 36. Halaman masuk tanpa sidebar/header, logo di atas form
+
+Perubahan:
+- `public/admin.html`: pada `.app.auth-locked`, sidebar dan topbar disembunyikan (`display: none`), konten utama melebar (`margin-left: 0`), dan area kerja tanpa padding.
+- Blok `.login-wrap` berisi logo + wordmark `suarakita` (memakai `/favicon.png`) tepat di atas kartu masuk, keduanya di tengah layar penuh (`min-height: 100dvh`).
+- Setelah masuk, kelas `auth-locked` dilepas dan sidebar/header/drawer kembali seperti semula.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Desktop 1440 px: `#sidebar` tidak terlihat, `.topbar` tidak terlihat, logo `suarakita` dan kartu masuk masing-masing selebar 400 px pada `x=520` (selisih titik tengah < 2 px), logo di atas form.
+- Mobile 390 px: sidebar dan topbar tidak terlihat, logo tetap di tengah di atas form.
+- Setelah login admin: sidebar `true`, topbar `true`, tombol menu mobile `true`.
+- Build + deploy lulus.
+
+## 37. Admin bisa memantau kuota server Groq dan sisa kuota harian tiap user
+
+Penjelasan beda dua hal:
+- "Sisa penggunaan" di modal user adalah **rate limit Groq** untuk satu kunci server (`remainingRequests/limitRequests`, `resetRequests`, dst). Kuota ini milik kunci, bukan milik user, jadi tidak bisa dipecah per user.
+- Kuota harian aplikasi (per user, default 30, plus batas global 300) dikelola sendiri di Blobs dan sudah tampil di tabel admin.
+
+Perubahan:
+- `lib/accounts.js`: `recordProviderQuota()` menyimpan cuplikan field Groq yang aman (`limit*`, `remaining*`, `reset*`, `retryAfter`, `observedAt`) ke blob `provider:quota`; `providerQuota()` membacanya. Entry tanpa `observedAt` diabaikan supaya snapshot lama tidak tertimpa data cacat.
+- `correct-transcript.mjs` + `meeting-notes.mjs`: setelah aksi berhasil, cuplikan `result.quota` disimpan.
+- `admin-users.mjs`: respons GET menambah `providerQuota`.
+- `public/admin.html` + `public/admin.js`: kartu **Sisa kuota server Groq** di halaman Pengguna (persen + angka sisa/limit, meter, hitung mundur reset yang berdetak tiap detik, waktu pembaruan), dan kolom **Sisa** per user (`kuota - terpakai hari ini`).
+- `tests/accounts.test.mjs` + `tests/apiValidation.test.mjs`: snapshot provider tersaring dan tetap ada saat input cacat; respons admin memuat `providerQuota`.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Aksi Groq user `statcheck`: respons `remainingRequests 999/1000`, `remainingTokens 7591/8000`; GET admin mengembalikan `providerQuota` dengan angka sama.
+- Kartu admin: `Sisa request 99% (999/1000)`, `Sisa token 94% (7591/8000)`, catatan `Reset request dalam 01:15 · Reset token sudah lewat · Diperbarui 02.12.53.`; hitung mundur berubah ke `01:13` setelah 2 detik.
+- Tabel: `davis 30/hari, hari ini 11, sisa 19`; `statcheck 6/hari, hari ini 1, sisa 5`.
+- `npm test` 29 berkas lulus; build + deploy lulus; user uji `statcheck` sudah dihapus.
+- Sisa risiko: snapshot Groq global (bukan per user), dan hanya diperbarui saat ada aksi AI; reset limit token Groq bisa sangat singkat sehingga tampil "sudah lewat".
+
+## 38. Menu Pengaturan AI di atas Audit; statistik ikut model yang dipilih
+
+Perubahan:
+- `lib/serverAi.js`: `resolveAiSettings()` memvalidasi provider/model tersimpan (bawaan `groq`/`openai/gpt-oss-120b`), `serverAiOptions(env, settings)` hanya mengaktifkan provider terpilih (hanya `groq` dan `gemini`, satu-satunya yang punya jalur di `providerFallback.js`).
+- `lib/accounts.js`: `readAiSettings()`/`writeAiSettings()` pada blob `settings:ai`; `recordProviderQuota(quota, provider)` ikut menyimpan nama provider di snapshot.
+- `netlify/functions/admin-users.mjs`: GET mengembalikan `settings` + `providers` (label, daftar model, `hasKey`), aksi baru `set-ai` dengan validasi provider/model dan key environment, dicatat di audit.
+- `netlify/functions/correct-transcript.mjs` + `meeting-notes.mjs`: membaca settings dulu, lalu `serverAiOptions(process.env, settings)`, dan mencatat snapshot kuota beserta `result.engine`.
+- `public/admin.html` + `public/admin.js`: menu **Pengaturan AI** di atas Audit, halaman dengan select provider/model (opsi provider tanpa key dinonaktifkan), tombol Simpan, catatan model aktif. Kartu kuota berjudul dinamis (`Sisa kuota server <provider>`); snapshot dari provider lain disembunyikan dan diganti keterangan, karena Gemini tidak mengirim header kuota.
+- `lib/providers.json`: daftar model disamakan dengan akses akun nyata. Groq: `openai/gpt-oss-120b`, `openai/gpt-oss-20b`, `qwen/qwen3.8-27b` (llama 3.x menghasilkan 404 di akun ini). Gemini: flash-lite lebih dulu karena semua model `*-flash` mengembalikan 503; `gemini-2.5-flash` sudah 404 untuk pengguna baru.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- `GET /api/admin/users`: `settings {groq, openai/gpt-oss-120b}`, `providers` groq+gemini dengan `hasKey true`.
+- `set-ai` model asing → 400; provider di luar jalur → 400; provider tanpa key → 400; `set-ai` sah → 200 dan tersimpan (GET berikutnya sama).
+- Koreksi + notulen dengan Gemini `gemini-3.5-flash-lite`: `engine gemini`, `modelUsed gemini-3.5-flash-lite`, `method llm_ai` (bukan fallback lokal).
+- Koreksi dengan Groq `openai/gpt-oss-120b` dan `openai/gpt-oss-20b`: `engine groq`, `modelUsed` sesuai, snapshot berubah dan memuat `provider: groq`.
+- UI desktop: urutan nav `Pengguna, Buat user, Rotasi password, Pengaturan AI, Audit`; pilih Gemini → catatan berubah, Simpan → toast `Model AI diganti ke Gemini.`; halaman Pengguna menampilkan `Sisa kuota server Gemini` + `Snapshot terakhir dari Groq...`.
+- UI mobile 390 px: form bertumpuk (provider di atas model, tombol selebar kartu), tanpa scroll horizontal.
+- `npm test` 29 berkas lulus; build + deploy lulus; model dikembalikan ke `groq`/`openai/gpt-oss-120b`; user uji `aicheck`/`aicheck2` dihapus.
+
+Catatan limit: Groq free tier akun ini 8.000 TPM / 1.000 RPD untuk semua model yang tersedia, jadi ganti model Groq tidak menambah limit. Gemini Flash-Lite memberi konteks 1M dan limit harian lebih besar, tetapi tidak mengirim header kuota sehingga kartu statistik hanya menampilkan data Groq terakhir (disembunyikan saat Gemini aktif).
+
+## 39. Kartu statistik user disembunyikan saat model Gemini
+
+Perubahan:
+- `resources/js/components/QuotaStatus.vue`: blok teks "Sisa kuota Gemini tidak tersedia dari respons ini" dihapus. Kartu hanya dirender saat ada objek `quota` atau `engine === 'groq'`. Dengan Gemini (tanpa header kuota), kartu tidak tampil sama sekali — tidak ada pesan kosong dan tidak ada celah.
+- Pesan Groq "Sisa kuota Groq tidak tersedia dari respons ini" tetap ada untuk kasus Groq tanpa metadata.
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Model aktif `gemini-3.5-flash-lite`, user `uicheck` koreksi lewat UI: modal hanya berisi header, panel Sebelum/Sesudah, Perbaikan, dan tombol; `Sisa penggunaan` tidak ada, teks `tidak tersedia` tidak ada, hasil koreksi tampil normal.
+- Model aktif `groq/qwen3.8-27b`: modal yang sama menampilkan `Sisa penggunaan` + `Request 99% · Token 97%` + hitung mundur reset, jadi perilaku Groq tidak berubah.
+- `npm run build` + deploy lulus; user uji `uicheck` dihapus; pilihan model di admin dikembalikan ke `groq/qwen3.8-27b` (pilihan yang sedang aktif sebelum pengujian).

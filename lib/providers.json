@@ -7,11 +7,26 @@
     "keyPlaceholder": "AIzaSy...",
     "keyUrl": "https://aistudio.google.com/apikey",
     "models": [
-      { "id": "gemini-3.8-flash", "label": "Gemini 3.8 Flash (paling pintar)" },
-      { "id": "gemini-3.5-flash-lite", "label": "Gemini 3.5 Flash-Lite (paling cepat)" },
-      { "id": "gemini-3.6-flash", "label": "Gemini 3.6 Flash" },
-      { "id": "gemini-3.1-flash-lite", "label": "Gemini 3.1 Flash-Lite" },
-      { "id": "gemini-2.5-flash", "label": "Gemini 2.5 Flash (khusus pengguna lama)" }
+      {
+        "id": "gemini-3.5-flash-lite",
+        "label": "Gemini 3.5 Flash-Lite (stabil)"
+      },
+      {
+        "id": "gemini-flash-lite-latest",
+        "label": "Gemini Flash-Lite terbaru"
+      },
+      {
+        "id": "gemini-3.1-flash-lite",
+        "label": "Gemini 3.1 Flash-Lite"
+      },
+      {
+        "id": "gemini-3.8-flash",
+        "label": "Gemini 3.8 Flash (paling pintar)"
+      },
+      {
+        "id": "gemini-3.6-flash",
+        "label": "Gemini 3.6 Flash"
+      }
     ]
   },
   "groq": {
@@ -22,9 +37,18 @@
     "keyPlaceholder": "gsk_...",
     "keyUrl": "https://console.groq.com/keys",
     "models": [
-      { "id": "llama-3.3-70b-versatile", "label": "Llama 3.3 70B" },
-      { "id": "openai/gpt-oss-120b", "label": "GPT-OSS 120B" },
-      { "id": "llama-3.1-8b-instant", "label": "Llama 3.1 8B Instant (tercepat)" }
+      {
+        "id": "openai/gpt-oss-120b",
+        "label": "GPT-OSS 120B"
+      },
+      {
+        "id": "openai/gpt-oss-20b",
+        "label": "GPT-OSS 20B (paling cepat)"
+      },
+      {
+        "id": "qwen/qwen3.8-27b",
+        "label": "Qwen 3.8 27B"
+      }
     ]
   },
   "cerebras": {
@@ -35,8 +59,14 @@
     "keyPlaceholder": "csk-...",
     "keyUrl": "https://cloud.cerebras.ai/",
     "models": [
-      { "id": "llama-3.3-70b", "label": "Llama 3.3 70B" },
-      { "id": "gpt-oss-120b", "label": "GPT-OSS 120B" }
+      {
+        "id": "llama-3.3-70b",
+        "label": "Llama 3.3 70B"
+      },
+      {
+        "id": "gpt-oss-120b",
+        "label": "GPT-OSS 120B"
+      }
     ]
   },
   "openrouter": {
@@ -47,9 +77,18 @@
     "keyPlaceholder": "sk-or-v1-...",
     "keyUrl": "https://openrouter.ai/keys",
     "models": [
-      { "id": "openrouter/free", "label": "Router gratis otomatis" },
-      { "id": "nvidia/nemotron-3-super-120b-a12b:free", "label": "Nemotron 3 Super 120B (gratis)" },
-      { "id": "qwen/qwen3.8-27b:free", "label": "Qwen 3.8 27B (gratis)" }
+      {
+        "id": "openrouter/free",
+        "label": "Router gratis otomatis"
+      },
+      {
+        "id": "nvidia/nemotron-3-super-120b-a12b:free",
+        "label": "Nemotron 3 Super 120B (gratis)"
+      },
+      {
+        "id": "qwen/qwen3.8-27b:free",
+        "label": "Qwen 3.8 27B (gratis)"
+      }
     ]
   }
 }

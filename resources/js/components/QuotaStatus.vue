@@ -1,9 +1,5 @@
 <template>
-  <div v-if="data.engine" class="text-xs text-[var(--color-muted)] leading-relaxed" role="status">
-    <template v-if="data.engine === 'gemini'">
-      Sisa kuota Gemini tidak tersedia dari respons ini.
-      <a href="https://aistudio.google.com/rate-limit" target="_blank" rel="noopener noreferrer" class="underline">Lihat AI Studio</a>.
-    </template>
+  <div v-if="visible" class="text-xs text-[var(--color-muted)] leading-relaxed" role="status">
     <template v-if="quota">
       <p class="font-semibold">Sisa penggunaan</p>
       <p v-if="requestPercent !== null || tokenPercent !== null">
@@ -30,6 +26,8 @@ const quota = computed(() => {
   const value = props.data.quota || [...(props.data.attempts || [])].reverse().find(item => item.provider === 'groq' && item.quota)?.quota;
   return value && Object.keys(value).length ? value : null;
 });
+// Gemini tidak mengirim header kuota: sembunyikan kartu, bukan menampilkan pesan kosong.
+const visible = computed(() => Boolean(quota.value) || props.data.engine === 'groq');
 const now = ref(Date.now());
 const deadline = ref(null);
 const requestDeadline = ref(null);
