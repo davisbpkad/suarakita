@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { serverAiOptions, audioParts, transcribeAudio } = require('../lib/serverAi.js');
+const options = serverAiOptions({ GROQ_API_KEY: 'secret' });
+assert.equal(options.groqKey, 'secret');
+assert.equal(options.allowGroq, true);
+assert.equal(options.geminiKey, undefined);
+assert.equal(options.groqModel, 'openai/gpt-oss-120b');
+assert.throws(() => audioParts(Buffer.alloc(0), 'audio/webm'));
+assert.throws(() => audioParts(Buffer.from('audio'), 'text/html'));
+const parts = audioParts(Buffer.from('audio'), 'audio/webm');
+assert.equal(parts[1].inlineData.data, Buffer.from('audio').toString('base64'));
+assert.equal(parts[1].inlineData.mimeType, 'audio/webm');
+const result = await transcribeAudio(Buffer.from('audio'), 'audio/webm', { apiKey: 'synthetic', language: 'id-ID' }, async (url, options) => {
+  assert.equal(url, 'https://api.groq.com/openai/v1/audio/transcriptions');
+  assert.equal(options.headers.Authorization, 'Bearer synthetic');
+  assert.equal(options.body.get('model'), 'whisper-large-v3-turbo');
+  assert.equal(options.body.get('language'), 'id');
+  assert.equal(options.body.get('file').size, 5);
+  return new Response(JSON.stringify({ text: 'Andi rapat besok.' }));
+});
+assert.equal(result.text, 'Andi rapat besok.');
+assert.equal(result.engine, 'groq');
+await assert.rejects(transcribeAudio(Buffer.from('audio'), 'audio/webm', { apiKey: 'synthetic' }, async () => new Response('secret upstream', { status: 429 })), error => error.status === 429 && !error.message.includes('secret'));
+console.log('Server AI: Groq-only routing dan validasi audio lulus (tanpa provider nyata)');

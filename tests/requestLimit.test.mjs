@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { createRequestLimit } = require('../lib/requestLimit.js');
+let time = 0;
+const acquire = createRequestLimit({ maxRequests: 3, maxActive: 1, windowMs: 100, now: () => time });
+const release = acquire();
+assert.equal(typeof release, 'function');
+assert.equal(acquire(), null);
+release(); release();
+acquire()(); acquire()();
+assert.equal(acquire(), null);
+time = 100;
+assert.equal(typeof acquire(), 'function');
+console.log('Limit: konkurensi, frekuensi, release idempoten, reset lulus');

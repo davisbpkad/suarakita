@@ -15,6 +15,15 @@ export function countdown(deadline, now = Date.now()) {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
+/** Only parse explicit ordered duration units; unknown provider formats stay unknown. */
+export function resetDeadline(value, now = Date.now()) {
+  if (typeof value !== 'string' || !/^(?=\d)(?:\d+(?:\.\d+)?h)?(?:\d+(?:\.\d+)?m(?!s))?(?:\d+(?:\.\d+)?s)?(?:\d+(?:\.\d+)?ms)?$/.test(value)) return null;
+  const units = { h: 3600000, m: 60000, s: 1000, ms: 1 };
+  const duration = [...value.matchAll(/(\d+(?:\.\d+)?)(ms|h|m|s)/g)].reduce((sum, match) => sum + Number(match[1]) * units[match[2]], 0);
+  const result = now + Math.ceil(duration);
+  return Number.isSafeInteger(result) ? result : null;
+}
+
 export function countAttempts(previous, attempts = []) {
   const counts = { ...previous };
   for (const attempt of attempts) {

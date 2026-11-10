@@ -4,10 +4,8 @@
       :languages="availableLanguages"
       :current-language="currentLanguage"
       :current-lang="currentLangObj"
-      :has-api-key="hasApiKey"
       :transcript="transcriptText"
       @select-language="setLanguage"
-      @open-ai-config="showAiConfigModal = true"
       @clear="clearTranscript"
       @download="downloadTranscript"
     />
@@ -58,20 +56,22 @@
 
     <CorrectionModal
       v-if="showCorrectionModal"
+      :loading="loadingAction === 'correction'"
       :data="correctionData"
-      @close="showCorrectionModal = false"
+      @close="closeCorrection"
       @apply="applyCorrection"
     />
 
     <MeetingNotesModal
       v-if="showMomModal"
+      :loading="loadingAction === 'mom'"
       :data="momData"
-      @close="showMomModal = false"
+      @close="closeNotes"
       @download="downloadMomMarkdown"
     />
 
     <AiConfigModal
-      v-if="showAiConfigModal"
+      v-if="showAiConfigModal && !serverManaged"
       v-model:provider="selectedProvider"
       v-model:api-key="geminiApiKey"
       v-model:model="selectedGeminiModel"
@@ -83,6 +83,17 @@
       @save="saveApiKey"
       @remove="removeApiKey"
     />
+    <div v-if="showAiConfigModal && serverManaged" class="modal-overlay" @click.self="showAiConfigModal = false" @keydown.esc="showAiConfigModal = false">
+      <section role="dialog" aria-modal="true" aria-labelledby="server-ai-title" class="modal-panel flex flex-col gap-5 text-[var(--color-ink)]">
+        <h2 id="server-ai-title" class="font-bold text-lg">Pengaturan AI</h2>
+        <div class="rounded-2xl bg-[var(--color-cream)] p-4 text-sm leading-relaxed space-y-3">
+          <p><strong>Pengetikan langsung:</strong> pengenalan suara browser. Teks muncul selama Anda berbicara.</p>
+          <p><strong>Koreksi dan notulen:</strong> Groq GPT-OSS 120B. Key dikelola server, tidak perlu diisi di sini.</p>
+        </div>
+        <p class="text-sm leading-relaxed text-[var(--color-muted)]">Teks dikirim ke Groq saat koreksi atau notulen dipilih. Pengenalan suara browser dapat membutuhkan internet.</p>
+        <button autofocus class="btn-primary self-end" @click="showAiConfigModal = false">Tutup</button>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -129,6 +140,7 @@ const recordingSeconds = ref(0);
 const micLevel = ref(0);
 const micQuiet = ref(false);
 let timerInterval = null;
+const serverManaged = ref(false);
 
 const availableLanguages = LANGUAGES;
 const currentLanguage = ref(DEFAULT_LANGUAGE);
@@ -182,6 +194,7 @@ function toggleRecording() {
 }
 
 async function startRecording() {
+  if (loadingAction.value) return;
   if (!SpeechRecognizer.supported) {
     alert('Browser Anda belum mendukung Web Speech Recognition API. Silakan gunakan Google Chrome, Edge, atau browser Chromium modern.');
     return;
@@ -234,11 +247,15 @@ const sessionCounts = ref({ gemini: 0, groq: 0 });
 const selectedGroqModel = ref(PROVIDERS.groq.models[0].id);
 const selectedProvider = ref(DEFAULT_PROVIDER);
 const selectedGeminiModel = ref(PROVIDERS[DEFAULT_PROVIDER].models[0].id);
-const hasApiKey = computed(() => Boolean(geminiApiKey.value.trim() || (allowGroq.value && groqApiKey.value.trim())));
+const hasApiKey = computed(() => serverManaged.value || Boolean(geminiApiKey.value.trim() || (allowGroq.value && groqApiKey.value.trim())));
 const loadingAction = ref(null);
 const api = new ApiClient();
+let actionController;
+function closeCorrection() { actionController?.abort(); showCorrectionModal.value = false; }
+function closeNotes() { actionController?.abort(); showMomModal.value = false; }
 
 function aiOptions() {
+  if (serverManaged.value) return {};
   return {
     geminiKey: geminiApiKey.value,
     geminiModel: selectedGeminiModel.value,
@@ -249,6 +266,9 @@ function aiOptions() {
 }
 
 onMounted(() => {
+  fetch('/api/status').then(response => response.json()).then(status => {
+    serverManaged.value = Boolean(status.serverAi?.groq);
+  }).catch(() => {});
   try {
   removeLegacyKey(localStorage);
   selectedProvider.value = DEFAULT_PROVIDER;
@@ -264,6 +284,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  actionController?.abort();
   if (timerInterval) clearInterval(timerInterval);
   recognizer.stop();
   micMonitor.stop();
@@ -326,11 +347,13 @@ async function runCorrection() {
   correctionData.value = { originalText: text, correctedText: '', changes: [], method: 'nlp_builtin' };
   showCorrectionModal.value = true;
   loadingAction.value = 'correction';
+  actionController = new AbortController();
 
   try {
-    correctionData.value = await api.runAiAction('correction', text, aiOptions());
+    correctionData.value = await api.runAiAction('correction', text, aiOptions(), actionController.signal);
     sessionCounts.value = countAttempts(sessionCounts.value, correctionData.value.attempts);
   } catch (err) {
+    if (err.name === 'AbortError') return;
     showCorrectionModal.value = false;
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
   } finally {
@@ -371,11 +394,13 @@ async function runMeetingNotes() {
   momData.value = { topic: '', summary: '', summaryItems: [], decisions: [], rawMarkdown: '', method: 'nlp_builtin' };
   showMomModal.value = true;
   loadingAction.value = 'mom';
+  actionController = new AbortController();
 
   try {
-    momData.value = await api.runAiAction('notes', text, aiOptions());
+    momData.value = await api.runAiAction('notes', text, aiOptions(), actionController.signal);
     sessionCounts.value = countAttempts(sessionCounts.value, momData.value.attempts);
   } catch (err) {
+    if (err.name === 'AbortError') return;
     showMomModal.value = false;
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
   } finally {

@@ -2,13 +2,14 @@
  * Netlify Serverless Function: Koreksi Transkrip Cerdas
  */
 const { correctTranscriptWithAI } = require('../../corrector.js');
-const { buildCorsHeaders, headerValue } = require('./_cors.js');
+const { buildCorsHeaders, headerValue, isAllowedOrigin } = require('./_cors.js');
 const { validateRequest } = require('../../lib/requestValidation.js');
 const { runAiAction } = require('../../lib/aiActions.js');
 
 
 exports.handler = async (event) => {
   const headers = buildCorsHeaders(event, 'POST, OPTIONS');
+  if (!isAllowedOrigin(event)) return { statusCode: 403, headers, body: JSON.stringify({ error: 'Origin tidak diizinkan.' }) };
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers };

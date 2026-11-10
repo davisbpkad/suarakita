@@ -78,27 +78,6 @@
         </div>
       </div>
 
-      <!-- AI Config -->
-      <div class="relative group">
-        <button
-          @click="emit('open-ai-config')"
-          class="btn-icon"
-          aria-label="Pengaturan AI"
-        >
-          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
-        </button>
-        <!-- Status dot for API key -->
-        <span
-          v-if="hasApiKey"
-          class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[var(--color-bg)] pointer-events-none"
-        ></span>
-        <!-- Tooltip label -->
-        <div class="theme-tooltip" role="tooltip">
-          <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-yolk)] shrink-0"></span>
-          <span>Pengaturan AI</span>
-        </div>
-      </div>
-
       <!-- Download -->
       <div class="relative group">
         <button
@@ -178,11 +157,10 @@ const props = defineProps({
   languages: { type: Array, required: true },
   currentLanguage: { type: String, required: true },
   currentLang: { type: Object, required: true },
-  hasApiKey: { type: Boolean, default: false },
   transcript: { type: String, default: '' },
 });
 
-const emit = defineEmits(['select-language', 'open-ai-config', 'clear', 'download']);
+const emit = defineEmits(['select-language', 'clear', 'download']);
 
 // Menu buka/tutup murni UI, jadi tinggal di sini.
 const showLangMenu = ref(false);

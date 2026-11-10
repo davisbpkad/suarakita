@@ -8,8 +8,17 @@
  * Dengan begitu tidak ada kuota server yang bisa dihabiskan pihak lain.
  */
 
+const { validOrigin } = require('../../lib/requestOrigin.js');
+
 function headerValue(headers, name) {
-  return headers?.[name] || headers?.[name.toLowerCase()] || headers?.[name.toUpperCase()] || '';
+  const key = Object.keys(headers || {}).find(key => key.toLowerCase() === name.toLowerCase());
+  return key ? headers[key] : '';
+}
+
+function isAllowedOrigin(event) {
+  const host = headerValue(event.headers, 'Host');
+  // Netlify public functions are served over HTTPS; do not trust forwarded protocol.
+  return validOrigin(headerValue(event.headers, 'Origin'), `https://${host}`);
 }
 
 function buildCorsHeaders(event, methods) {
@@ -26,7 +35,7 @@ function buildCorsHeaders(event, methods) {
 
   // Hanya pantulkan origin kalau host-nya sama dengan host situs ini.
   try {
-    if (origin && host && new URL(origin).host === host) {
+    if (origin && isAllowedOrigin(event)) {
       headers['Access-Control-Allow-Origin'] = origin;
     }
   } catch (e) {
@@ -36,4 +45,4 @@ function buildCorsHeaders(event, methods) {
   return headers;
 }
 
-module.exports = { buildCorsHeaders, headerValue };
+module.exports = { buildCorsHeaders, headerValue, isAllowedOrigin };

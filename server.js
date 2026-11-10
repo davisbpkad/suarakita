@@ -1,25 +1,60 @@
+const { existsSync } = require('node:fs');
+const { loadEnvFile } = require('node:process');
+if (existsSync(require('node:path').join(__dirname, '.env'))) loadEnvFile(require('node:path').join(__dirname, '.env'));
 const express = require('express');
+const { serverAiOptions, audioParts, transcribeAudio } = require('./lib/serverAi.js');
 const path = require('path');
 const { validateRequest } = require('./lib/requestValidation.js');
 const { runAiAction } = require('./lib/aiActions.js');
+const { validOrigin } = require('./lib/requestOrigin.js');
+const { createRequestLimit } = require('./lib/requestLimit.js');
 const { correctTranscriptWithNLP, correctTranscriptWithAI, correctTranscriptStream } = require('./corrector.js');
 const { generateMeetingNotesWithNLP, generateMeetingNotesWithAI, generateMeetingNotesStream } = require('./meetingNotes.js');
 
 const app = express();
 const PORT = process.env.PORT || 3088;
+const acquireRequest = createRequestLimit();
 
 /** Batas panjang teks masuk, selaras dengan fungsi Netlify. */
 const MAX_TEXT_LENGTH = 50000;
 
 // Middleware
+app.use((req, res, next) => {
+  res.set({
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'no-referrer',
+    'Permissions-Policy': 'camera=(), geolocation=(), microphone=(self)',
+    'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+  });
+  next();
+});
+app.use((req, res, next) => {
+  const host = req.get('host');
+  if (![`127.0.0.1:${PORT}`, `localhost:${PORT}`].includes(host)) {
+    return res.status(403).set('Cache-Control', 'no-store').json({ error: 'Host tidak diizinkan.' });
+  }
+  next();
+});
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
+  if (!validOrigin(req.get('origin'), `${req.protocol}://${req.get('host')}`)) return res.status(403).json({ error: 'Origin tidak diizinkan.' });
   if (req.method === 'POST') {
-    const invalid = validateRequest(req.body);
+    const invalid = req.path === '/transcribe' ? null : validateRequest(req.body);
     if (invalid) return res.status(invalid.status).json({ error: invalid.error });
+    const release = acquireRequest();
+    if (!release) return res.status(429).set('Retry-After', '60').json({ error: 'Batas request lokal tercapai. Coba lagi nanti.' });
+    res.once('close', release);
+    res.once('finish', release);
   }
+  next();
+});
+app.use('/api', (req, res, next) => {
+  const controller = new AbortController();
+  req.aiSignal = controller.signal;
+  res.on('close', () => { if (!res.writableEnded) controller.abort(); });
   next();
 });
 
@@ -27,7 +62,7 @@ app.use('/api', (req, res, next) => {
 function startSse(res) {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream; charset=utf-8',
-    'Cache-Control': 'no-cache, no-transform',
+    'Cache-Control': 'no-store, no-transform',
     Connection: 'keep-alive',
     'X-Accel-Buffering': 'no',
   });
@@ -59,18 +94,34 @@ async function streamResponse(res, run, errorMessage) {
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'ok',
+    serverAi: { gemini: Boolean(process.env.GEMINI_API_KEY), groq: Boolean(process.env.GROQ_API_KEY) },
     app: 'SuaraKita - Voice to Text, Transcript Correction & Meeting Minutes',
     time: new Date().toISOString()
   });
+});
+
+app.post('/api/transcribe', express.raw({ type: 'audio/*', limit: '10mb' }), async (req, res) => {
+  let parts;
+  try { parts = audioParts(req.body, req.get('content-type')?.split(';')[0]); }
+  catch { return res.status(400).json({ error: 'Audio kosong, terlalu besar, atau format tidak didukung.' }); }
+  if (!process.env.GROQ_API_KEY) return res.status(503).json({ error: 'Key Groq belum dikonfigurasi di server.' });
+  try {
+    const language = req.get('x-audio-language') || 'id';
+    if (!/^[a-z]{2,3}(-[A-Za-z]{2,8})?$/.test(language)) return res.status(400).json({ error: 'Bahasa audio tidak valid.' });
+    res.json(await transcribeAudio(req.body, req.get('content-type').split(';')[0], { apiKey: process.env.GROQ_API_KEY, language, signal: req.aiSignal }));
+  } catch (error) {
+    res.status(error.status === 429 ? 429 : 502).json({ error: 'Transkripsi Groq gagal. Periksa koneksi, kuota, atau akses akun.', providerStatus: error.status || null });
+  }
 });
 
 // Endpoint Koreksi Transkrip (Transcript Correction)
 app.post('/api/correct-transcript', async (req, res) => {
   const { text, model, provider, stream } = req.body || {};
   const apiKey = req.headers['x-api-key'] || req.body?.apiKey || '';
-  if (req.body.ai !== undefined) {
-    if (stream) return streamResponse(res, () => runAiAction('correction', text, req.body.ai), 'Gagal melakukan koreksi transkrip.');
-    try { return res.json(await runAiAction('correction', text, req.body.ai)); }
+  if (process.env.GROQ_API_KEY || req.body.ai !== undefined) {
+    const options = { ...(process.env.GROQ_API_KEY ? serverAiOptions() : req.body.ai), signal: req.aiSignal };
+    if (stream) return streamResponse(res, () => runAiAction('correction', text, options), 'Gagal melakukan koreksi transkrip.');
+    try { return res.json(await runAiAction('correction', text, options)); }
     catch { return res.status(502).json({ error: 'Gagal melakukan koreksi transkrip.' }); }
   }
   if (!text || !text.trim()) {
@@ -102,9 +153,10 @@ app.post('/api/correct-transcript', async (req, res) => {
 app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res) => {
   const { text, model, provider, stream } = req.body || {};
   const apiKey = req.headers['x-api-key'] || req.body?.apiKey || '';
-  if (req.body.ai !== undefined) {
-    if (stream) return streamResponse(res, () => runAiAction('notes', text, req.body.ai), 'Gagal membuat notulen rapat.');
-    try { return res.json(await runAiAction('notes', text, req.body.ai)); }
+  if (process.env.GROQ_API_KEY || req.body.ai !== undefined) {
+    const options = { ...(process.env.GROQ_API_KEY ? serverAiOptions() : req.body.ai), signal: req.aiSignal };
+    if (stream) return streamResponse(res, () => runAiAction('notes', text, options), 'Gagal membuat notulen rapat.');
+    try { return res.json(await runAiAction('notes', text, options)); }
     catch { return res.status(502).json({ error: 'Gagal membuat notulen rapat.' }); }
   }
   if (!text || !text.trim()) {

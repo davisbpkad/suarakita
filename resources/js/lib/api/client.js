@@ -26,13 +26,14 @@ export class ApiClient {
    * Kalau server tidak mendukung SSE (mis. Netlify Functions v1), balasan JSON
    * biasa diterima apa adanya sehingga fitur tetap jalan tanpa streaming.
    */
-  async _stream(path, body, apiKey, onRaw) {
+  async _stream(path, body, apiKey, onRaw, signal) {
     const headers = { 'Content-Type': 'application/json' };
     if (apiKey) headers['X-Api-Key'] = apiKey;
     const res = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
+      signal,
     });
 
     const contentType = res.headers.get('content-type') || '';
@@ -90,10 +91,10 @@ export class ApiClient {
     return this._post('/api/correct-transcript', { text, model, provider }, apiKey);
   }
 
-  async runAiAction(action, text, ai) {
+  async runAiAction(action, text, ai, signal) {
     if (!['correction', 'notes'].includes(action)) throw new Error('Aksi tidak dikenal.');
     const path = action === 'correction' ? '/api/correct-transcript' : '/api/meeting-notes';
-    return this._stream(path, { text, ai, stream: true }, '', () => {});
+    return this._stream(path, { text, ai, stream: true }, '', () => {}, signal);
   }
 
   async generateMeetingNotes(text, apiKey, model, provider) {

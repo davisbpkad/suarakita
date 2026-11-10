@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { quotaPercent } from '../resources/js/lib/quotaPercent.mjs';
+const require = createRequire(import.meta.url);
+const { readQuota } = require('../lib/providerQuota.js');
+assert.equal(quotaPercent(999, 1000), 99);
+assert.equal(quotaPercent(7029, 8000), 87);
+assert.equal(quotaPercent(0, 8000), 0);
+assert.equal(quotaPercent(100, undefined), null);
+assert.equal(quotaPercent(100, 0), null);
+assert.equal(quotaPercent(110, 100), 100);
+const quota = readQuota({ 'x-ratelimit-limit-requests': '1000', 'x-ratelimit-limit-tokens': '8000' });
+assert.equal(quota.limitRequests, 1000);
+assert.equal(quota.limitTokens, 8000);
+console.log('Persentase kuota: batas provider, pembulatan konservatif, dan data hilang lulus');

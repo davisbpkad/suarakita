@@ -4,6 +4,26 @@ Tanggal: 10 November 2026
 Status: Implementasi dimulai; perlindungan penyimpanan key tahap pertama selesai. Rencana keseluruhan belum selesai.  
 Lokasi proyek: `/Users/davistanjung/Documents/web-saya`
 
+## Pembaruan server-managed AI — 10 November 2026
+
+### Tampilan kuota Groq sederhana
+
+QuotaStatus bersama untuk koreksi dan notulen menampilkan persentase request/token tersisa, bukan rincian reset berulang. Persentase dihitung dari remaining/limit header Groq, dibulatkan ke bawah, maksimal 100%; tanpa limit tidak mengarang persentase. Label respons terakhir tetap ada karena bukan saldo real-time akun. Retry-After tetap tampil saat perlu menunggu. Parser allowlist dan metadata fallback kini meneruskan limitRequests/limitTokens. RED modul persentase belum tersedia; GREEN npm test 22 berkas lulus, build 29 modul lulus. Backend 3088 dimulai ulang setelah verifikasi PID/cwd. Visual browser dan header nyata setelah perubahan ini belum diuji. Tidak ada commit/push.
+
+### Penggantian STT ke Groq Whisper Turbo
+
+**Keputusan terbaru pengguna:** kembalikan pengetikan langsung seperti sebelumnya. App.vue kembali memakai SpeechRecognizer/Web Speech API saat merekam, tanpa menunggu Stop. Cabang MediaRecorder/unggah audio di UI dihapus. Koreksi dan notulen tetap memakai Groq GPT-OSS 120B dengan key server. Dialog informasi disesuaikan. Endpoint Whisper tetap tersedia di backend tetapi tidak dipanggil UI. Setelah perubahan, build lulus 28 modul dan npm test lulus 21 berkas; mikrofon fisik belum diuji. Refresh halaman 3088 untuk bundle baru. Tidak ada commit/push.
+
+Pengguna menyetujui `whisper-large-v3-turbo` untuk STT. Endpoint lokal `/api/transcribe` sekarang memakai multipart Groq, key backend yang sama, batas audio 10 MB, timeout 120 detik dan disconnect signal. Bahasa UI diteruskan sebagai kode ISO (default id). Koreksi/notulen tetap GPT-OSS 120B. UI tidak lagi mensyaratkan key Gemini untuk mode server-managed dan menjelaskan audio dikirim ke Groq setelah Stop. Key Gemini tidak dihapus.
+
+RED: tes transcribeAudio gagal TypeError karena fungsi belum tersedia. GREEN: `npm test` 21 berkas lulus, termasuk endpoint/model multipart, bahasa, upload dan error 429 yang tidak membocorkan isi respons. `npm run build` lulus 28 modul. Tes nyata WAV sintetis berbahasa Inggris: Whisper Turbo berhasil 1576 ms; melalui HTTP backend 3088 setelah restart berhasil 200 dalam 1659 ms. Audio kosong melalui HTTP ditolak 400. Teks menghasilkan Andy untuk nama Andi, sehingga tidak mengklaim akurasi nama sempurna. Ini bukan benchmark komparatif Gemini atau bukti kualitas bahasa Indonesia/mikrofon fisik. Browser recording E2E dan deployment Netlify belum diuji. Tidak ada commit/push.
+
+Pengguna meminta memakai key dalam `.env`, tanpa commit/push kredensial. Server kini membaca `.env` menggunakan Node loadEnvFile. Key tidak dikirim ke frontend. Jalur lokal memakai Gemini 2.5 Flash untuk unggah audio setelah Stop (maksimum 10 MB), dan Groq `openai/gpt-oss-120b` untuk koreksi/notulen. UI menampilkan informasi provider, bukan form key ketika kedua key server tersedia. Ini bukan streaming langsung. Netlify belum mendapat integrasi audio/key bersama; jangan merilis perubahan sebagai dukungan deployment publik.
+
+Bukti: tes baru RED karena modul serverAi belum tersedia; GREEN `npm test` menjalankan 21 berkas. Build lulus 28 modul, diff check bersih. Tes Express secara eksplisit mengosongkan key agar tidak memakai kredensial nyata. Pemeriksaan metadata Gemini/Groq keduanya HTTP 200. Koreksi dan notulen nyata memakai Groq, outcome success. Backend 3088 dimulai ulang setelah memverifikasi PID/cwd; request koreksi melalui HTTP 3088 memberi 200 engine groq. Tidak mengakses port 3000.
+
+Blokir Gemini: audio sintetis WAV dibuat dengan macOS say lalu dikirim ke Gemini 2.5 Flash; HTTP 404. Request teks minimal juga 404 dengan pesan provider: model tidak tersedia untuk pengguna baru, menyarankan gemini-3.8-flash. Metadata 200 tidak membuktikan inference tersedia. Tidak mengganti model tanpa keputusan pengguna. Mikrofon fisik, E2E perekaman, coverage, dan kualitas lengkap belum diuji. Tidak ada commit atau push; `.env` tetap diabaikan Git.
+
 ## 1. Tujuan dan aturan konteks
 
 Membuat Koreksi Teks dan Buat Notulen memahami transkrip mentah tanpa tanda baca, memakai Gemini sebagai AI utama, Groq sebagai cadangan, dan mesin lokal sebagai cadangan terakhir. Lindungi API key dan buktikan perilaku melalui pengujian aktual.
@@ -507,3 +527,80 @@ Parser allowlist `lib/providerQuota.js` menerima remaining request/token nonnega
 RED: `node tests/providerQuota.test.mjs` gagal karena parser belum ada. GREEN: perintah sama lulus 11 pemeriksaan input valid/hilang/invalid/negatif/desimal/panjang. `npm run test:ai-actions` lulus enam skenario dengan assertion snapshot Groq diteruskan. `npm test` lulus sebelas skrip; transport tiruan 20 kombinasi kini juga memeriksa metadata error dan snapshot HTTP Groq sukses. `npm run build` lulus (27 modul), sebelum perubahan teks penjelas modal terakhir.
 
 Batas: tampilan kuota belum dibuktikan melalui browser; header aktual akun/provider belum diuji. Penamaan jendela sengaja tidak mengklaim harian/menit sebelum verifikasi dokumentasi. Retry-after ditampilkan sebagai nilai provider, belum countdown/penjadwalan retry. Penghitung sesi belum dibuat. Transport sukses SSE lama belum menangkap snapshot (jalur orkestrasi baru memakai HTTP generate). Backend 3088 perlu dimulai ulang untuk metadata baru. Tidak ada klaim seluruh QUO-01/02/03 selesai.
+
+## 21. Countdown, penghitung sesi, dan bukti browser
+
+Permintaan pengguna: uji tampilan kuota melalui browser dan header provider asli, serta buat countdown/penghitung sesi.
+
+- Countdown menggunakan Retry-After berupa detik atau tanggal HTTP, bukan asumsi reset kuota. Tidak melakukan retry otomatis. Timer dibersihkan ketika modal dilepas dan berhenti saat nol.
+- Penghitung dalam memori menghitung percobaan Gemini/Groq yang dilaporkan pada hasil selesai. Ditampilkan sebagai “Pemakaian sesi ini ... percobaan terlapor”, bukan kuota akun. Request putus sebelum hasil diterima belum dapat dihitung; ini batas yang sengaja ditampilkan lewat istilah terlapor.
+- Penghitung reset saat refresh; menghapus key tidak menghapus riwayat penghitung sesi.
+- RED: `node tests/quotaClock.test.mjs` gagal karena helper belum tersedia. GREEN: 11 assertion lulus, mencakup detik/tanggal, invalid, nol, expired, dan penghitung dua provider.
+- `npm run build` lulus (28 modul).
+- Playwright pada 127.0.0.1:3088 memakai respons fetch tiruan lokal, tanpa mengirim key ke provider. Assertion membuktikan label Groq, request 940/token 1200, disclaimer snapshot, dan counter Gemini 1/Groq 1 setelah fallback terlapor.
+- Percobaan countdown pertama sudah mencapai nol saat diperiksa, sehingga tidak membuktikan pergerakan. Tes diulang dengan Retry-After 60 detik: nilai aktual turun dari 01:00 ke 00:59 setelah 1,5 detik. Ini bukti pergerakan timer browser, bukan header asli.
+- Refresh menghapus mock fetch dan membuktikan counter kembali Gemini 0/Groq 0. Snapshot setelah refresh `.playwright-mcp/page-2026-11-10T15-25-47-337Z.yml`; snapshot awal `.playwright-mcp/page-2026-11-10T15-25-09-936Z.yml`.
+- Header provider asli: **TERBLOKIR**, tidak ada key aktif pada modal (diperiksa sebagai boolean saja, tidak dibaca/dicatat nilainya). Jangan mengklaim tes provider asli lulus. Pengguna harus memasukkan key lewat modal, bukan chat; gunakan transkrip sintetis untuk percobaan nyata yang diizinkan.
+
+Batas lanjutan: countdown ini khusus Retry-After, bukan countdown format durasi reset Groq. Belum ada enforcement cooldown server. Dua entri console browser masih perlu ditinjau. Backend yang aktif masih perlu restart untuk perubahan metadata server dari tahap sebelumnya; tes UI di sini sengaja memakai respons tiruan. Keamanan publik, transport abort, model provider aktif, dan matriks lengkap belum selesai.
+
+## 22. Countdown reset request/token
+
+Ditambahkan parser durasi eksplisit berurutan h/m/s/ms, termasuk pecahan, untuk countdown reset request dan token secara terpisah. Format tidak dikenal tetap tidak mendapat countdown. UI memberi label “perkiraan dari snapshot”, bukan jaminan kuota pulih. Timer berhenti setelah seluruh deadline lewat, tanpa retry otomatis.
+
+RED `node tests/quotaClock.test.mjs`: export resetDeadline belum ada. GREEN sesudah perubahan: 22 assertion lulus, termasuk format gabungan, milidetik, nol, duplikasi unit, angka tanpa unit, negatif, dan teks invalid. `npm run build` lulus (28 modul).
+
+Playwright respons tiruan pada 127.0.0.1:3088 membuktikan reset request turun 01:30 → 01:29 dan token 00:30 → 00:29. Snapshot navigasi `.playwright-mcp/page-2026-11-10T15-30-21-777Z.yml`. Console warning/error pada navigasi pengujian ini: nol pesan. Setelah tes halaman dimuat ulang untuk menghapus mock fetch; snapshot `.playwright-mcp/page-2026-11-10T15-30-48-267Z.yml`.
+
+Header provider asli tetap TERBLOKIR: pemeriksaan awal modal menunjukkan tidak ada key aktif. Tidak mencari key dari filesystem, environment, atau sumber lain. Pengguna perlu memasukkan key melalui modal untuk tes asli. Countdown masih berjangkar saat komponen menerima snapshot; belum mempertahankan waktu observasi server saat modal dipasang ulang. Ini gap akurasi yang perlu ditangani sebelum menyebut waktu reset akurat lintas buka/tutup modal.
+
+## 23. Waktu observasi snapshot dipertahankan
+
+Parser kuota kini menambahkan observedAt saat header dibaca. Metadata error Groq mempertahankan timestamp tersebut setelah revalidasi. Countdown memakai timestamp snapshot, bukan waktu modal dipasang. Snapshot tanpa timestamp tidak diberi countdown, daripada mengarang waktu acuan. Perbedaan jam server/browser masih dapat memengaruhi perkiraan; label perkiraan tetap berlaku.
+
+RED: `node tests/providerQuota.test.mjs` gagal pada assertion “snapshot punya waktu observasi”. GREEN: perintah sama lulus setelah perubahan; assertion parser lama tetap berjalan. `npm test` lulus 11 skrip. `npm run build` lulus 28 modul.
+
+Playwright dengan respons tiruan: header reset 1m dan observedAt 30 detik sebelumnya menghasilkan UI “Reset jendela request: 00:30”, bukan 01:00. Ini membuktikan umur snapshot dihormati saat mount; belum merupakan tes buka-tutup ulang komponen yang sama. Snapshot navigasi `.playwright-mcp/page-2026-11-10T15-36-42-556Z.yml`. Halaman dimuat ulang sesudah tes untuk menghapus mock, snapshot `.playwright-mcp/page-2026-11-10T15-36-57-508Z.yml`.
+
+Header asli tetap belum diuji karena key belum disediakan. Backend aktif perlu restart agar menyertakan observedAt terbaru. Jangan menyatakan tes provider asli, deployment publik, atau keseluruhan rencana telah selesai.
+
+## 24. Runner seluruh tes dan regresi backend/browser aktual
+
+`npm test` sekarang menemukan seluruh `tests/*.test.mjs` secara otomatis lewat tests/run.mjs, menjalankan berkas berurutan pada proses terpisah, gagal pada exit nonzero/timeout, dan menolak suite kosong. Ini mencegah tes tambahan terlewat dari skrip utama. Eksekusi aktual: 17 berkas lulus, termasuk tes Express 28 pemeriksaan pada 3089, aksi AI, klien dua-key, label, parser kuota dan countdown. Tidak mengklaim 17 berkas sama dengan seluruh variasi matriks selesai.
+
+Server 3088 lama diverifikasi cwd proyek, dihentikan, lalu dimulai ulang pada 127.0.0.1 dengan kode terbaru. Playwright tanpa mock fetch membuktikan preset → koreksi lokal → label Mesin lokal → Gunakan Hasil mengubah editor tanpa koma ganda → Buat Notulen lokal. Hasil notulen aktual menampilkan progres 80%/100%, nominal Rp 2.500.000, dan tenggat besok sore/H-7. Snapshot navigasi `.playwright-mcp/page-2026-11-10T15-41-59-077Z.yml`; excerpt/assertion tercatat dalam sesi tool.
+
+Ini menutup retest browser bug koma ganda dan memakai backend terbaru, tetapi hanya contoh preset pendek. Contoh panjang, AI asli, header asli, download, mikrofon fisik dan seluruh variasi negatif masih belum dibuktikan. Key asli belum disediakan. Tidak ada panggilan provider nyata atau akses port 3000.
+
+## 25. Penolakan origin lintas situs
+
+Express dan kedua handler Netlify kini menolak Origin yang tidak sama sebelum memanggil aksi/provider. Origin null, malformed, memiliki path, dan beda protokol ditolak. Netlify mengharuskan HTTPS sesuai deployment publik dan tidak mempercayai forwarded-proto. Header lookup Netlify kini case-insensitive. Klien tanpa Origin tetap didukung dengan key sendiri; pemeriksaan ini bukan autentikasi dan tidak mencegah non-browser memalsukan header. Validasi Host allowlist masih pekerjaan terpisah.
+
+RED `node tests/requestOrigin.test.mjs`: origin evil menghasilkan 200 bukan 403. GREEN: 12 pemeriksaan Netlify lulus untuk dua handler. Tes Express diperluas dengan empat origin ditolak dan satu same-origin diterima; total 33 pemeriksaan integrasi aktual lulus pada server tes 3089. `npm test` menjalankan 18 berkas dan seluruhnya lulus. Tidak ada provider asli dipanggil. Belum menguji deployment Netlify asli atau konfigurasi reverse proxy; server 3088 perlu restart untuk middleware baru. Mode dev lintas origin Vite harus ditinjau sebelum dipakai, bukan dibuka wildcard.
+
+## 26. Host lokal dan cache SSE
+
+Express kini mengizinkan Host tepat localhost:PORT atau 127.0.0.1:PORT pada seluruh rute sebelum static/body parsing. Host asing ditolak 403 untuk memperkecil risiko DNS rebinding. Ini konfigurasi server lokal, bukan konfigurasi reverse proxy publik; domain custom perlu rancangan allowlist eksplisit, tidak wildcard. Netlify tetap menggunakan hosting platform; validasi Host platform belum diuji langsung.
+
+SSE sebelumnya menimpa no-store dengan no-cache. Header kini no-store, no-transform; tes JSON/SSE memeriksanya. Awal reproduksi Host memakai fetch memberi 200 bahkan setelah fix karena permintaan tidak membuktikan override Host yang dimaksud. Tes diganti node:http agar mengirim header Host eksplisit. Dengan transport ini hasil aktual 403. Jangan menganggap kegagalan fetch tersebut bukti kontrol server masih gagal.
+
+`node tests/expressValidation.test.mjs` akhir lulus 34 pemeriksaan aktual. `npm test` lulus 18 berkas. Tidak ada provider asli dipanggil. Server 3088 belum dimulai ulang untuk middleware Host/origin terbaru; tes memakai proses terisolasi 3089. Rate limit, CSP, abort dan seluruh matriks masih belum selesai.
+
+## 27. Pembatalan transport, batas respons, dan guard lokal
+
+Pengguna mengizinkan melanjutkan sampai tahap akhir tanpa konfirmasi per tahap. Ini tidak mengizinkan mengarang hasil atau memakai key yang tidak diberikan.
+
+Perubahan:
+- AbortSignal diteruskan dari modal close/unmount ke fetch, lalu disconnect Express ke orkestrator dan client provider. Transport HTTP/SSE menghancurkan request saat abort. Netlify v1 belum memiliki propagasi disconnect yang dibuktikan.
+- Transport membatasi respons provider pada 1.000.000 byte, menangani response aborted/error, dan menyamarkan error jaringan. Batas hasil fitur tetap 200.000 karakter.
+- Server lokal memberi CSP dan header keamanan, serta guard proses 30 request valid/menit dan maksimal dua request aktif. Release idempoten pada close/finish. Limit ini bukan kuota global Netlify; deployment publik tetap diblokir sampai kontrol platform tersedia.
+- Tutup modal membatalkan request aktif; guard loading tetap mencegah tindakan bersamaan. Streaming token tetap belum dibangun; SSE baru mengirim hasil final.
+
+Bukti aktual:
+- RED transport abort: tes awal keluar 13 (unsettled top-level await), menunjukkan signal belum ditangani.
+- GREEN transport: dua client tiruan membuktikan reject AbortError dan destroy socket. Assertion tambahan respons >1MB membuktikan destroy dan penolakan.
+- Tes limiter membuktikan konkurensi, frekuensi, release ganda dan reset jendela; tes limiter dibuat bersamaan implementasi, tidak mengklaim RED yang tidak dijalankan.
+- `npm test`: 20 berkas lulus (sebelum assertion ukuran tambahan); tes transport setelah assertion tambahan juga lulus.
+- `npm run build`: lulus 28 modul. `git diff --check`: exit 0.
+
+Status akhir sementara: **BELUM SIAP RILIS PUBLIK**. Belum selesai/belum terbukti: model aktif dari dokumentasi resmi, AI/header asli (key tidak tersedia), seluruh matriks termasuk contoh panjang dan audio fisik, E2E pembatalan/CSP/limit, aksesibilitas lengkap, kuota global Netlify, streaming token, dan review coverage. Server 3088 belum restart untuk guard terbaru. Tidak ada klaim seluruh plan selesai atau coverage 80%. Tidak ada commit otomatis karena working tree berisi perubahan pengguna.

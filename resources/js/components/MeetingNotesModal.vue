@@ -12,7 +12,7 @@
         </div>
         <div class="flex items-center gap-2">
           <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs font-semibold">
-            {{ methodLabel }}
+            <span role="status">{{ loading ? 'Loading…' : 'Selesai' }}</span>
           </span>
           <button @click="emit('close')" class="btn-icon w-8 h-8">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -73,19 +73,18 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { copyToClipboard } from '../lib/utils/clipboard.js';
 import { formatMarkdownInline } from '../lib/text/markdownInline.mjs';
-import { engineLabel, fallbackLabel } from '../lib/engineLabel.mjs';
+import { fallbackLabel } from '../lib/engineLabel.mjs';
 import QuotaStatus from './QuotaStatus.vue';
 
 const props = defineProps({
   data: { type: Object, required: true },
+  loading: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['close', 'download']);
 
-const methodLabel = computed(() => engineLabel(props.data));
 
 async function copyNotes() {
   if (await copyToClipboard(props.data.rawMarkdown)) {
