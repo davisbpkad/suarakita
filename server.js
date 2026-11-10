@@ -2,24 +2,44 @@ const { existsSync } = require('node:fs');
 const { loadEnvFile } = require('node:process');
 if (existsSync(require('node:path').join(__dirname, '.env'))) loadEnvFile(require('node:path').join(__dirname, '.env'));
 const express = require('express');
-const { serverAiOptions, audioParts, transcribeAudio } = require('./lib/serverAi.js');
+const { serverAiOptions } = require('./lib/serverAi.js');
 const path = require('path');
 const { validateRequest } = require('./lib/requestValidation.js');
 const { runAiAction } = require('./lib/aiActions.js');
 const { validOrigin } = require('./lib/requestOrigin.js');
 const { createRequestLimit } = require('./lib/requestLimit.js');
+const { issueToken, verifyToken, verifyPassword, passwordUsable, TTL_MS } = require('./lib/auth.js');
 const { correctTranscriptWithNLP, correctTranscriptWithAI, correctTranscriptStream } = require('./corrector.js');
 const { generateMeetingNotesWithNLP, generateMeetingNotesWithAI, generateMeetingNotesStream } = require('./meetingNotes.js');
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = process.env.PORT || 3088;
 const acquireRequest = createRequestLimit();
+const acquireIngress = createRequestLimit({ maxRequests: 120, maxActive: 8 });
+const acquireLogin = createRequestLimit({ maxRequests: 10, maxActive: 2 });
+
+/** Password bersama + sesi cookie; tanpa APP_PASSWORD endpoint AI menolak (fail closed). */
+const APP_PASSWORD = process.env.APP_PASSWORD || '';
+const SESSION_SECRET = process.env.SESSION_SECRET || APP_PASSWORD;
+const SESSION_COOKIE = 'sk_sess';
+const PROTECTED_PATHS = new Set(['/correct-transcript', '/meeting-notes', '/generate-meeting-notes']);
+
+function readCookie(header, name) {
+  if (typeof header !== 'string') return '';
+  for (const part of header.split(';')) {
+    const index = part.indexOf('=');
+    if (index > 0 && part.slice(0, index).trim() === name) return part.slice(index + 1).trim();
+  }
+  return '';
+}
 
 /** Batas panjang teks masuk, selaras dengan fungsi Netlify. */
 const MAX_TEXT_LENGTH = 50000;
 
 // Middleware
 app.use((req, res, next) => {
+  clearTimeout(req.socket.headerDeadline);
   res.set({
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
@@ -36,13 +56,33 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  if (!validOrigin(req.get('origin'), `${req.protocol}://${req.get('host')}`)) return res.status(403).json({ error: 'Origin tidak diizinkan.' });
+  if (req.path === '/transcribe') return res.status(410).json({ error: 'Endpoint audio dinonaktifkan. Gunakan pengenalan suara browser.' });
+  if (req.method === 'POST') {
+    const release = acquireIngress();
+    if (!release) return res.status(429).set('Retry-After', '60').json({ error: 'Batas request lokal tercapai. Coba lagi nanti.' });
+    res.once('close', release);
+    res.once('finish', release);
+  }
+  next();
+});
+app.use('/api', (req, res, next) => {
+  if (!PROTECTED_PATHS.has(req.path)) return next();
+  if (!passwordUsable(APP_PASSWORD)) return res.status(503).json({ error: 'APP_PASSWORD belum diatur di .env.' });
+  if (!verifyToken(SESSION_SECRET, readCookie(req.headers.cookie, SESSION_COOKIE))) {
+    return res.status(401).json({ error: 'Perlu masuk dengan password bersama.' });
+  }
+  next();
+});
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
   if (!validOrigin(req.get('origin'), `${req.protocol}://${req.get('host')}`)) return res.status(403).json({ error: 'Origin tidak diizinkan.' });
   if (req.method === 'POST') {
-    const invalid = req.path === '/transcribe' ? null : validateRequest(req.body);
+    const invalid = PROTECTED_PATHS.has(req.path) ? validateRequest(req.body) : null;
     if (invalid) return res.status(invalid.status).json({ error: invalid.error });
     const release = acquireRequest();
     if (!release) return res.status(429).set('Retry-After', '60').json({ error: 'Batas request lokal tercapai. Coba lagi nanti.' });
@@ -91,27 +131,26 @@ async function streamResponse(res, run, errorMessage) {
 }
 
 // Health check / API status
+app.post('/api/login', (req, res) => {
+  const release = acquireLogin();
+  if (!release) return res.status(429).set('Retry-After', '60').json({ error: 'Terlalu banyak percobaan masuk. Coba lagi nanti.' });
+  res.once('close', release);
+  res.once('finish', release);
+  if (!passwordUsable(APP_PASSWORD)) return res.status(503).json({ error: 'APP_PASSWORD belum diatur di .env (minimal 12 karakter).' });
+  if (!verifyPassword(APP_PASSWORD, req.body?.password)) return res.status(401).json({ error: 'Password salah.' });
+  // ponytail: tambah `secure: true` saat disajikan lewat HTTPS.
+  res.cookie(SESSION_COOKIE, issueToken(SESSION_SECRET), { httpOnly: true, sameSite: 'strict', path: '/', maxAge: TTL_MS });
+  res.json({ ok: true });
+});
+
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'ok',
     serverAi: { gemini: Boolean(process.env.GEMINI_API_KEY), groq: Boolean(process.env.GROQ_API_KEY) },
+    authRequired: passwordUsable(APP_PASSWORD),
     app: 'SuaraKita - Voice to Text, Transcript Correction & Meeting Minutes',
     time: new Date().toISOString()
   });
-});
-
-app.post('/api/transcribe', express.raw({ type: 'audio/*', limit: '10mb' }), async (req, res) => {
-  let parts;
-  try { parts = audioParts(req.body, req.get('content-type')?.split(';')[0]); }
-  catch { return res.status(400).json({ error: 'Audio kosong, terlalu besar, atau format tidak didukung.' }); }
-  if (!process.env.GROQ_API_KEY) return res.status(503).json({ error: 'Key Groq belum dikonfigurasi di server.' });
-  try {
-    const language = req.get('x-audio-language') || 'id';
-    if (!/^[a-z]{2,3}(-[A-Za-z]{2,8})?$/.test(language)) return res.status(400).json({ error: 'Bahasa audio tidak valid.' });
-    res.json(await transcribeAudio(req.body, req.get('content-type').split(';')[0], { apiKey: process.env.GROQ_API_KEY, language, signal: req.aiSignal }));
-  } catch (error) {
-    res.status(error.status === 429 ? 429 : 502).json({ error: 'Transkripsi Groq gagal. Periksa koneksi, kuota, atau akses akun.', providerStatus: error.status || null });
-  }
 });
 
 // Endpoint Koreksi Transkrip (Transcript Correction)
@@ -135,7 +174,7 @@ app.post('/api/correct-transcript', async (req, res) => {
   if (stream) {
     return streamResponse(
       res,
-      (onDelta) => correctTranscriptStream(text, { apiKey, model, provider }, onDelta),
+      (onDelta) => correctTranscriptStream(text, { apiKey, model, provider, signal: req.aiSignal }, onDelta),
       'Gagal melakukan koreksi transkrip.'
     );
   }
@@ -170,7 +209,7 @@ app.post(['/api/meeting-notes', '/api/generate-meeting-notes'], async (req, res)
   if (stream) {
     return streamResponse(
       res,
-      (onDelta) => generateMeetingNotesStream(text, { apiKey, model, provider }, onDelta),
+      (onDelta) => generateMeetingNotesStream(text, { apiKey, model, provider, signal: req.aiSignal }, onDelta),
       'Gagal membuat notulen rapat.'
     );
   }
@@ -192,6 +231,19 @@ app.use((err, req, res, next) => {
   res.status(err.type === 'entity.too.large' ? 413 : 400).json({ error: 'Request tidak valid.' });
 });
 
-app.listen(PORT, '127.0.0.1', () => {
+const server = app.listen(PORT, '127.0.0.1', () => {
   console.log(`Server SuaraKita aktif di http://localhost:${PORT}`);
+});
+server.headersTimeout = 15000;
+server.requestTimeout = 30000;
+server.setTimeout(45000, socket => socket.destroy());
+server.maxConnections = 64;
+server.maxRequestsPerSocket = 100;
+// Node tidak menutup header parsial pada semua versi; timer absolut ini melengkapinya.
+const HEADER_DEADLINE_MS = 15000;
+server.on('connection', socket => {
+  const timer = setTimeout(() => socket.destroy(), HEADER_DEADLINE_MS);
+  timer.unref();
+  socket.once('close', () => clearTimeout(timer));
+  socket.headerDeadline = timer;
 });

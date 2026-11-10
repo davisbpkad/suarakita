@@ -15,7 +15,7 @@ export class ApiClient {
       headers,
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    if (!res.ok) throw Object.assign(new Error(`HTTP error ${res.status}`), { status: res.status });
     return res.json();
   }
 
@@ -39,7 +39,7 @@ export class ApiClient {
     const contentType = res.headers.get('content-type') || '';
     if (!contentType.includes('text/event-stream')) {
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || `HTTP error ${res.status}`);
+      if (!res.ok) throw Object.assign(new Error(data.error || `HTTP error ${res.status}`), { status: res.status });
       return data;
     }
     if (!res.body) throw new Error('Streaming tidak didukung peramban ini.');

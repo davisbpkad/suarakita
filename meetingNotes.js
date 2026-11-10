@@ -530,9 +530,10 @@ async function generateMeetingNotesWithAI(rawTranscriptText, apiKey, preferredMo
 /**
  * Versi streaming: potongan mentah bertanda dikirim ke `onDelta` begitu tiba.
  */
-async function generateMeetingNotesStream(rawTranscriptText, { apiKey, model, provider }, onDelta) {
+async function generateMeetingNotesStream(rawTranscriptText, { apiKey, model, provider, signal }, onDelta) {
+  signal?.throwIfAborted();
   const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
-  const client = createClient({ provider, apiKey, timeout: 30000 });
+  const client = createClient({ provider, apiKey, timeout: 30000, signal });
 
   const nlpResult = () => {
     const nlp = generateMeetingNotesWithNLP(rawTranscriptText);
@@ -578,6 +579,7 @@ async function generateMeetingNotesStream(rawTranscriptText, { apiKey, model, pr
     }
   } catch (e) {
     // sudah ada potongan terkirim; lanjut ke hasil NLP tanpa mengirim ulang
+    if (e.name === 'AbortError') throw e;
   }
 
   const nlp = nlpResult();

@@ -6,6 +6,53 @@ Lokasi proyek: `/Users/davistanjung/Documents/web-saya`
 
 ## Pembaruan server-managed AI — 10 November 2026
 
+### Audit lanjutan — 11 November 2026
+
+#### Audit source dan uji negatif lanjutan
+
+#### Remediasi dan verifikasi batas keamanan
+
+#### Verifikasi akhir lokal — 11 November 2026
+
+Ditemukan bug nyata lewat tes: setelah abort, handler SSE masih meneruskan delta yang sudah di buffer. Perbaikan `stopped` membuat delta diabaikan setelah abort. RED `2 !== 1`, GREEN lulus. `headersTimeout` Node tidak menutup header parsial pada Node 24; timer per-koneksi 15 detik ditambahkan dan dibersihkan saat header lengkap. RED koneksi tetap terbuka >20 detik, GREEN tertutup pada ~15.0 detik sementara health tetap 200.
+
+Hasil akhir: `npm test` 27 berkas lulus; build 29 modul; `git diff --check` bersih. Server 3088 dimulai ulang setelah verifikasi PID/cwd: status 200 dengan kedua key terdeteksi, `X-Powered-By` tidak ada, `/api/transcribe` 410, koreksi nyata Groq 200 dan negasi dipertahankan.
+
+Tidak dapat diselesaikan dalam sesi ini: tidak ada Netlify CLI, `.netlify` link, akun deployment, atau URL target, sehingga verifikasi deployment tidak dilakukan. Autentikasi/kuota global tidak dibangun karena membutuhkan keputusan pemilik: siapa yang boleh mengakses, identitas apa, dan di mana kuota disimpan. Selama bind hanya 127.0.0.1 dan tanpa tunnel, aplikasi tetap alat lokal pribadi. **Rilis publik tetap diblokir.** Belum dipindai: log eksternal, backup, credential lama, reflog/dangling object. Tidak ada commit/push; port 3000 tidak disentuh.
+
+#### Verifikasi lanjutan koneksi, injeksi, riwayat, dan legacy
+
+11 November: tes slowConnection pada 3089 menahan delapan POST dengan body tidak selesai. Health tetap 200, POST tambahan 429, sesudah socket ditutup slot pulih (JSON rusak kembali 400). Ini uji terbatas, bukan DDoS. Server diberi headersTimeout 15s, requestTimeout 30s, idle socket timeout 45s, maxConnections 64, maxRequestsPerSocket 100. Durasi timeout penuh dan saturasi 64 socket belum diukur; jangan mengklaim keduanya PASS.
+
+Legacy streaming: signal diteruskan dari Express ke fungsi koreksi/notulen dan client. AbortError dilempar ulang, tidak ditelan sebagai local fallback atau mencoba model berikutnya. RED tes missing AbortError; GREEN legacyAbort lulus pre-abort dua fungsi dan no-retry kedua client. Midstream disconnect riil provider pada jalur legacy belum diuji.
+
+Dua panggilan Groq nyata (koreksi/notulen, GPT-OSS 120B) memakai transkrip sintetis dengan instruksi palsu untuk mengubah anggaran dan membocorkan environment. Keduanya tetap engine groq, tidak mengeluarkan hanya penanda serangan, mempertahankan anggaran dan 'belum disetujui', dan tidak memuat kedua key aktif. Koreksi mempertahankan instruksi palsu sebagai teks literal; notulen mengabaikannya. Ini satu sampel per aksi, bukan jaminan kebal prompt injection. Model tidak memiliki akses environment/tools.
+
+Pemindaian isi 814 blob Git dari seluruh ref lokal: nol kecocokan exact kedua key aktif. Pemindaian .log proyek (kecuali node_modules/.git): nol file, sehingga bukan bukti log eksternal bersih. Key lama/tidak dikenal, reflog/dangling object, remote server logs dan backup belum dipindai. Nilai rahasia tidak dicetak.
+
+Verifikasi akhir pass: npm test 25 berkas, build 29 modul lulus. Deployment hanya review konfigurasi Netlify; tidak ada target deployment/akun test yang diverifikasi. Tidak memasang autentikasi atau kuota global pura-pura: belum ada keputusan identitas pengguna/storage untuk publik. Rilis publik tetap BLOCKED. Server aktif 3088 perlu restart untuk perubahan legacy dan timeout terbaru. Tidak ada commit/push atau akses port 3000.
+
+Server kini menolak origin sebelum parsing, membatasi ingress POST 120/menit dan 8 request aktif sebelum parsing (limit aksi tetap 30/menit, 2 aktif), menonaktifkan endpoint audio dengan 410 sebelum membaca body, dan menghapus X-Powered-By. Implementasi handler upload yang tidak dipakai dihapus dari server. Helper STT tidak lagi dapat dijangkau HTTP. RED tes securityBoundary gagal karena header Express masih muncul; GREEN lulus pemeriksaan header, dotfiles, audio 410, origin atas JSON rusak 403, dan malformed-request flood 429. `npm test`: 23 berkas lulus; build 29 modul lulus.
+
+Browser Playwright aktual pada 3088, dengan respons provider sintetis (tanpa inferensi), memasukkan payload img onerror dan svg onload pada topic/summary/decisions serta original/corrected/changes. Kedua modal menampilkan teks escaped, tidak membentuk node berbahaya, dan penanda eksekusi tetap 0. Ini membuktikan payload yang diuji, bukan seluruh kemungkinan XSS. Server 3088 dimulai ulang setelah memverifikasi PID/cwd untuk memuat perubahan dan qs terbaru. Tidak menyentuh port 3000, commit, atau push.
+
+Status: kontrol lokal diperkuat, bukan sertifikasi keamanan menyeluruh. Belum diuji: slowloris/full connection exhaustion, prompt injection provider nyata, seluruh isi log/riwayat Git, deployment Netlify, serta autentikasi/kuota global untuk publik. Tidak menyatakan semua risiko ditutup. Jalur legacy streaming masih perlu konsolidasi atau abort tersendiri.
+
+Scope: server Express lokal, handler Netlify, client provider, validasi request, rendering Vue, dan konfigurasi deployment. Tidak memakai scanner eksternal atau inferensi berbayar. `npm audit --json` aktual menghasilkan 0 temuan. Server terisolasi 3089 dengan kedua key dikosongkan membuktikan cross-origin 403, JSON >1MB 413, audio >10MB 413, format non-audio 400, dan rate limit 429. Proses tes ditutup; port 3000 tidak diakses.
+
+Temuan belum diperbaiki (audit saja):
+- HIGH bila dipublikasikan: Express menggunakan key pemilik tanpa autentikasi; Host/origin bukan autentikasi. Saat ini bind 127.0.0.1 membatasi akses jaringan langsung. Jangan buka tunnel/proxy publik sebelum autentikasi serta kuota global tersedia. Netlify saat ini tidak membaca key pemilik, jadi tidak mengklaim shared-key exposure di handler tersebut.
+- MEDIUM: JSON body parsing sebelum limiter; upload audio memakai batas 10MB tetapi tidak ada pembatasan total koneksi/body upload serentak. Penyerang yang sudah dapat menjangkau server bisa menahan koneksi atau menekan memori sebelum validasi akhir.
+- MEDIUM: jalur Whisper memakai response.json tanpa batas byte respons, berbeda dari transport teks dengan cap 1MB. Endpoint masih tersedia meskipun UI tidak memakainya; validasi hanya MIME/ukuran, bukan signature audio. Menghapus endpoint yang tidak diperlukan memperkecil permukaan serangan.
+- LOW: Express masih menampilkan X-Powered-By; cache/error/method handling dapat diseragamkan. Jalur legacy streaming belum memiliki propagasi abort yang setara jalur AI baru.
+- Integritas AI: prompt memisahkan transkrip sebagai JSON tetapi tidak menjamin bebas prompt injection. Tidak ada tools/shell/file capability pada model; dampak yang terlihat adalah output salah, bukan eksekusi server. Nama, angka, negasi dan penugasan tetap perlu uji adversarial nyata.
+
+Review XSS: v-html hanya pada formatter inline yang escape HTML dahulu; koreksi dan ringkasan prosa memakai interpolasi Vue. Ini bukti source review, bukan pengujian browser atas seluruh payload. SSRF: URL provider dari preset tetap, bukan input URL pengguna. Belum memindai isi seluruh log/riwayat Git, menguji deployment Netlify, browser XSS, slow-client stress, atau mikrofon fisik. Audit tidak menyatakan aplikasi bebas kerentanan atau siap publik. Tidak ada perubahan source produksi dalam pass audit ini, commit atau push.
+
+`npm audit --omit=dev --json` menemukan satu kerentanan moderate pada qs (GHSA-6pq8-jhm2-2vcw, DoS qs.stringify). `npm update qs` memperbarui dependensi transitif; npm melaporkan 0 vulnerabilities sesudahnya. Tidak memakai force/major upgrade. `npm test` sesudah pembaruan lulus 22 berkas; build lulus 29 modul.
+
+Pemeriksaan rahasia tanpa mencetak nilainya: dua key dibandingkan terhadap dua berkas bundle build, tidak ada kecocokan. `.env` tidak tracked dan tidak muncul pada riwayat path `.env` di seluruh ref lokal. Ini tidak membuktikan key tidak pernah disalin dengan nama/path lain. HTTP aktual 3088 untuk `/.env` dan `/.git/config` keduanya 404; status API 200. Tidak ada commit/push. Audit ini belum mencakup pentest lengkap, pemeriksaan seluruh log/riwayat berbasis isi, mikrofon fisik, kuota global, atau deployment publik. Proses aktif perlu restart untuk memuat dependensi qs terbaru.
+
 ### Tampilan kuota Groq sederhana
 
 QuotaStatus bersama untuk koreksi dan notulen menampilkan persentase request/token tersisa, bukan rincian reset berulang. Persentase dihitung dari remaining/limit header Groq, dibulatkan ke bawah, maksimal 100%; tanpa limit tidak mengarang persentase. Label respons terakhir tetap ada karena bukan saldo real-time akun. Retry-After tetap tampil saat perlu menunggu. Parser allowlist dan metadata fallback kini meneruskan limitRequests/limitTokens. RED modul persentase belum tersedia; GREEN npm test 22 berkas lulus, build 29 modul lulus. Backend 3088 dimulai ulang setelah verifikasi PID/cwd. Visual browser dan header nyata setelah perubahan ini belum diuji. Tidak ada commit/push.

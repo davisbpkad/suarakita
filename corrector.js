@@ -348,9 +348,10 @@ async function correctTranscriptWithAI(rawText, apiKey, preferredModel, provider
  * tidak mencoba model lain (hasil akan terduplikasi). Struktur akhir diambil
  * dari hasil lengkap yang sudah terkumpul.
  */
-async function correctTranscriptStream(rawText, { apiKey, model, provider }, onDelta) {
+async function correctTranscriptStream(rawText, { apiKey, model, provider, signal }, onDelta) {
+  signal?.throwIfAborted();
   const { parseTagged, toTagged, toBulletList } = await import('./lib/taggedOutput.mjs');
-  const client = createClient({ provider, apiKey, timeout: 30000 });
+  const client = createClient({ provider, apiKey, timeout: 30000, signal });
 
   if (!client) {
     const nlp = correctTranscriptWithNLP(rawText);
@@ -385,6 +386,7 @@ async function correctTranscriptStream(rawText, { apiKey, model, provider }, onD
     }
   } catch (e) {
     // sudah ada potongan terkirim ke UI; lanjut ke hasil NLP tanpa mengirim ulang
+    if (e.name === 'AbortError') throw e;
   }
 
   const nlp = correctTranscriptWithNLP(rawText);

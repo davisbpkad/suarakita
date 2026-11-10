@@ -70,51 +70,27 @@
       @download="downloadMomMarkdown"
     />
 
-    <AiConfigModal
-      v-if="showAiConfigModal && !serverManaged"
-      v-model:provider="selectedProvider"
-      v-model:api-key="geminiApiKey"
-      v-model:model="selectedGeminiModel"
-      v-model:groq-key="groqApiKey"
-      v-model:groq-model="selectedGroqModel"
-      v-model:allow-groq="allowGroq"
-      :session-counts="sessionCounts"
-      @close="showAiConfigModal = false"
-      @save="saveApiKey"
-      @remove="removeApiKey"
+    <LoginModal
+      v-if="showLogin"
+      @close="showLogin = false"
+      @success="onLoginSuccess"
     />
-    <div v-if="showAiConfigModal && serverManaged" class="modal-overlay" @click.self="showAiConfigModal = false" @keydown.esc="showAiConfigModal = false">
-      <section role="dialog" aria-modal="true" aria-labelledby="server-ai-title" class="modal-panel flex flex-col gap-5 text-[var(--color-ink)]">
-        <h2 id="server-ai-title" class="font-bold text-lg">Pengaturan AI</h2>
-        <div class="rounded-2xl bg-[var(--color-cream)] p-4 text-sm leading-relaxed space-y-3">
-          <p><strong>Pengetikan langsung:</strong> pengenalan suara browser. Teks muncul selama Anda berbicara.</p>
-          <p><strong>Koreksi dan notulen:</strong> Groq GPT-OSS 120B. Key dikelola server, tidak perlu diisi di sini.</p>
-        </div>
-        <p class="text-sm leading-relaxed text-[var(--color-muted)]">Teks dikirim ke Groq saat koreksi atau notulen dipilih. Pengenalan suara browser dapat membutuhkan internet.</p>
-        <button autofocus class="btn-primary self-end" @click="showAiConfigModal = false">Tutup</button>
-      </section>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import AppHeader from './components/AppHeader.vue';
 import TranscriptWorkspace from './components/TranscriptWorkspace.vue';
 import CorrectionModal from './components/CorrectionModal.vue';
 import MeetingNotesModal from './components/MeetingNotesModal.vue';
-import AiConfigModal from './components/AiConfigModal.vue';
+import LoginModal from './components/LoginModal.vue';
 import { SpeechRecognizer } from './lib/speech/SpeechRecognizer.js';
 import { MicMonitor } from './lib/audio/MicMonitor.js';
 import { appendTranscriptCleanly, paragraphize } from './lib/text/transcript.mjs';
 import { LANGUAGES, DEFAULT_LANGUAGE, findLanguage } from './lib/speech/languages.js';
 import { ApiClient } from './lib/api/client.js';
 import { triggerDownload, fileTimestamp } from './lib/utils/download.js';
-import PROVIDERS from '../../lib/providers.json';
-import { removeLegacyKey } from './lib/keyStorage.mjs';
-import { countAttempts } from './lib/quotaClock.mjs';
-
-const DEFAULT_PROVIDER = 'gemini';
 
 // -------------------------------------------------------------
 // STATE: TRANSCRIPT WORKSPACE
@@ -140,7 +116,6 @@ const recordingSeconds = ref(0);
 const micLevel = ref(0);
 const micQuiet = ref(false);
 let timerInterval = null;
-const serverManaged = ref(false);
 
 const availableLanguages = LANGUAGES;
 const currentLanguage = ref(DEFAULT_LANGUAGE);
@@ -239,49 +214,28 @@ function stopRecording() {
 // -------------------------------------------------------------
 // STATE: API KEY & ACTION STATE
 // -------------------------------------------------------------
-const showAiConfigModal = ref(false);
-const geminiApiKey = ref('');
-const groqApiKey = ref('');
-const allowGroq = ref(false);
-const sessionCounts = ref({ gemini: 0, groq: 0 });
-const selectedGroqModel = ref(PROVIDERS.groq.models[0].id);
-const selectedProvider = ref(DEFAULT_PROVIDER);
-const selectedGeminiModel = ref(PROVIDERS[DEFAULT_PROVIDER].models[0].id);
-const hasApiKey = computed(() => serverManaged.value || Boolean(geminiApiKey.value.trim() || (allowGroq.value && groqApiKey.value.trim())));
 const loadingAction = ref(null);
 const api = new ApiClient();
 let actionController;
+let pendingRetry = null;
+const showLogin = ref(false);
 function closeCorrection() { actionController?.abort(); showCorrectionModal.value = false; }
 function closeNotes() { actionController?.abort(); showMomModal.value = false; }
 
-function aiOptions() {
-  if (serverManaged.value) return {};
-  return {
-    geminiKey: geminiApiKey.value,
-    geminiModel: selectedGeminiModel.value,
-    groqKey: allowGroq.value ? groqApiKey.value : '',
-    groqModel: selectedGroqModel.value,
-    allowGroq: allowGroq.value,
-  };
+/** 401 berarti sesi belum ada/kedaluwarsa; aksi disimpan untuk diulang setelah masuk. */
+function handleAuthError(err, retry) {
+  if (err.status !== 401) return false;
+  pendingRetry = retry;
+  showLogin.value = true;
+  return true;
 }
 
-onMounted(() => {
-  fetch('/api/status').then(response => response.json()).then(status => {
-    serverManaged.value = Boolean(status.serverAi?.groq);
-  }).catch(() => {});
-  try {
-  removeLegacyKey(localStorage);
-  selectedProvider.value = DEFAULT_PROVIDER;
-  const storedModel = localStorage.getItem('gemini_model');
-  const provider = PROVIDERS[selectedProvider.value] || PROVIDERS[DEFAULT_PROVIDER];
-  // Buang model tersimpan yang tidak dikenal provider aktif (mis. sisa provider lama).
-  selectedGeminiModel.value = provider.models.some((m) => m.id === storedModel)
-    ? storedModel
-    : provider.models[0].id;
-  } catch {
-    // Browser storage is optional; keys are never persisted.
-  }
-});
+function onLoginSuccess() {
+  showLogin.value = false;
+  const retry = pendingRetry;
+  pendingRetry = null;
+  retry?.();
+}
 
 onUnmounted(() => {
   actionController?.abort();
@@ -289,27 +243,6 @@ onUnmounted(() => {
   recognizer.stop();
   micMonitor.stop();
 });
-
-function saveApiKey() {
-  geminiApiKey.value = geminiApiKey.value.trim();
-  groqApiKey.value = groqApiKey.value.trim();
-  try {
-  localStorage.setItem('gemini_model', selectedGeminiModel.value);
-  localStorage.setItem('llm_provider', selectedProvider.value);
-  removeLegacyKey(localStorage);
-  } catch {
-    // Settings remain usable when browser storage is disabled.
-  }
-  showAiConfigModal.value = false;
-}
-
-function removeApiKey() {
-  geminiApiKey.value = '';
-  groqApiKey.value = '';
-  allowGroq.value = false;
-  try { removeLegacyKey(localStorage); } catch { /* Storage may be unavailable. */ }
-  showAiConfigModal.value = false;
-}
 
 // -------------------------------------------------------------
 // PRESETS
@@ -350,11 +283,11 @@ async function runCorrection() {
   actionController = new AbortController();
 
   try {
-    correctionData.value = await api.runAiAction('correction', text, aiOptions(), actionController.signal);
-    sessionCounts.value = countAttempts(sessionCounts.value, correctionData.value.attempts);
+    correctionData.value = await api.runAiAction('correction', text, {}, actionController.signal);
   } catch (err) {
     if (err.name === 'AbortError') return;
     showCorrectionModal.value = false;
+    if (handleAuthError(err, runCorrection)) return;
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
   } finally {
     loadingAction.value = null;
@@ -397,11 +330,11 @@ async function runMeetingNotes() {
   actionController = new AbortController();
 
   try {
-    momData.value = await api.runAiAction('notes', text, aiOptions(), actionController.signal);
-    sessionCounts.value = countAttempts(sessionCounts.value, momData.value.attempts);
+    momData.value = await api.runAiAction('notes', text, {}, actionController.signal);
   } catch (err) {
     if (err.name === 'AbortError') return;
     showMomModal.value = false;
+    if (handleAuthError(err, runMeetingNotes)) return;
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
   } finally {
     loadingAction.value = null;
