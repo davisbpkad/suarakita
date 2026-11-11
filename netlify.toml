@@ -43,6 +43,11 @@
   to = "/.netlify/functions/meeting-notes"
   status = 200
 
+[[redirects]]
+  from = "/api/ai-job"
+  to = "/.netlify/functions/ai-job"
+  status = 200
+
 # SPA fallback
 [[redirects]]
   from = "/admin"

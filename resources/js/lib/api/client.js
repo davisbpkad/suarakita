@@ -91,10 +91,32 @@ export class ApiClient {
     return this._post('/api/correct-transcript', { text, model, provider }, apiKey);
   }
 
-  async runAiAction(action, text, ai, signal) {
+  /**
+   * Teks panjang dialihkan ke background function (balasan 202 + jobId).
+   * Klien lalu mem-poll status sampai selesai.
+   */
+  async _awaitJob(jobId, signal) {
+    for (let attempt = 0; attempt < 450; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (signal?.aborted) throw Object.assign(new Error('Dibatalkan.'), { name: 'AbortError' });
+      const res = await fetch(`${this.baseUrl}/api/ai-job?id=${encodeURIComponent(jobId)}`, { signal });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw Object.assign(new Error(data.error || `HTTP ${res.status}`), { status: res.status });
+      if (data.status === 'done') return data.result;
+      if (data.status === 'error') throw new Error(data.error || 'Pekerjaan gagal.');
+    }
+    throw new Error('Pekerjaan terlalu lama. Coba lagi dengan teks lebih pendek.');
+  }
+
+  async runAiAction(action, text, ai, signal, onJob) {
     if (!['correction', 'notes'].includes(action)) throw new Error('Aksi tidak dikenal.');
     const path = action === 'correction' ? '/api/correct-transcript' : '/api/meeting-notes';
-    return this._stream(path, { text, ai, stream: true }, '', () => {}, signal);
+    const result = await this._stream(path, { text, ai, stream: true }, '', () => {}, signal);
+    if (result && result.jobId) {
+      if (typeof onJob === 'function') onJob(result.jobId);
+      return this._awaitJob(result.jobId, signal);
+    }
+    return result;
   }
 
   async generateMeetingNotes(text, apiKey, model, provider) {

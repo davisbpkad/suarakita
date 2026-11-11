@@ -7,7 +7,9 @@ const { jsonResponse, corsHeaders, allowedOrigin, readJson, requireUser, session
 const { validateRequest } = require('../../lib/requestValidation.js');
 const { runAiAction } = require('../../lib/aiActions.js');
 const { serverAiOptions, maxCharsFor } = require('../../lib/serverAi.js');
+const { needsBackground } = require('../../lib/aiChunking.js');
 const { sseResponse } = require('../../lib/sseResponse.js');
+const { startJob } = require('./_jobs.js');
 
 export default async (request) => {
   const headers = corsHeaders(request, 'POST, OPTIONS');
@@ -40,6 +42,21 @@ export default async (request) => {
 
     // Key hanya dari environment Netlify; pemanggil tidak pernah mengirim key.
     const options = { ...serverAiOptions(process.env, settings), timeoutMs: 240000 };
+
+    // Fungsi sinkron dibunuh tepat pada 30 detik → teks besar dipindah ke worker latar.
+    if (needsBackground(options, text)) {
+      const job = await startJob({
+        username: sessionOf(request).username,
+        action: 'correction',
+        text,
+        provider: settings?.provider || 'groq',
+        model: settings?.model || '',
+        usage: { used: quota.used, limit: quota.limit },
+        origin: new URL(request.url).origin,
+      });
+      return jsonResponse({ jobId: job.id, status: 'running' }, 202, headers);
+    }
+
     const perform = async () => {
       const result = await runAiAction('correction', text, options);
       // `quota` milik provider (Groq) dipakai panel Sisa penggunaan; kuota harian aplikasi terpisah.

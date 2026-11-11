@@ -909,3 +909,46 @@ Bukti aktual (produksi, 11 Nov 2026):
 - `npm test` 29 berkas lulus (71 pemeriksaan API); build + deploy lulus; pilihan model dikembalikan ke `groq/openai/gpt-oss-20b`; user uji dihapus.
 
 Keterbatasan: batas 100.000 hanya bisa dilayani penuh bila model selesai < ~30 dtk. Di atas ±15.000 karakter, Gemini sering 503/lambat sehingga hasil berasal dari mesin lokal (teks utuh, kualitas lokal). Untuk koreksi AI penuh pada 100.000 karakter perlu pemrosesan bertahap/background — belum dibuat.
+
+## 41. Uji ketahanan: 100.000 karakter butuh chunking + background function
+
+### Hasil pengukuran (produksi, 11 Nov 2026)
+
+Batas platform Netlify di akun ini:
+- Fungsi sinkron: **dibunuh tepat pada 30 detik**. Sonda `probe-timeout`: sleep 28 detik → 200; sleep 30–50 detik → 504 "Inactivity Timeout" (`Duration: 30000 ms`).
+- SSE **tidak** membantu: `probe-stream` dengan heartbeat tiap 1 detik tetap terputus di detik ke-30.
+- Background function: `202` seketika, berjalan 40 detik, lalu menulis Blobs. Batas 15 menit.
+
+Batas model:
+| Model | 1x permintaan | Chunk 5–6.000 | Catatan |
+|---|---|---|---|
+| Gemini 3.5 Flash-Lite | 100.000 karakter → 63 dtk, hasil **terpotong** (469/100.000) | 100.000 karakter pulih utuh, rasio 1,00 | 8.000 token/menit |
+| Gemini 3.6 Flash | sering 503 "high demand" | 20.000 karakter 22 dtk, hasil utuh | kuota harian 20 permintaan |
+| Gemini 3.5 Flash-Lite | — | 20 chunk × 8 paralel: 46 dari 48 permintaan sukses dalam 3 menit | kuota harian **500 permintaan** per model |
+| Groq gpt-oss-120b | 12.000 karakter OK; 15.000 → 429; 22.000 → **413 "Request too large"** | 6.000 karakter per potongan, jeda 30 dtk | 8.000 token/menit, 200.000 token/hari |
+| Groq | hasil terpotong Occasionally: 2.396 karakter dari 5.949 | ambang 80% sekarang memicu fallback lokal | |
+
+### Perubahan
+- `lib/aiChunking.js` (baru): `splitForChunking` (potong di batas kalimat, gabungan = teks asal), `mapWithLimit` (paralel terbatas), `chunkPlan` (6.000 karakter/8 paralel untuk Gemini, 6.000/1+ jeda 30 dtk untuk Groq), `needsBackground` (di atas 24.000 karakter Gemini atau 12.000 Groq → worker latar).
+- `lib/aiActions.js`: `runSingle` per potongan + `mergeChunks` (gabungkan teks, ringkasan, keputusan; tandai `method: 'mixed'` bila sebagian memakai mesin lokal); percobaan ulang 3× dengan jeda bila satu potongan gagal; ambang hasil terpotong diperketat dari 50% ke 80%.
+- `lib/aiJobs.js` (baru): store pekerjaan di Blobs (`job:<id>`), TTL 30 menit, `create/get/finish/fail/prune`.
+- `netlify/functions/_jobs.js` (baru): token internal HMAC agar hanya fungsi aplikasi yang bisa memicu worker.
+- `netlify/functions/ai-worker.mjs` (baru, background): menjalankan AI untuk pekerjaan panjang, model diambil dari pekerjaan yang dibuat.
+- `netlify/functions/ai-job.mjs` (baru): `GET /api/ai-job?id=` → status/hasil, hanya untuk pemilik pekerjaan.
+- `netlify/functions/correct-transcript.mjs` + `meeting-notes.mjs`: teks besar dijawab `202 { jobId }`; sisanya jalur sinkron + SSE.
+- `resources/js/lib/api/client.js`: `_awaitJob` mem-poll tiap 2 detik (maks 15 menit), `onJob` memberi tahu UI.
+- `resources/js/App.vue` + kedua modal: catatan "Transkrip panjang diproses di latar. Bisa memakan waktu beberapa menit."
+- `tests/aiChunking.test.mjs` (baru): 30 berkas tes lulus.
+
+### Bukti aktual (produksi, 11 Nov 2026)
+- Gemini 3.5 Flash-Lite, 100.000 karakter via worker: `202` → selesai 35,3 dtk, `engine gemini`, `modelUsed gemini-3.5-flash-lite`, hasil 100.043 karakter (rasio 1,00), `usage { used: 4, limit: 6 }`.
+- Groq gpt-oss-120b, 50.000 karakter via worker: `202` → selesai 311 dtk (jeda 30 dtk × 9 potongan), `engine groq`, hasil 54.359 karakter, rasio 1,09.
+- Groq, 20.000 karakter: selesai 85 dtk, hasil 20.015 karakter (rasio 1,00).
+- UI (Playwright, 62.220 karakter): catatan "Transkrip panjang diproses di latar…" muncul, hasil lengkap tampil setelah 32,5 dtk, tanpa baris "tidak tersedia" dan tanpa kartu statistik.
+- Kuota harian Gemini free tier exhausted setelah uji: `429 Generate content requests per day limit exceeded … quotaValue 500` (flash-lite) dan `20` (3.6-flash). Groq tidak kena 429 pada ritme 30 dtk.
+- User uji dihapus; model dikembalikan ke `groq/openai/gpt-oss-20b`.
+
+### Risiko tersisa
+- Gemini free tier hanya 500 permintaan/hari per model: satu pekerjaan 100.000 karakter memakai 20 permintaan. Setelah kuota habis, semua pekerjaan Gemini turun ke mesin lokal.
+- Groq free tier 8.000 token/menit membuat 50.000 karakter butuh ±5 menit; jeda 30 detik per potongan.
+- Hasil model yang memotong di tengah (2.396 dari 5.949 karakter) kini memicu fallback lokal untuk potongan itu, bukan menggabungkan teks yang hilang.

@@ -20,6 +20,8 @@
         </div>
       </div>
 
+      <p v-if="notice" class="text-xs text-[var(--color-muted)]" role="status">{{ notice }}</p>
+
       <!-- Side-by-Side Comparison -->
       <QuotaStatus :data="data" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -72,6 +74,7 @@ import QuotaStatus from './QuotaStatus.vue';
 const props = defineProps({
   data: { type: Object, required: true },
   loading: { type: Boolean, default: false },
+  notice: { type: String, default: '' },
 });
 
 const emit = defineEmits(['close', 'apply']);

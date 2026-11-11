@@ -60,6 +60,7 @@
     <CorrectionModal
       v-if="showCorrectionModal"
       :loading="loadingAction === 'correction'"
+      :notice="jobNotice"
       :data="correctionData"
       @close="closeCorrection"
       @apply="applyCorrection"
@@ -68,6 +69,7 @@
     <MeetingNotesModal
       v-if="showMomModal"
       :loading="loadingAction === 'mom'"
+      :notice="jobNotice"
       :data="momData"
       @close="closeNotes"
       @download="downloadMomMarkdown"
@@ -218,6 +220,7 @@ function stopRecording() {
 // STATE: API KEY & ACTION STATE
 // -------------------------------------------------------------
 const loadingAction = ref(null);
+const jobNotice = ref('');
 const api = new ApiClient();
 let actionController;
 let pendingRetry = null;
@@ -312,7 +315,9 @@ async function runCorrection() {
   actionController = new AbortController();
 
   try {
-    correctionData.value = await api.runAiAction('correction', text, {}, actionController.signal);
+    correctionData.value = await api.runAiAction('correction', text, {}, actionController.signal, () => {
+      jobNotice.value = 'Transkrip panjang diproses di latar. Bisa memakan waktu beberapa menit.';
+    });
   } catch (err) {
     if (err.name === 'AbortError') return;
     showCorrectionModal.value = false;
@@ -361,7 +366,9 @@ async function runMeetingNotes() {
   actionController = new AbortController();
 
   try {
-    momData.value = await api.runAiAction('notes', text, {}, actionController.signal);
+    momData.value = await api.runAiAction('notes', text, {}, actionController.signal, () => {
+      jobNotice.value = 'Transkrip panjang diproses di latar. Bisa memakan waktu beberapa menit.';
+    });
   } catch (err) {
     if (err.name === 'AbortError') return;
     showMomModal.value = false;
