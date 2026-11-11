@@ -317,6 +317,8 @@ async function runCorrection() {
     if (err.name === 'AbortError') return;
     showCorrectionModal.value = false;
     if (handleAuthError(err, runCorrection)) return;
+    // Pesan batas panjang sudah final dari server; jangan dibungkus kalimat kesalahan umum.
+    if (err.status === 413) return alert(err.message);
     alert('Terjadi kesalahan saat mengoreksi teks: ' + err.message);
   } finally {
     loadingAction.value = null;
@@ -364,6 +366,7 @@ async function runMeetingNotes() {
     if (err.name === 'AbortError') return;
     showMomModal.value = false;
     if (handleAuthError(err, runMeetingNotes)) return;
+    if (err.status === 413) return alert(err.message);
     alert('Terjadi kesalahan saat memproses Notulen Rapat: ' + err.message);
   } finally {
     loadingAction.value = null;

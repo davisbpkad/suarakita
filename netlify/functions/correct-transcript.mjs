@@ -6,7 +6,8 @@ const require = createRequire(import.meta.url);
 const { jsonResponse, corsHeaders, allowedOrigin, readJson, requireUser, sessionOf, accounts } = require('./_auth.js');
 const { validateRequest } = require('../../lib/requestValidation.js');
 const { runAiAction } = require('../../lib/aiActions.js');
-const { serverAiOptions } = require('../../lib/serverAi.js');
+const { serverAiOptions, maxCharsFor } = require('../../lib/serverAi.js');
+const { sseResponse } = require('../../lib/sseResponse.js');
 
 export default async (request) => {
   const headers = corsHeaders(request, 'POST, OPTIONS');
@@ -20,11 +21,15 @@ export default async (request) => {
   try {
     const data = await readJson(request);
     if (!data) return jsonResponse({ error: 'JSON tidak valid.' }, 400, headers);
-    const invalid = validateRequest(data);
+
+    const store = accounts();
+    const settings = await store.readAiSettings();
+    // Batas panjang mengikuti model aktif, bukan angka tetap.
+    const invalid = validateRequest(data, { maxChars: maxCharsFor(settings) });
     if (invalid) return jsonResponse({ error: invalid.error }, invalid.status, headers);
     const { text } = data;
 
-    const quota = await accounts().consume(sessionOf(request).username);
+    const quota = await store.consume(sessionOf(request).username);
     if (!quota.allowed) {
       if (quota.reason === 'unknown' || quota.reason === 'inactive') {
         return jsonResponse({ error: 'Akun tidak aktif atau sudah dihapus. Masuk lagi.' }, 401, headers);
@@ -34,12 +39,17 @@ export default async (request) => {
     }
 
     // Key hanya dari environment Netlify; pemanggil tidak pernah mengirim key.
-    const options = serverAiOptions(process.env, await accounts().readAiSettings());
-    const result = await runAiAction('correction', text, options);
+    const options = { ...serverAiOptions(process.env, settings), timeoutMs: 240000 };
+    const perform = async () => {
+      const result = await runAiAction('correction', text, options);
+      // `quota` milik provider (Groq) dipakai panel Sisa penggunaan; kuota harian aplikasi terpisah.
+      if (result.quota) await store.recordProviderQuota(result.quota, result.engine);
+      return { ...result, usage: { used: quota.used, limit: quota.limit } };
+    };
 
-    // `quota` milik provider (Groq) dipakai panel Sisa penggunaan; kuota harian aplikasi terpisah.
-    if (result.quota) await accounts().recordProviderQuota(result.quota, result.engine);
-    return jsonResponse({ ...result, usage: { used: quota.used, limit: quota.limit } }, 200, headers);
+    // Transkrip panjang bisa melewati batas waktu fungsi biasa; stream menjaga koneksi tetap hidup.
+    if (data.stream === true) return sseResponse(headers, perform, 'Gagal melakukan koreksi transkrip.');
+    return jsonResponse(await perform(), 200, headers);
   } catch (err) {
     console.error('Netlify correct-transcript gagal.', err.message);
     return jsonResponse({ error: 'Gagal melakukan koreksi transkrip.' }, 500, headers);

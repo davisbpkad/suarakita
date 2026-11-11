@@ -48,6 +48,7 @@ const sariHeaders = { Cookie: cookieOf(sariLogin) };
 
 const tooLong = await call(correct, { headers: authHeaders, body: { text: 'x'.repeat(50001) } });
 assert.equal(tooLong.status, 413, 'batas panjang tetap berlaku sebelum kuota');
+assert.equal((await tooLong.json()).error, 'Maaf, maksimal input 50.000 karakter.', 'pesan batas memakai angka dan format Indonesia');
 const statusBody = await (await call(status, { method: 'GET', headers: authHeaders })).json();
 assert.equal(statusBody.authRequired, true);
 assert.equal(statusBody.accounts, true);
@@ -149,6 +150,31 @@ const remove = await call(admin, { headers: adminHeaders, body: { action: 'delet
 assert.equal(remove.status, 200);
 const deletedSession = await call(correct, { headers: bahlilHeaders, body: { text: 'Rapat selesai.', ai: {} } });
 assert.equal(deletedSession.status, 401, 'sesi lama user terhapus langsung ditolak');
+// Batas panjang mengikuti model AI yang aktif.
+const longText = 'Rapat dimulai jam sembilan pagi. '.repeat(2000);
+const createLong = await call(admin, { headers: adminHeaders, body: { action: 'create', username: 'panjang', quotaPerDay: 10 } });
+const panjangPassword = (await createLong.json()).password;
+const panjangLogin = await call(login, { body: { username: 'panjang', password: panjangPassword } });
+const panjangHeaders = { Cookie: cookieOf(panjangLogin) };
+const groqLimit = await call(correct, { headers: panjangHeaders, body: { text: longText } });
+assert.equal(groqLimit.status, 413, 'Groq tetap ditolak di atas 50.000');
+assert.equal((await groqLimit.json()).error, 'Maaf, maksimal input 50.000 karakter.');
+process.env.GEMINI_API_KEY = 'sintetis';
+const setGemini = await call(admin, { headers: adminHeaders, body: { action: 'set-ai', provider: 'gemini', model: 'gemini-3.5-flash-lite' } });
+assert.equal(setGemini.status, 200);
+process.env.GEMINI_API_KEY = '';
+const geminiLong = await call(correct, { headers: panjangHeaders, body: { text: longText } });
+assert.equal(geminiLong.status, 200, '64.000 karakter lolos saat Gemini aktif');
+assert.equal((await geminiLong.json()).engine, 'local', 'tanpa key asli, mesin lokal yang dipakai');
+const geminiTooLong = await call(correct, { headers: panjangHeaders, body: { text: longText.repeat(2) } });
+assert.equal(geminiTooLong.status, 413, 'di atas 100.000 ditolak');
+assert.equal((await geminiTooLong.json()).error, 'Maaf, maksimal input 100.000 karakter.');
+process.env.GROQ_API_KEY = 'sintetis';
+const restoreGroq = await call(admin, { headers: adminHeaders, body: { action: 'set-ai', provider: 'groq', model: 'openai/gpt-oss-120b' } });
+assert.equal(restoreGroq.status, 200);
+process.env.GROQ_API_KEY = '';
+checks += 7;
+
 const rotateWrong = await call(admin, { headers: adminHeaders, body: { action: 'rotate-admin', currentPassword: 'salah-panjang-panjang-panjang', newPassword: 'password-admin-baru-20-lebih' } });
 assert.equal(rotateWrong.status, 401);
 const rotate = await call(admin, { headers: adminHeaders, body: { action: 'rotate-admin', currentPassword: process.env.ADMIN_PASSWORD, newPassword: 'password-admin-baru-20-lebih' } });

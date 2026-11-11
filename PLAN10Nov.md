@@ -885,3 +885,27 @@ Bukti aktual (produksi, 11 Nov 2026):
 - Model aktif `gemini-3.5-flash-lite`, user `uicheck` koreksi lewat UI: modal hanya berisi header, panel Sebelum/Sesudah, Perbaikan, dan tombol; `Sisa penggunaan` tidak ada, teks `tidak tersedia` tidak ada, hasil koreksi tampil normal.
 - Model aktif `groq/qwen3.8-27b`: modal yang sama menampilkan `Sisa penggunaan` + `Request 99% · Token 97%` + hitung mundur reset, jadi perilaku Groq tidak berubah.
 - `npm run build` + deploy lulus; user uji `uicheck` dihapus; pilihan model di admin dikembalikan ke `groq/qwen3.8-27b` (pilihan yang sedang aktif sebelum pengujian).
+
+## 40. Batas input mengikuti model aktif + streaming heartbeat + sembunyikan info provider
+
+Batas per model (`lib/providers.json` → `maxChars`):
+- Groq semua model: **50.000** karakter.
+- Gemini semua model: **100.000** karakter. Plafon model sebenarnya: input 1.048.576 token, output 65.536 token → ±330.000 karakter untuk koreksi penuh (transkrip Indonesia ±5 karakter/token).
+
+Perubahan:
+- `lib/serverAi.js`: `maxCharsFor(settings)` memilih batas dari model aktif; model tak dikenal kembali ke 50.000.
+- `lib/requestValidation.js`: `validateRequest(data, { maxChars })`; pesan `Maaf, maksimal input <n> karakter.` (format `id-ID`).
+- `lib/aiActions.js`: `options.timeoutMs` (bawaan 20 dtk, endpoint streaming 240 dtk) dan penjaga hasil terpotong — bila hasil koreksi < 50% panjang input (>2.000 karakter), model dianggap gagal dan mesin lokal dipakai supaya tidak ada teks hilang.
+- `netlify/functions/correct-transcript.mjs` + `meeting-notes.mjs`: baca settings sebelum validasi, batas dinamis, dan `stream: true` menjawab SSE lewat `lib/sseResponse.js` (heartbeat `{ping:true}` tiap 10 dtk, frame akhir `{result}` atau `{error}`). Tanpa `stream`, balasan tetap JSON.
+- `resources/js/App.vue`: error 413 ditampilkan apa adanya (tanpa awalan "Terjadi kesalahan…").
+- `resources/js/components/CorrectionModal.vue` + `MeetingNotesModal.vue`: baris `fallbackLabel` dihapus, jadi teks seperti "Gemini: tidak tersedia atau respons tidak valid" tidak lagi tampil ke pengguna. `fallbackLabel` ikut dihapus dari `engineLabel.mjs` (tes disesuaikan).
+
+Bukti aktual (produksi, 11 Nov 2026):
+- Groq `gpt-oss-20b`, 50.001 karakter → 413 `Maaf, maksimal input 50.000 karakter.`
+- Gemini `gemini-3.5-flash-lite`, 100.001 karakter → 413 `Maaf, maksimal input 100.000 karakter.`
+- Stream Groq kecil: `text/event-stream`, frame `result` engine `groq`, `modelUsed openai/gpt-oss-20b`, ada `quota`, snapshot admin `provider: groq`.
+- UI koreksi Gemini ±6.900 karakter: 7,5 dtk, hasil tampil, tanpa baris "tidak tersedia", tanpa kartu statistik.
+- Uji ukuran Gemini `gemini-3.6-flash` lewat SSE: 15.000 karakter selesai 23,7 dtk dengan hasil utuh (15.080 karakter); 25.000 karakter jatuh ke mesin lokal (5,3 dtk, teks utuh); 50.000 karakter koneksi ditutup ±31 dtk tanpa hasil (batas waktu platform).
+- `npm test` 29 berkas lulus (71 pemeriksaan API); build + deploy lulus; pilihan model dikembalikan ke `groq/openai/gpt-oss-20b`; user uji dihapus.
+
+Keterbatasan: batas 100.000 hanya bisa dilayani penuh bila model selesai < ~30 dtk. Di atas ±15.000 karakter, Gemini sering 503/lambat sehingga hasil berasal dari mesin lokal (teks utuh, kualitas lokal). Untuk koreksi AI penuh pada 100.000 karakter perlu pemrosesan bertahap/background — belum dibuat.

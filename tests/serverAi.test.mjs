@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { serverAiOptions, resolveAiSettings, audioParts, transcribeAudio } = require('../lib/serverAi.js');
+const { serverAiOptions, resolveAiSettings, maxCharsFor, audioParts, transcribeAudio } = require('../lib/serverAi.js');
+assert.equal(maxCharsFor({}), 50000, 'Groq tetap 50.000 karakter');
+assert.equal(maxCharsFor({ provider: 'groq', model: 'openai/gpt-oss-20b' }), 50000);
+assert.equal(maxCharsFor({ provider: 'gemini', model: 'gemini-3.5-flash-lite' }), 100000, 'Gemini 100.000 karakter');
+assert.equal(maxCharsFor({ provider: 'gemini', model: 'tidak-ada' }), 100000, 'model asing memakai model pertama provider');
 const options = serverAiOptions({ GROQ_API_KEY: 'secret' });
 assert.deepEqual(resolveAiSettings({}), { provider: 'groq', model: 'openai/gpt-oss-120b' });
 assert.deepEqual(resolveAiSettings({ provider: 'gemini', model: 'gemini-3.8-flash' }), { provider: 'gemini', model: 'gemini-3.8-flash' });

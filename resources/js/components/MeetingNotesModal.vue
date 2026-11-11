@@ -22,8 +22,7 @@
 
       <!-- Structured Sections -->
       <div class="flex flex-col gap-4">
-        <p v-if="fallbackLabel(data)" class="text-xs text-[var(--color-muted)]" role="status">{{ fallbackLabel(data) }}</p>
-        <QuotaStatus :data="data" />
+          <QuotaStatus :data="data" />
         <!-- Topik -->
         <div class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
           <div class="section-label text-xs mb-2">📌 Topik / Konteks Pembicaraan</div>
@@ -75,7 +74,6 @@
 <script setup>
 import { copyToClipboard } from '../lib/utils/clipboard.js';
 import { formatMarkdownInline } from '../lib/text/markdownInline.mjs';
-import { fallbackLabel } from '../lib/engineLabel.mjs';
 import QuotaStatus from './QuotaStatus.vue';
 
 const props = defineProps({

@@ -21,7 +21,6 @@
       </div>
 
       <!-- Side-by-Side Comparison -->
-      <p v-if="fallbackLabel(data)" class="text-xs text-[var(--color-muted)]" role="status">{{ fallbackLabel(data) }}</p>
       <QuotaStatus :data="data" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
@@ -68,7 +67,6 @@
 
 <script setup>
 import { copyToClipboard } from '../lib/utils/clipboard.js';
-import { fallbackLabel } from '../lib/engineLabel.mjs';
 import QuotaStatus from './QuotaStatus.vue';
 
 const props = defineProps({

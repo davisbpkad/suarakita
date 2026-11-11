@@ -9,23 +9,28 @@
     "models": [
       {
         "id": "gemini-3.5-flash-lite",
-        "label": "Gemini 3.5 Flash-Lite (stabil)"
+        "label": "Gemini 3.5 Flash-Lite (stabil)",
+        "maxChars": 100000
       },
       {
         "id": "gemini-flash-lite-latest",
-        "label": "Gemini Flash-Lite terbaru"
+        "label": "Gemini Flash-Lite terbaru",
+        "maxChars": 100000
       },
       {
         "id": "gemini-3.1-flash-lite",
-        "label": "Gemini 3.1 Flash-Lite"
+        "label": "Gemini 3.1 Flash-Lite",
+        "maxChars": 100000
       },
       {
         "id": "gemini-3.8-flash",
-        "label": "Gemini 3.8 Flash (paling pintar)"
+        "label": "Gemini 3.8 Flash (paling pintar)",
+        "maxChars": 100000
       },
       {
         "id": "gemini-3.6-flash",
-        "label": "Gemini 3.6 Flash"
+        "label": "Gemini 3.6 Flash",
+        "maxChars": 100000
       }
     ]
   },
@@ -39,15 +44,18 @@
     "models": [
       {
         "id": "openai/gpt-oss-120b",
-        "label": "GPT-OSS 120B"
+        "label": "GPT-OSS 120B",
+        "maxChars": 50000
       },
       {
         "id": "openai/gpt-oss-20b",
-        "label": "GPT-OSS 20B (paling cepat)"
+        "label": "GPT-OSS 20B (paling cepat)",
+        "maxChars": 50000
       },
       {
         "id": "qwen/qwen3.8-27b",
-        "label": "Qwen 3.8 27B"
+        "label": "Qwen 3.8 27B",
+        "maxChars": 50000
       }
     ]
   },
@@ -61,11 +69,13 @@
     "models": [
       {
         "id": "llama-3.3-70b",
-        "label": "Llama 3.3 70B"
+        "label": "Llama 3.3 70B",
+        "maxChars": 50000
       },
       {
         "id": "gpt-oss-120b",
-        "label": "GPT-OSS 120B"
+        "label": "GPT-OSS 120B",
+        "maxChars": 50000
       }
     ]
   },
@@ -79,15 +89,18 @@
     "models": [
       {
         "id": "openrouter/free",
-        "label": "Router gratis otomatis"
+        "label": "Router gratis otomatis",
+        "maxChars": 50000
       },
       {
         "id": "nvidia/nemotron-3-super-120b-a12b:free",
-        "label": "Nemotron 3 Super 120B (gratis)"
+        "label": "Nemotron 3 Super 120B (gratis)",
+        "maxChars": 50000
       },
       {
         "id": "qwen/qwen3.8-27b:free",
-        "label": "Qwen 3.8 27B (gratis)"
+        "label": "Qwen 3.8 27B (gratis)",
+        "maxChars": 50000
       }
     ]
   }
