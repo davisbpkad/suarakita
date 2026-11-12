@@ -11,6 +11,7 @@ for (const action of ['correction', 'notes']) {
     async generateContent(model, prompt) {
       calls.push(provider);
       assert.ok(prompt.includes('Andi belum selesai.'));
+      if (action === 'correction') assert.ok(prompt.includes('salah dengar') && prompt.includes('konteks'), 'Correction prompt must fix misheard words from context');
       if (provider === 'gemini') throw Object.assign(new Error('limited'), { status: 429 });
       return action === 'correction' ? '<<<TEXT>>>\nAndi belum selesai.\n<<<CHANGES>>>\n- Kapitalisasi' : '<<<TOPIC>>>\nProgres proyek\n<<<SUMMARY>>>\nAndi belum selesai.\n<<<DECISIONS>>>\nTidak ada keputusan.';
     },
@@ -27,3 +28,11 @@ for (const action of ['correction', 'notes']) {
   count += 3;
 }
 console.log(`Koreksi/notulen: ${count} skenario integrasi orkestrator tiruan lolos`);
+
+// Hitung permintaan Gemini (perkiraan kuota harian) dan tandai 429 harian.
+const geminiOnly = { geminiKey: 'synthetic', geminiModel: 'gemini-3.5-flash-lite' };
+const ok = await runAiAction('correction', 'Andi belum selesai.', geminiOnly, () => ({ generateContent: async () => '<<<TEXT>>>\nAndi belum selesai.\n<<<CHANGES>>>\n- Tidak ada' }));
+assert.deepEqual([ok.geminiCalls, ok.geminiExhausted], [1, false]);
+const daily = await runAiAction('correction', 'Andi belum selesai.', geminiOnly, () => ({ generateContent: async () => { throw Object.assign(new Error('limited'), { status: 429, dailyLimit: true }); } }));
+assert.deepEqual([daily.geminiCalls, daily.geminiExhausted], [0, true]);
+console.log('Kuota Gemini: hitungan permintaan dan penanda 429 harian lolos');

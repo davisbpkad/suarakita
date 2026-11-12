@@ -2,9 +2,11 @@
   <div class="modal-overlay">
     <div class="modal-panel flex flex-col gap-5">
       <!-- Header -->
-      <div class="flex items-center justify-between pb-4 border-b border-[var(--color-line)]">
-        <div class="flex items-center gap-3">
-          <span class="w-9 h-9 rounded-2xl bg-blue-100 flex items-center justify-center text-base">📋</span>
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--color-line)]">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-9 h-9 shrink-0 rounded-2xl bg-[var(--color-yolk)] text-[var(--color-ink)] flex items-center justify-center">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2m0 7h8m-8 4h8m-8 4h5" /></svg>
+          </span>
           <div>
             <h3 class="text-base font-bold text-[var(--color-ink)]">Notulen Rapat (MoM)</h3>
             <p class="text-xs text-[var(--color-muted)]">Ringkasan, topik, keputusan & penugasan</p>
@@ -14,7 +16,7 @@
           <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs font-semibold">
             <span role="status">{{ loading ? 'Loading…' : 'Selesai' }}</span>
           </span>
-          <button @click="emit('close')" class="btn-icon w-8 h-8">
+          <button @click="emit('close')" class="btn-icon w-8 h-8" aria-label="Tutup notulen rapat">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -27,15 +29,15 @@
           <QuotaStatus :data="data" />
         <!-- Topik -->
         <div class="p-5 bg-[var(--color-bg)] border border-[var(--color-line)] rounded-2xl">
-          <div class="section-label text-xs mb-2">📌 Topik / Konteks Pembicaraan</div>
+          <div class="text-xs font-bold text-[var(--color-muted)] mb-2 flex items-center gap-2"><svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6Zm3 12v6" /></svg>Topik / Konteks Pembicaraan</div>
           <p class="text-base font-bold text-[var(--color-ink)] leading-snug">{{ data.topic }}</p>
         </div>
 
         <!-- Ringkasan Hasil Rapat -->
         <div class="p-5 bg-[var(--color-yolk)]/20 border border-[var(--color-yolk)]/30 rounded-2xl">
           <div class="text-xs font-bold text-[var(--color-muted)] mb-3 flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-yolk)]"></span>
-            📝 Ringkasan Hasil Rapat (Progress & Substansi)
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 13h8m-8 4h6" /></svg>
+            Ringkasan Hasil Rapat (Progress & Substansi)
           </div>
           <ul v-if="data.summaryItems && data.summaryItems.length" class="flex flex-col gap-2.5">
             <li v-for="(item, idx) in data.summaryItems" :key="idx" class="flex items-start gap-2 text-sm text-[var(--color-ink)] leading-relaxed">
@@ -49,8 +51,8 @@
         <!-- Keputusan yang Diambil (Decisions Made) -->
         <div v-if="data.decisions && data.decisions.length" class="p-5 bg-green-50 border border-green-200 rounded-2xl">
           <div class="text-xs font-bold text-green-700 mb-3 flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-            🎯 Keputusan yang Diambil (Decisions Made)
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>
+            Keputusan yang Diambil (Decisions Made)
           </div>
           <ul class="flex flex-col gap-2.5">
             <li v-for="(dec, idx) in data.decisions" :key="idx" class="flex items-start gap-2 text-sm text-[var(--color-ink)] leading-relaxed">

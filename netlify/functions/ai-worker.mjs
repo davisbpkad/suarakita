@@ -34,6 +34,7 @@ export default async (request) => {
     const options = { ...serverAiOptions(process.env, { provider: job.provider, model: job.model }), timeoutMs: 300000 };
     const result = await runAiAction(job.action, job.text, options);
     if (result.quota) await accounts().recordProviderQuota(result.quota, result.engine);
+    if (options.geminiModel) result.geminiUsage = await accounts().recordGeminiUsage(options.geminiModel, result.geminiCalls, result.geminiExhausted);
     await store.finish(job.id, job.usage ? { ...result, usage: job.usage } : result);
     return new Response('OK', { status: 200 });
   } catch (error) {

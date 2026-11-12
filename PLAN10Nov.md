@@ -952,3 +952,24 @@ Batas model:
 - Gemini free tier hanya 500 permintaan/hari per model: satu pekerjaan 100.000 karakter memakai 20 permintaan. Setelah kuota habis, semua pekerjaan Gemini turun ke mesin lokal.
 - Groq free tier 8.000 token/menit membuat 50.000 karakter butuh ±5 menit; jeda 30 detik per potongan.
 - Hasil model yang memotong di tengah (2.396 dari 5.949 karakter) kini memicu fallback lokal untuk potongan itu, bukan menggabungkan teks yang hilang.
+
+## 42. Perbaikan transkrip mobile kosong — 12 November 2026
+
+- Laporan pengguna: level mikrofon bergerak, tetapi tidak ada transkrip. Ini membuktikan stream meter menerima audio, bukan membuktikan engine pengenalan suara menerima audio. Konflik capture masih hipotesis perangkat, bukan penyebab yang sudah terverifikasi.
+- `MicMonitor` tidak membuka capture kedua di Android/iOS, termasuk iPad dengan UA Macintosh. Meter disembunyikan pada perangkat tersebut; desktop tetap memakai meter.
+- `SpeechRecognition.start()` dipanggil langsung dari klik, sebelum operasi izin meter. Kegagalan meter tidak lagi membatalkan pengenalan suara. Kegagalan start membersihkan state dan menampilkan pesan.
+- Semua error fatal ditampilkan, termasuk `service-not-allowed`, bahasa tidak didukung, dan kode lain. Pesan Siri/Dikte merupakan saran pemeriksaan, bukan jaminan dukungan Chrome iOS.
+- `?diag=1` menampilkan dukungan API, secure context, UA, bahasa, dan 80 event terakhir tanpa audio/isi transkrip. Event meliputi start, audiostart, speechstart, result, error, end.
+- Gap final memakai timestamp final sebelumnya. Callback dari sesi lama/setelah stop diabaikan.
+- Bukti RED: `node tests/speechMobile.test.mjs` gagal `unexpected capture` pada Android sebelum perubahan.
+- Bukti GREEN: `npm test` mengeksekusi 31 berkas dan lulus; tes speech memakai engine tiruan untuk capture mobile, gap final 2500 ms, event result, dan callback sesi lama. Ini bukan bukti STT provider atau mikrofon nyata. Coverage numerik tidak diukur.
+- `npm run build` lulus, 26 modul; `git diff --check` bersih.
+- Deploy produksi berhasil: `6af52b371a6e8a01089aa960`, https://suarakit.netlify.app. Fetch produksi memberi HTTP 200 untuk halaman dan JS; bundle memuat penanda diagnostik/start/error terbaru.
+- Belum diverifikasi: ucapan nyata Chrome Android/iPhone/Windows/MacBook, latensi interim, restart panjang, dan izin OS. Pengguna perlu membuka `/?diag=1`, mencoba bicara, dan mengirim event jika masih kosong. Tidak ada commit otomatis; perubahan awal pengguna dipertahankan.
+
+## 43. Perkiraan kuota Gemini (12 Nov 2026)
+- `runAiAction` menghitung permintaan Gemini yang dijawab (`geminiCalls`) dan 429 harian (`geminiExhausted`, dari body `PerDay`, hanya flag).
+- `recordGeminiUsage` di `lib/accounts.js`: kunci `gemini:<hari Pasifik>:<model>`, batas 3.5 Flash-Lite 500, 3.6 Flash 20; 429 harian = 100%.
+- Endpoint koreksi/notulen/worker mengirim `geminiUsage`; `QuotaStatus.vue` menampilkan bar perkiraan.
+- Bukti: tes RED lalu GREEN, `npm test` 32 berkas lulus, panggilan Gemini nyata `geminiCalls=1`, bundle produksi memuat UI baru.
+- Batasan: tidak atomik; pemakaian key di luar aplikasi tidak terhitung.

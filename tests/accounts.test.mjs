@@ -81,3 +81,13 @@ const log = await accounts.auditLog();
 assert.equal(log[0].action, 'create-user');
 
 console.log('Akun: hash, login, kuota per user + total, kunci percobaan, sesi beridentitas, audit lulus');
+
+// Perkiraan kuota Gemini per model per hari Pasifik.
+const gem = createAccounts(memoryStore());
+const day = new Date('2026-11-12T07:59:00Z'); // 11 Nov waktu Pasifik
+assert.deepEqual(await gem.recordGeminiUsage('gemini-3.5-flash-lite', 3, false, day), { model: 'gemini-3.5-flash-lite', used: 3, limit: 500, percent: 1 });
+assert.equal((await gem.recordGeminiUsage('gemini-3.5-flash-lite', 2, false, day)).used, 5);
+assert.equal((await gem.recordGeminiUsage('gemini-3.5-flash-lite', 1, false, new Date('2026-11-12T08:01:00Z'))).used, 1, 'reset tengah malam Pasifik');
+assert.deepEqual(await gem.recordGeminiUsage('gemini-3.6-flash', 0, true, day), { model: 'gemini-3.6-flash', used: 20, limit: 20, percent: 100 });
+assert.equal((await gem.recordGeminiUsage('gemini-3.5-flash-lite', 0, false, day)).used, 5, 'tanpa permintaan hanya membaca');
+console.log('Kuota Gemini: penghitung harian per model lulus');

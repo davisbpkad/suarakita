@@ -1,9 +1,9 @@
 <template>
   <section class="card p-4 sm:p-6 flex flex-col gap-3.5 shadow-sm border border-[var(--color-line)]">
     <!-- Top Bar: Status Pill, Presets & Stats -->
-    <div class="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-[var(--color-line)]/60">
+    <div class="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-2.5 pb-2 border-b border-[var(--color-line)]/60">
       <!-- Left: Status & Presets -->
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2 min-w-0">
         <!-- Recording Status Pill -->
         <div
           class="tag text-xs font-semibold py-1 px-3"
@@ -41,9 +41,10 @@
       </div>
 
       <!-- Right: Stats -->
-      <div class="flex items-center gap-1.5 ml-auto">
-        <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs py-1 px-2.5">{{ charCount }} karakter</span>
-        <span class="tag bg-[var(--color-cream)] text-[var(--color-muted)] text-xs py-1 px-2.5">{{ wordCount }} kata</span>
+      <div class="flex items-center gap-1.5 text-[var(--color-muted)] text-xs sm:ml-auto">
+        <span>{{ charCount }} karakter</span>
+        <span aria-hidden="true">·</span>
+        <span>{{ wordCount }} kata</span>
       </div>
     </div>
 
@@ -68,7 +69,7 @@
           </p>
 
           <!-- Level mic: pengguna bisa lihat sendiri kalau suaranya terlalu pelan -->
-          <div class="mt-1.5 flex items-center gap-2">
+          <div v-if="showMicLevel" class="mt-1.5 flex items-center gap-2">
             <span class="text-[10px] font-bold uppercase tracking-wider shrink-0" :class="micQuiet ? 'text-red-600' : 'text-emerald-600'">
               Level mic
             </span>
@@ -80,7 +81,7 @@
               ></div>
             </div>
           </div>
-          <p v-if="micQuiet" class="text-[11px] font-semibold text-red-600 mt-1 leading-snug">
+          <p v-if="showMicLevel && micQuiet" class="text-[11px] font-semibold text-red-600 mt-1 leading-snug">
             Suara terlalu pelan. Naikkan volume input mikrofon di pengaturan sistem, atau dekatkan mic.
           </p>
         </div>
@@ -110,10 +111,10 @@
     <!-- Bottom Action Toolbar inside the Card -->
     <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--color-line)]/60">
       <!-- Left: Main Record Button -->
-      <div class="flex items-center gap-2.5">
+      <div class="flex w-full sm:w-auto items-center gap-2.5">
         <button
           @click="emit('toggle-recording')"
-          class="btn-primary text-sm sm:text-base font-bold px-5 sm:px-6 py-2.5 sm:py-3 transition-all flex items-center gap-2"
+          class="btn-primary w-full sm:w-auto text-sm sm:text-base font-bold px-5 sm:px-6 py-2.5 sm:py-3 transition-all flex items-center gap-2"
           :class="isRecording
             ? 'bg-red-500! text-white! hover:bg-red-600! ring-4 ring-red-100 shadow-md'
             : 'bg-[var(--color-yolk)] text-[var(--color-ink)] hover:bg-amber-400'"
@@ -137,7 +138,7 @@
       </div>
 
       <!-- Right: Koreksi Teks & Buat Notulen Buttons -->
-      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+      <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto justify-end min-w-0">
         <!-- Koreksi Teks -->
         <button
           @click="emit('correct')"
@@ -179,6 +180,7 @@ const props = defineProps({
   isRecording: { type: Boolean, default: false },
   interimSpeech: { type: String, default: '' },
   micLevel: { type: Number, default: 0 },
+  showMicLevel: { type: Boolean, default: true },
   micQuiet: { type: Boolean, default: false },
   currentLang: { type: Object, required: true },
   loadingAction: { type: String, default: null },

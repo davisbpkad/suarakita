@@ -14,6 +14,13 @@
       <p v-if="remaining !== null && remaining !== '00:00'">Coba lagi dalam {{ remaining }}.</p>
     </template>
     <p v-else-if="data.engine === 'groq'">Sisa kuota Groq tidak tersedia dari respons ini.</p>
+    <div v-if="gemini" class="mt-1">
+      <p class="font-semibold">Pemakaian Gemini hari ini (perkiraan)</p>
+      <div class="h-1.5 my-1 rounded-full bg-[var(--color-line)] overflow-hidden" role="progressbar" :aria-valuenow="gemini.percent" aria-valuemin="0" aria-valuemax="100" aria-label="Pemakaian kuota Gemini">
+        <div class="h-full bg-[var(--color-yolk)]" :style="{ width: gemini.percent + '%' }"></div>
+      </div>
+      <p>{{ gemini.used }} / {{ gemini.limit }} permintaan ({{ gemini.percent }}%) · reset sekitar 15.00 WIB.</p>
+    </div>
   </div>
 </template>
 
@@ -26,8 +33,12 @@ const quota = computed(() => {
   const value = props.data.quota || [...(props.data.attempts || [])].reverse().find(item => item.provider === 'groq' && item.quota)?.quota;
   return value && Object.keys(value).length ? value : null;
 });
-// Gemini tidak mengirim header kuota: sembunyikan kartu, bukan menampilkan pesan kosong.
-const visible = computed(() => Boolean(quota.value) || props.data.engine === 'groq');
+// Gemini tidak mengirim header kuota; server menghitung perkiraan sendiri.
+const gemini = computed(() => {
+  const value = props.data.geminiUsage;
+  return value && Number.isFinite(value.used) && Number.isFinite(value.limit) && value.limit > 0 ? value : null;
+});
+const visible = computed(() => Boolean(quota.value) || props.data.engine === 'groq' || Boolean(gemini.value));
 const now = ref(Date.now());
 const deadline = ref(null);
 const requestDeadline = ref(null);

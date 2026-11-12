@@ -18,12 +18,14 @@ export class SpeechRecognizer {
     onInterim = () => {},
     onFinal = () => {},
     onError = () => {},
+    onEvent = () => {},
   } = {}) {
     this.language = language;
     this.isMobile = isMobile;
     this.onInterim = onInterim;
     this.onFinal = onFinal;
     this.onError = onError;
+    this.onEvent = onEvent;
 
     this.active = false;
     this.recognition = null;
@@ -50,7 +52,8 @@ export class SpeechRecognizer {
     }
   }
 
-  async start() {
+  start() {
+    if (this.active) return true;
     if (!this._init()) return false;
     clearTimeout(this.restartTimer);
     this.lastFinalPhrase = '';
@@ -62,7 +65,13 @@ export class SpeechRecognizer {
     this.recognition.maxAlternatives = 1;
     this.recognition.interimResults = true;
     this.recognition.lang = this.language;
-    this.recognition.start();
+    try {
+      this.recognition.start();
+    } catch (error) {
+      this.active = false;
+      this.onEvent({ type: 'error', error: error.name || 'start-failed' });
+      throw error;
+    }
     return true;
   }
 
@@ -86,22 +95,40 @@ export class SpeechRecognizer {
 
     this.recognition = new SpeechRecognition();
 
-    // Android/Samsung: continuous HARUS false. Engine SpeechRecognizer OS hanya
-    // mendukung satu frasa per sesi; continuous=true memicu resultIndex=0 dan
-    // duplikasi kata 5-7x. Desktop continuous=true lancar tanpa jeda restart.
+    // Sesi pendek pada mobile; onend menyalakan ulang engine.
     this.recognition.continuous = !this.isMobile;
     this.recognition.interimResults = true;
     this.recognition.maxAlternatives = 1;
     this.recognition.lang = this.language;
 
-    this.recognition.onresult = (event) => this._handleResult(event);
-    this.recognition.onerror = (event) => this._handleError(event);
-    this.recognition.onend = () => this._handleEnd();
+    const recognition = this.recognition;
+    const current = () => this.active && this.recognition === recognition;
+    for (const type of ['start', 'audiostart', 'speechstart', 'speechend', 'audioend']) {
+      recognition['on' + type] = () => {
+        if (current()) this.onEvent({ type });
+      };
+    }
+    recognition.onresult = (event) => {
+      if (!current()) return;
+      this.onEvent({ type: 'result', count: event.results.length });
+      this._handleResult(event);
+    };
+    recognition.onerror = (event) => {
+      if (!current()) return;
+      this.onEvent({ type: 'error', error: event.error });
+      this._handleError(event);
+    };
+    recognition.onend = () => {
+      if (!current()) return;
+      this.onEvent({ type: 'end' });
+      this._handleEnd();
+    };
     return true;
   }
 
   _handleResult(event) {
     const now = Date.now();
+    const previousFinalTimestamp = this.lastFinalTimestamp;
     let interim = '';
     let finalChunk = '';
 
@@ -129,7 +156,7 @@ export class SpeechRecognizer {
 
     this.onInterim(interim);
     if (finalChunk) {
-      this.onFinal(finalChunk, now - this.lastFinalTimestamp);
+      this.onFinal(finalChunk, previousFinalTimestamp ? now - previousFinalTimestamp : 0);
     }
   }
 
@@ -152,8 +179,14 @@ export class SpeechRecognizer {
       this.recognition.lang = this.language;
       this.recognition.start();
     } catch (e) {
-      // Audio subsystem belum selesai unbind; coba sekali lagi.
-      if (attempt === 0) setTimeout(() => this._restart(1), 40);
+      // Android sering butuh >40 ms melepas engine. Dulu hanya 2 percobaan,
+      // lalu sesi mati diam-diam. Sekarang coba terus (maks 2 detik) selama aktif.
+      if (attempt < 8) this.restartTimer = setTimeout(() => this._restart(attempt + 1), 40 * (attempt + 1));
+      else {
+        this.active = false;
+        this.onEvent({ type: 'error', error: 'restart-failed' });
+        this.onError('restart-failed');
+      }
     }
   }
 }

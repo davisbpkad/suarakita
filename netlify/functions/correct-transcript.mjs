@@ -61,7 +61,8 @@ export default async (request) => {
       const result = await runAiAction('correction', text, options);
       // `quota` milik provider (Groq) dipakai panel Sisa penggunaan; kuota harian aplikasi terpisah.
       if (result.quota) await store.recordProviderQuota(result.quota, result.engine);
-      return { ...result, usage: { used: quota.used, limit: quota.limit } };
+      const geminiUsage = options.geminiModel ? await store.recordGeminiUsage(options.geminiModel, result.geminiCalls, result.geminiExhausted) : undefined;
+      return { ...result, geminiUsage, usage: { used: quota.used, limit: quota.limit } };
     };
 
     // Transkrip panjang bisa melewati batas waktu fungsi biasa; stream menjaga koneksi tetap hidup.

@@ -1,7 +1,7 @@
 <template>
-  <header class="wrap sticky top-0 z-30 flex items-center justify-between py-4 lg:py-5 bg-[var(--color-bg)]/95 backdrop-blur-sm">
+  <header class="wrap sticky top-0 z-30 flex flex-col sm:flex-row items-center justify-between gap-3 py-3 sm:py-4 lg:py-5 bg-[var(--color-bg)]/95 backdrop-blur-sm">
     <!-- Brand -->
-    <a href="/" class="group inline-flex items-center gap-2.5">
+    <a href="/" class="group inline-flex shrink-0 items-center gap-2.5">
       <img
         :src="'/favicon.png'"
         alt="suarakita logo"
@@ -11,7 +11,7 @@
     </a>
 
     <!-- Right Actions -->
-    <div class="flex items-center gap-2">
+    <div class="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-1 sm:gap-2">
       <!-- PENGATURAN BAHASA (Hover / Click Dropdown, bersebelahan dengan Pengaturan AI) -->
       <div
         class="relative group"
@@ -51,7 +51,7 @@
 
         <!-- Dropdown Menu on Hover / Click -->
         <div
-          class="absolute right-0 top-full pt-2 z-40 transition-all duration-200"
+          class="absolute left-0 sm:left-auto sm:right-0 top-full pt-2 z-40 transition-all duration-200"
           :class="showLangMenu ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0'"
         >
           <div class="w-48 bg-white border border-[var(--color-line)] rounded-2xl py-2 shadow-xl flex flex-col gap-0.5">

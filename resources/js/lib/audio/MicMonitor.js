@@ -17,6 +17,12 @@ const LEVEL_EPSILON = 0.005;
  * capture sendiri). Fungsinya mengukur, bukan menguatkan.
  */
 export class MicMonitor {
+  // Dimatikan di semua platform: stream kedua bersaing dengan SpeechRecognition
+  // (delay/gagal transkrip). Aktifkan lagi hanya bila terbukti tidak mengganggu.
+  static get supported() {
+    return false;
+  }
+
   constructor({ onLevel = () => {}, onQuietChange = () => {} } = {}) {
     this.onLevel = onLevel;
     this.onQuietChange = onQuietChange;
@@ -30,6 +36,8 @@ export class MicMonitor {
 
   /** Buka mikrofon dengan pembersih suara. Melempar error kalau izin ditolak. */
   async start() {
+    // Hindari capture kedua; SpeechRecognition membuka mikrofon sendiri.
+    if (!MicMonitor.supported) return;
     this.stream = await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
     });

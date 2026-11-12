@@ -17,9 +17,9 @@
     <main class="wrap flex-1 flex flex-col gap-4 pb-8 lg:pb-10">
       <!-- Header Title & Subtitle (Compact) -->
       <section class="text-center pt-1 sm:pt-3 flex flex-col items-center gap-1.5">
-        <h1 class="display text-2xl sm:text-3xl lg:text-[2.25rem] text-[var(--color-ink)] max-w-2xl mx-auto">
-          <span>Bicara bebas, </span>
-          <span class="bg-[var(--color-yolk)] px-2 py-0.5 rounded-lg box-decoration-clone">jadi teks instan.</span>
+        <h1 class="display hero-title text-2xl sm:text-3xl lg:text-[2.25rem] text-[var(--color-ink)] max-w-2xl mx-auto">
+          <span>Bicara bebas,</span>
+          <span class="hero-highlight bg-[var(--color-yolk)] px-2 py-0.5 rounded-lg">jadi teks instan.</span>
         </h1>
         <p class="text-[var(--color-muted)] text-xs sm:text-sm max-w-lg leading-relaxed">
           Rekam suara, koreksi transkrip otomatis, dan buat notulen rapat — semua dalam satu tempat.
@@ -32,6 +32,7 @@
         :interim-speech="interimSpeech"
         :mic-level="micLevel"
         :mic-quiet="micQuiet"
+        :show-mic-level="MicMonitor.supported"
         :current-lang="currentLangObj"
         :loading-action="loadingAction"
         :formatted-recording-time="formattedRecordingTime"
@@ -43,6 +44,12 @@
         @meeting-notes="runMeetingNotes"
         @preset="loadPreset"
       />
+      <details v-if="diagnosticsEnabled" open class="rounded-xl border border-[var(--color-muted)] p-3 text-xs">
+        <summary class="font-semibold cursor-pointer">Diagnostik pengenalan suara</summary>
+        <p>supported: {{ SpeechRecognizer.supported }} · secure: {{ secureContext }} · bahasa: {{ currentLanguage }}</p>
+        <p class="break-words">{{ userAgent }}</p>
+        <pre class="mt-2 max-h-56 overflow-auto whitespace-pre-wrap">{{ speechEvents.join('\n') || 'Tekan Rekam untuk memulai.' }}</pre>
+      </details>
     </main>
 
     <!-- ====== FOOTER ====== -->
@@ -121,6 +128,15 @@ const recordingSeconds = ref(0);
 const micLevel = ref(0);
 const micQuiet = ref(false);
 let timerInterval = null;
+const diagnosticsEnabled = new URLSearchParams(window.location.search).get('diag') === '1';
+const userAgent = navigator.userAgent;
+const secureContext = window.isSecureContext;
+const speechEvents = ref([]);
+function logSpeechEvent(event) {
+  if (!diagnosticsEnabled) return;
+  // Jangan simpan audio atau isi transkrip dalam diagnostik.
+  speechEvents.value = [...speechEvents.value.slice(-79), `${new Date().toISOString()} ${event.type}${event.error ? ': ' + event.error : ''}${event.count !== undefined ? ' results=' + event.count : ''}`];
+}
 
 const availableLanguages = LANGUAGES;
 const currentLanguage = ref(DEFAULT_LANGUAGE);
@@ -137,6 +153,7 @@ const formattedRecordingTime = computed(() => {
 // menerima callback, jadi mengganti engine nanti tidak menyentuh template.
 const recognizer = new SpeechRecognizer({
   language: DEFAULT_LANGUAGE,
+  onEvent: logSpeechEvent,
   onInterim: (text) => {
     interimSpeech.value = text;
   },
@@ -146,9 +163,19 @@ const recognizer = new SpeechRecognizer({
   },
   onError: (error) => {
     console.warn('Speech recognition error:', error);
+    stopRecording();
     if (error === 'not-allowed') {
       alert('Izin akses mikrofon tidak diizinkan. Silakan aktifkan izin mikrofon pada browser Anda.');
-      stopRecording();
+    } else if (error === 'network') {
+      alert('Layanan pengenalan suara tidak terhubung. Periksa jaringan lalu rekam lagi.');
+    } else if (error === 'audio-capture' || error === 'restart-failed') {
+      alert('Mikrofon tidak terbaca atau dipakai aplikasi lain. Tutup aplikasi lain lalu rekam lagi.');
+    } else if (error === 'service-not-allowed') {
+      alert('Layanan pengenalan suara diblokir. Periksa izin browser dan Siri & Dikte pada iPhone. Jika tetap gagal, coba Safari.');
+    } else if (error === 'language-not-supported') {
+      alert('Bahasa ini tidak didukung layanan pengenalan suara. Pilih bahasa lain lalu rekam lagi.');
+    } else {
+      alert('Pengenalan suara gagal: ' + error);
     }
   },
 });
@@ -173,37 +200,47 @@ function toggleRecording() {
   }
 }
 
-async function startRecording() {
-  if (loadingAction.value) return;
+function startRecording() {
+  if (loadingAction.value || isRecording.value) return;
   if (!SpeechRecognizer.supported) {
-    alert('Browser Anda belum mendukung Web Speech Recognition API. Silakan gunakan Google Chrome, Edge, atau browser Chromium modern.');
-    return;
-  }
-
-  // Panggilan ini yang meminta izin mic dan menyalakan meter level.
-  try {
-    await micMonitor.start();
-  } catch (err) {
-    alert('Tidak bisa mengakses mikrofon: ' + err.message);
+    logSpeechEvent({ type: 'error', error: 'unsupported' });
+    alert('Browser ini tidak mendukung pengenalan suara. Pada iPhone, coba Safari. Pada Android atau komputer, coba Chrome terbaru.');
     return;
   }
 
   try {
-    await recognizer.start();
     isRecording.value = true;
     recordingSeconds.value = 0;
     interimSpeech.value = '';
+    logSpeechEvent({ type: 'start-request' });
+    // Mulai langsung dari klik pengguna, tanpa menunggu izin getUserMedia.
+    if (!recognizer.start()) {
+      stopRecording();
+      return;
+    }
+    if (!isRecording.value) return;
+
+    if (MicMonitor.supported) {
+      micMonitor.start().then(() => {
+        if (!isRecording.value) micMonitor.stop();
+      }).catch((err) => {
+        micMonitor.stop();
+        logSpeechEvent({ type: 'meter-error', error: err.name || 'unknown' });
+      });
+    }
 
     timerInterval = setInterval(() => {
       recordingSeconds.value++;
     }, 1000);
   } catch (err) {
     console.error('Error starting recognition:', err);
-    isRecording.value = false;
+    stopRecording();
+    alert('Tidak bisa memulai pengenalan suara: ' + err.message);
   }
 }
 
 function stopRecording() {
+  logSpeechEvent({ type: 'stop-request' });
   isRecording.value = false;
   interimSpeech.value = '';
   micLevel.value = 0;
